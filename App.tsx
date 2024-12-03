@@ -1,21 +1,22 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { FinanceScreen } from './src/screens/finance/FinanceScreen';
-import { SalesScreen } from './src/screens/SalesScreen';
-import { MarketingScreen } from './src/screens/MarketingScreen';
-import { ITScreen } from './src/screens/ITScreen';
-import { FinanceQuizScreen } from './src/screens/finance/FinanceQuizScreen';
 import HomeScreen from './src/screens/HomeScreen';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from './src/lib/supabase';
 import { Session } from '@supabase/supabase-js';
-import Auth from './src/components/Auth';
-import Account from './src/components/Account';
+import { TopicScreen } from './src/screens/TopicScreen';
+import { QuizScreen } from './src/screens/QuizScreen';
 
-const Stack = createNativeStackNavigator();
+type RootStackParamList = {
+  Home: undefined;
+  Topic: { topicId: number; topicTitle: string };
+  Quiz: { levelId: number; topicId: number; levelTitle: string; topicTitle: string };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-    const [session, setSession] = useState<Session | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -42,32 +43,24 @@ export default function App() {
             },
           }}
         >
-
           <Stack.Screen 
             name="Home" 
             component={HomeScreen} 
             options={{ title: 'Dashboard' }}
           />
           <Stack.Screen 
-            name="Finance" 
-            component={FinanceScreen} 
+            name="Topic" 
+            component={TopicScreen}
+            options={({ route }) => ({ 
+              title: route.params?.topicTitle || 'Topic'
+            })}
           />
           <Stack.Screen 
-            name="FinanceQuiz" 
-            component={FinanceQuizScreen} 
-            options={{ title: 'Finance Quiz' }}
-          />
-          <Stack.Screen 
-            name="Sales" 
-            component={SalesScreen} 
-          />
-          <Stack.Screen 
-            name="Marketing" 
-            component={MarketingScreen} 
-          />
-          <Stack.Screen 
-            name="IT" 
-            component={ITScreen} 
+            name="Quiz" 
+            component={QuizScreen}
+            options={({ route }) => ({ 
+              title: route.params?.levelTitle || 'Quiz'
+            })}
           />
         </Stack.Navigator>
       {/* ) : (

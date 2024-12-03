@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     margin: 4,
-    width: '48%',
+    width: '47%',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

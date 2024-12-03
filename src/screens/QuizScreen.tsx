@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { supabase } from '../../lib/supabase';
-import { Question } from '../../types/database.types';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { supabase } from '../lib/supabase';
 
-export const FinanceQuizScreen = ({ route, navigation }: { route: any; navigation: any }) => {
-  const { levelId } = route.params || { levelId: 1 };
+type Question = {
+  id: number;
+  level_id: number;
+  question: string;
+  options: string[];
+  correct_answer: number;
+};
+
+export const QuizScreen = ({ route, navigation }: { route: any; navigation: any }) => {
+  const { levelId, topicId, levelTitle, topicTitle } = route.params;
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [questions, setQuestions] = useState<Question[] | null>(null);
@@ -37,7 +44,7 @@ export const FinanceQuizScreen = ({ route, navigation }: { route: any; navigatio
         setError('No questions found for this level');
         setQuestions([]);
       } else {
-        setQuestions(data as unknown as Question[]);
+        setQuestions(data as Question[]);
       }
     } catch (error) {
       console.error('Error fetching questions:', error);
@@ -46,12 +53,12 @@ export const FinanceQuizScreen = ({ route, navigation }: { route: any; navigatio
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const handleAnswer = (selectedIndex: number) => {
     if (!questions) return;
     
-    const isCorrect = selectedIndex === questions[currentQuestion].correctAnswer;
+    const isCorrect = selectedIndex === questions[currentQuestion].correct_answer;
     
     if (isCorrect) {
       setScore(score + 1);
@@ -73,13 +80,18 @@ export const FinanceQuizScreen = ({ route, navigation }: { route: any; navigatio
           },
         ]
       );
+
+      // Here you could add logic to unlock the next level if passed
+      if (passed) {
+        // Update user progress or unlock next level
+      }
     }
   };
 
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Loading questions...</Text>
+        <ActivityIndicator size="large" color="#f0dc1b" />
       </View>
     );
   }
@@ -96,7 +108,7 @@ export const FinanceQuizScreen = ({ route, navigation }: { route: any; navigatio
             fetchQuestions();
           }}
         >
-          <Text style={styles.retryButtonText}>Retry</Text>
+          <Text style={styles.buttonText}>Retry</Text>
         </TouchableOpacity>
       </View>
     );
@@ -110,7 +122,7 @@ export const FinanceQuizScreen = ({ route, navigation }: { route: any; navigatio
           style={styles.retryButton}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.retryButtonText}>Go Back</Text>
+          <Text style={styles.buttonText}>Go Back</Text>
         </TouchableOpacity>
       </View>
     );
@@ -118,6 +130,11 @@ export const FinanceQuizScreen = ({ route, navigation }: { route: any; navigatio
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.topicTitle}>{topicTitle}</Text>
+        <Text style={styles.levelTitle}>{levelTitle}</Text>
+      </View>
+
       <View style={styles.progressContainer}>
         <Text style={styles.progressText}>
           Question {currentQuestion + 1} of {questions.length}
@@ -149,15 +166,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+  },
+  header: {
+    marginBottom: 24,
+  },
+  topicTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#666',
+    marginBottom: 4,
+  },
+  levelTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
   },
   progressContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 24,
-    width: '100%',
   },
   progressText: {
     fontSize: 16,
@@ -173,7 +201,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 20,
     marginBottom: 24,
-    width: '100%',
   },
   question: {
     fontSize: 20,
@@ -183,14 +210,12 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     gap: 12,
-    width: '100%',
   },
   optionButton: {
     backgroundColor: '#f0dc1b',
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
-    width: '100%',
   },
   optionText: {
     fontSize: 16,
@@ -200,18 +225,18 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     fontSize: 16,
-    marginBottom: 20,
     textAlign: 'center',
+    marginBottom: 16,
   },
   retryButton: {
     backgroundColor: '#f0dc1b',
-    borderRadius: 8,
     padding: 12,
-    marginTop: 16,
+    borderRadius: 8,
+    alignItems: 'center',
   },
-  retryButtonText: {
+  buttonText: {
     fontSize: 16,
-    color: '#000000',
     fontWeight: '500',
+    color: '#000',
   },
 }); 

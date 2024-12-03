@@ -5,3 +5,10 @@ export interface Question {
     correctAnswer: number
     created_at: string
 }
+
+export interface Topic {
+    id: number
+    title: string
+    description: string
+    emoji: string
+}
