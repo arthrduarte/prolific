@@ -1,120 +1,72 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Card } from './src/components/Card';
-import { FinanceScreen } from './src/screens/finance/FinanceScreen';
-import { SalesScreen } from './src/screens/SalesScreen';
-import { MarketingScreen } from './src/screens/MarketingScreen';
-import { ITScreen } from './src/screens/ITScreen';
-import { FinanceQuizScreen } from './src/screens/finance/FinanceQuizScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import { useState, useEffect } from 'react';
+import { supabase } from './src/lib/supabase';
+import { Session } from '@supabase/supabase-js';
+import { TopicScreen } from './src/screens/TopicScreen';
+import { QuizScreen } from './src/screens/QuizScreen';
 
-const Stack = createNativeStackNavigator();
+type RootStackParamList = {
+  Home: undefined;
+  Topic: { topicId: number; topicTitle: string };
+  Quiz: { levelId: number; topicId: number; levelTitle: string; topicTitle: string };
+};
 
-function HomeScreen({ navigation }: { navigation: any }) {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Prolific</Text>
-      <View style={styles.cardsContainer}>
-        <View style={styles.cardsRow}>
-          <Card 
-            emoji="💰"
-            title="Finance" 
-            description="This is the description for the first card. It contains important information."
-            onPress={() => navigation.navigate('Finance')}
-          />
-          <Card 
-            emoji="💼"
-            title="Sales" 
-            description="Here's another card with different content to showcase the component."
-            onPress={() => navigation.navigate('Sales')}
-          />
-        </View>
-        <View style={styles.cardsRow}>
-          <Card 
-            emoji="💬"
-            title="Marketing" 
-            description="The third card demonstrates how multiple cards can be stacked nicely."
-            onPress={() => navigation.navigate('Marketing')}
-          />
-          <Card 
-            emoji="💻"
-            title="IT" 
-            description="And finally, the fourth card completes our card collection."
-            onPress={() => navigation.navigate('IT')}
-          />
-        </View>
-      </View>
-      <StatusBar style="light" />
-    </View>
-  );
-}
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const [session, setSession] = useState<Session | null>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+  }, [])
+
   return (
     <NavigationContainer>
-      <Stack.Navigator 
-        initialRouteName="Home"
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#fff',
-          },
-          headerTintColor: '#000000',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      >
-        <Stack.Screen 
-          name="Home" 
-          component={HomeScreen} 
-          options={{ title: 'Dashboard' }}
-        />
-        <Stack.Screen 
-          name="Finance" 
-          component={FinanceScreen} 
-        />
-        <Stack.Screen 
-          name="FinanceQuiz" 
-          component={FinanceQuizScreen} 
-          options={{ title: 'Finance Quiz' }}
-        />
-        <Stack.Screen 
-          name="Sales" 
-          component={SalesScreen} 
-        />
-        <Stack.Screen 
-          name="Marketing" 
-          component={MarketingScreen} 
-        />
-        <Stack.Screen 
-          name="IT" 
-          component={ITScreen} 
-        />
-      </Stack.Navigator>
+      {/* {session && session.user ? ( */}
+        <Stack.Navigator 
+          initialRouteName="Home"
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: '#fff',
+            },
+            headerTintColor: '#000000',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        >
+          <Stack.Screen 
+            name="Home" 
+            component={HomeScreen} 
+            options={{ title: 'Dashboard' }}
+          />
+          <Stack.Screen 
+            name="Topic" 
+            component={TopicScreen}
+            options={({ route }) => ({ 
+              title: route.params?.topicTitle || 'Topic'
+            })}
+          />
+          <Stack.Screen 
+            name="Quiz" 
+            component={QuizScreen}
+            options={({ route }) => ({ 
+              title: route.params?.levelTitle || 'Quiz'
+            })}
+          />
+        </Stack.Navigator>
+      {/* ) : (
+        <Auth />
+      )} */}
     </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 16,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#000',
-  },
-  cardsContainer: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  cardsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-});
