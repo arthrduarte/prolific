@@ -29,47 +29,50 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator 
-        initialRouteName="Home"
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#fff',
-          },
-          headerTintColor: '#000000',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      >
-        {session && session.user ? <Account key={session.user.id} session={session} /> : <Auth />}
-        
-        <Stack.Screen 
-          name="Home" 
-          component={HomeScreen} 
-          options={{ title: 'Dashboard' }}
-        />
-        <Stack.Screen 
-          name="Finance" 
-          component={FinanceScreen} 
-        />
-        <Stack.Screen 
-          name="FinanceQuiz" 
-          component={FinanceQuizScreen} 
-          options={{ title: 'Finance Quiz' }}
-        />
-        <Stack.Screen 
-          name="Sales" 
-          component={SalesScreen} 
-        />
-        <Stack.Screen 
-          name="Marketing" 
-          component={MarketingScreen} 
-        />
-        <Stack.Screen 
-          name="IT" 
-          component={ITScreen} 
-        />
-      </Stack.Navigator>
+      {session && session.user ? (
+        <Stack.Navigator 
+          initialRouteName="Home"
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: '#fff',
+            },
+            headerTintColor: '#000000',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        >
+
+          <Stack.Screen 
+            name="Home" 
+            component={HomeScreen} 
+            options={{ title: 'Dashboard' }}
+          />
+          <Stack.Screen 
+            name="Finance" 
+            component={FinanceScreen} 
+          />
+          <Stack.Screen 
+            name="FinanceQuiz" 
+            component={FinanceQuizScreen} 
+            options={{ title: 'Finance Quiz' }}
+          />
+          <Stack.Screen 
+            name="Sales" 
+            component={SalesScreen} 
+          />
+          <Stack.Screen 
+            name="Marketing" 
+            component={MarketingScreen} 
+          />
+          <Stack.Screen 
+            name="IT" 
+            component={ITScreen} 
+          />
+        </Stack.Navigator>
+      ) : (
+        <Auth />
+      )}
     </NavigationContainer>
   );
 }
