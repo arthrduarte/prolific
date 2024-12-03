@@ -3,10 +3,11 @@ import { StyleSheet, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Card } from './src/components/Card';
-import { FinanceScreen } from './src/screens/FinanceScreen';
+import { FinanceScreen } from './src/screens/finance/FinanceScreen';
 import { SalesScreen } from './src/screens/SalesScreen';
 import { MarketingScreen } from './src/screens/MarketingScreen';
 import { ITScreen } from './src/screens/ITScreen';
+import { FinanceQuizScreen } from './src/screens/finance/FinanceQuizScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -58,7 +59,7 @@ export default function App() {
           headerStyle: {
             backgroundColor: '#fff',
           },
-          headerTintColor: '#f0dc1b',
+          headerTintColor: '#000000',
           headerTitleStyle: {
             fontWeight: 'bold',
           },
@@ -72,6 +73,11 @@ export default function App() {
         <Stack.Screen 
           name="Finance" 
           component={FinanceScreen} 
+        />
+        <Stack.Screen 
+          name="FinanceQuiz" 
+          component={FinanceQuizScreen} 
+          options={{ title: 'Finance Quiz' }}
         />
         <Stack.Screen 
           name="Sales" 
