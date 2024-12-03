@@ -29,7 +29,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      {session && session.user ? (
+      {/* {session && session.user ? ( */}
         <Stack.Navigator 
           initialRouteName="Home"
           screenOptions={{
@@ -70,9 +70,9 @@ export default function App() {
             component={ITScreen} 
           />
         </Stack.Navigator>
-      ) : (
+      {/* ) : (
         <Auth />
-      )}
+      )} */}
     </NavigationContainer>
   );
 }
