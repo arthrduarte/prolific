@@ -17,19 +17,20 @@ type Topic = {
 };
 
 export const TopicScreen = ({ route, navigation }: { route: any; navigation: any }) => {
-  const { topicId } = route.params;
-  const [levels, setLevels] = useState<Level[]>([]);
+  const topicId = route.params?.topicId;
   const [topic, setTopic] = useState<Topic | null>(null);
+  const [levels, setLevels] = useState<Level[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchTopicAndLevels();
-  }, [topicId]);
-
   const fetchTopicAndLevels = async () => {
+    if (!topicId) return;
+    
     try {
-      // Fetch topic details
+      setLoading(true);
+      setError(null);
+      
+      // Fetch topic data
       const { data: topicData, error: topicError } = await supabase
         .from('topics')
         .select('*')
@@ -39,52 +40,75 @@ export const TopicScreen = ({ route, navigation }: { route: any; navigation: any
       if (topicError) throw topicError;
       setTopic(topicData);
 
-      // Fetch levels for this topic
+      // Fetch levels data
       const { data: levelsData, error: levelsError } = await supabase
-        .from('levels')
+        .from('Levels')
         .select('*')
         .eq('topic_id', topicId)
-        .order('id');
+        .order('id', { ascending: true });
 
       if (levelsError) throw levelsError;
       setLevels(levelsData || []);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setError('Failed to load content. Please try again.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred while fetching data');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLevelPress = (level: Level) => {
-    if (level.is_locked) {
-      // Show locked message or unlock requirements
+  useEffect(() => {
+    if (!topicId) {
+      setError('Topic ID is missing');
+      setLoading(false);
       return;
     }
-    navigation.navigate('Quiz', {
-      levelId: level.id,
-      topicId: topicId,
-      levelTitle: level.title,
-      topicTitle: topic?.title
-    });
-  };
+    fetchTopicAndLevels();
+  }, [topicId]);
+
+  const renderLevel = ({ item }: { item: Level }) => (
+    <TouchableOpacity 
+      style={[styles.levelCard, item.is_locked && styles.lockedLevel]}
+      onPress={() => {
+        if (!item.is_locked) {
+          navigation.navigate('Level', { level: item });
+        }
+      }}
+      disabled={item.is_locked}
+    >
+      <View style={styles.levelContent}>
+        <Text style={styles.levelTitle}>{item.title}</Text>
+        <Text style={styles.levelDescription}>{item.description}</Text>
+      </View>
+      {item.is_locked && (
+        <Text style={styles.lockedText}>🔒</Text>
+      )}
+    </TouchableOpacity>
+  );
+
+  if (!topicId) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Topic ID is missing</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.buttonText}>Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator size="large" color="#f0dc1b" />
       </View>
     );
   }
 
-  if (error) {
+  if (error || !topic) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity 
-          style={styles.retryButton}
-          onPress={fetchTopicAndLevels}
-        >
+        <Text style={styles.errorText}>{error || 'Failed to load topic'}</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={fetchTopicAndLevels}>
           <Text style={styles.buttonText}>Retry</Text>
         </TouchableOpacity>
       </View>
@@ -93,35 +117,17 @@ export const TopicScreen = ({ route, navigation }: { route: any; navigation: any
 
   return (
     <View style={styles.container}>
-      {topic && (
-        <View style={styles.topicHeader}>
-          <Text style={styles.topicTitle}>{topic.title}</Text>
-          <Text style={styles.topicDescription}>{topic.description}</Text>
-        </View>
-      )}
+      <View style={styles.topicHeader}>
+        <Text style={styles.topicTitle}>{topic.title}</Text>
+        <Text style={styles.topicDescription}>{topic.description}</Text>
+      </View>
 
       <FlatList
         data={levels}
+        renderItem={renderLevel}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.levelCard,
-              item.is_locked && styles.lockedLevel
-            ]}
-            onPress={() => handleLevelPress(item)}
-            disabled={item.is_locked}
-          >
-            <View style={styles.levelContent}>
-              <Text style={styles.levelTitle}>{item.title}</Text>
-              <Text style={styles.levelDescription}>{item.description}</Text>
-            </View>
-            {item.is_locked && (
-              <Text style={styles.lockedText}>🔒</Text>
-            )}
-          </TouchableOpacity>
-        )}
         contentContainerStyle={styles.levelsList}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
