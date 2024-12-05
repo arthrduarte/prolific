@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { supabase } from '../lib/supabase';
-
-type Level = {
-  id: number;
-  topic_id: number;
-  title: string;
-  description: string;
-  is_locked: boolean;
-};
-
-type Topic = {
-  id: number;
-  title: string;
-  description: string;
-};
+import { Level, Topic } from '../types/database.types';
 
 export const TopicScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const topicId = route.params?.topicId;
@@ -23,34 +10,28 @@ export const TopicScreen = ({ route, navigation }: { route: any; navigation: any
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTopicAndLevels = async () => {
-    if (!topicId) return;
-    
+  const fetchTopic = async () => {
+    const { data, error } = await supabase.from('topics').select('*').eq('id', topicId);
+    if (error) throw error
+    setTopic(data[0])
+    console.log(topic);
+  };
+
+  const fetchLevels = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      const { data, error } = await supabase.from('levels').select('*');
       
-      // Fetch topic data
-      const { data: topicData, error: topicError } = await supabase
-        .from('topics')
-        .select('*')
-        .eq('id', topicId)
-        .single();
-
-      if (topicError) throw topicError;
-      setTopic(topicData);
-
-      // Fetch levels data
-      const { data: levelsData, error: levelsError } = await supabase
-        .from('Levels')
-        .select('*')
-        .eq('topic_id', topicId)
-        .order('id', { ascending: true });
-
-      if (levelsError) throw levelsError;
-      setLevels(levelsData || []);
+      if (error) {
+        console.error('Error fetching levels:', error);
+        setError(error.message);
+        return;
+      }
+      
+      console.log("Fetched levels data:", data);
+      setLevels(data || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred while fetching data');
+      console.error('Error in fetchLevels:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -62,12 +43,16 @@ export const TopicScreen = ({ route, navigation }: { route: any; navigation: any
       setLoading(false);
       return;
     }
-    fetchTopicAndLevels();
+    fetchLevels();
+    fetchTopic();
   }, [topicId]);
 
   const renderLevel = ({ item }: { item: Level }) => (
     <TouchableOpacity 
-      style={[styles.levelCard, item.is_locked && styles.lockedLevel]}
+      style={[
+        styles.levelCard, 
+        item.is_locked ? styles.lockedLevel : styles.unlockedLevel
+      ]}
       onPress={() => {
         if (!item.is_locked) {
           navigation.navigate('Level', { level: item });
@@ -108,7 +93,7 @@ export const TopicScreen = ({ route, navigation }: { route: any; navigation: any
     return (
       <View style={styles.container}>
         <Text style={styles.errorText}>{error || 'Failed to load topic'}</Text>
-        <TouchableOpacity style={styles.retryButton} onPress={fetchTopicAndLevels}>
+        <TouchableOpacity style={styles.retryButton}>
           <Text style={styles.buttonText}>Retry</Text>
         </TouchableOpacity>
       </View>
@@ -164,6 +149,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderWidth: 1,
     borderColor: '#eee',
+  },
+  unlockedLevel: {
+    backgroundColor: '#f0dc1b',
   },
   levelContent: {
     flex: 1,
