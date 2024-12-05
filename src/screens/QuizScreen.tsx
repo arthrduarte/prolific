@@ -97,6 +97,43 @@ export const QuizScreen = ({ route, navigation }: { route: any; navigation: any 
     }
   };
 
+  const unlockNextLevel = async () => {
+    try {
+      // Check if next level exists
+      const { data: nextLevel, error: fetchError } = await supabase
+        .from('levels')
+        .select('id')
+        .eq('topic_id', topicId)
+        .gt('id', levelId)
+        .order('id')
+        .limit(1)
+        .single();
+
+      if (fetchError || !nextLevel) return null;
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      // Create or update progress for next level
+      const { error: unlockError } = await supabase
+        .from('user_progress')
+        .insert({
+          user_id: user.id,
+          level_id: nextLevel.id,
+          score_percentage: 0,
+          is_unlocked: true
+        })
+        .select()
+        .single();
+
+      if (unlockError) throw unlockError;
+      return nextLevel.id;
+    } catch (error) {
+      console.error('Error unlocking next level:', error);
+      throw error;
+    }
+  };
+
   const handleAnswer = async (selectedIndex: number) => {
     if (!questions) return;
     
@@ -116,21 +153,42 @@ export const QuizScreen = ({ route, navigation }: { route: any; navigation: any 
       if (passed) {
         try {
           await updateLevelProgress(finalScore, questions.length);
+          const nextLevelId = await unlockNextLevel();
+          Alert.alert(
+            'Quiz Completed!',
+            `You scored ${finalScore} out of ${questions.length}\n${nextLevelId ? 'Level Complete! Next level unlocked! 🎉' : 'Level Complete! 🎉'}`,
+            [
+              {
+                text: 'OK',
+                onPress: () => navigation.goBack(),
+              },
+            ]
+          );
         } catch (error) {
           console.error('Failed to update progress:', error);
+          Alert.alert(
+            'Quiz Completed!',
+            `You scored ${finalScore} out of ${questions.length}\nLevel Complete! 🎉`,
+            [
+              {
+                text: 'OK',
+                onPress: () => navigation.goBack(),
+              },
+            ]
+          );
         }
+      } else {
+        Alert.alert(
+          'Quiz Completed!',
+          `You scored ${finalScore} out of ${questions.length}\nTry again! 💪`,
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.goBack(),
+            },
+          ]
+        );
       }
-
-      Alert.alert(
-        'Quiz Completed!',
-        `You scored ${finalScore} out of ${questions.length}\n${passed ? 'Level Complete! 🎉' : 'Try again! 💪'}`,
-        [
-          {
-            text: 'OK',
-            onPress: () => navigation.goBack(),
-          },
-        ]
-      );
     }
   };
 
