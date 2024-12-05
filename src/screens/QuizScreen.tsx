@@ -49,7 +49,55 @@ export const QuizScreen = ({ route, navigation }: { route: any; navigation: any 
     }
   };
 
-  const handleAnswer = (selectedIndex: number) => {
+  const updateLevelProgress = async (score: number, totalQuestions: number) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const scorePercentage = Math.round((score / totalQuestions) * 100);
+      
+      // First check if entry exists
+      const { data: existingProgress } = await supabase
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('level_id', levelId)
+        .single();
+
+      let error;
+      if (existingProgress) {
+        // Update existing entry
+        const { error: updateError } = await supabase
+          .from('user_progress')
+          .update({
+            score_percentage: scorePercentage,
+            is_unlocked: true
+          })
+          .eq('user_id', user.id)
+          .eq('level_id', levelId);
+        error = updateError;
+      } else {
+        // Insert new entry
+        const { error: insertError } = await supabase
+          .from('user_progress')
+          .insert({
+            user_id: user.id,
+            level_id: levelId,
+            score_percentage: scorePercentage,
+            is_unlocked: true
+          });
+        error = insertError;
+      }
+
+      if (error) throw error;
+      return scorePercentage;
+    } catch (error) {
+      console.error('Error updating level progress:', error);
+      throw error;
+    }
+  };
+
+  const handleAnswer = async (selectedIndex: number) => {
     if (!questions) return;
     
     const isCorrect = selectedIndex === questions[currentQuestion].correct_answer;
@@ -62,11 +110,20 @@ export const QuizScreen = ({ route, navigation }: { route: any; navigation: any 
       setCurrentQuestion(currentQuestion + 1);
     } else {
       // Quiz completed
-      const passed = (score + (isCorrect ? 1 : 0)) / questions.length >= 0.7; // 70% passing threshold
+      const finalScore = score + (isCorrect ? 1 : 0);
+      const passed = finalScore / questions.length >= 0.7; // 70% passing threshold
       
+      if (passed) {
+        try {
+          await updateLevelProgress(finalScore, questions.length);
+        } catch (error) {
+          console.error('Failed to update progress:', error);
+        }
+      }
+
       Alert.alert(
         'Quiz Completed!',
-        `You scored ${score + (isCorrect ? 1 : 0)} out of ${questions.length}\n${passed ? 'Level Complete! 🎉' : 'Try again! 💪'}`,
+        `You scored ${finalScore} out of ${questions.length}\n${passed ? 'Level Complete! 🎉' : 'Try again! 💪'}`,
         [
           {
             text: 'OK',
@@ -74,11 +131,6 @@ export const QuizScreen = ({ route, navigation }: { route: any; navigation: any 
           },
         ]
       );
-
-      // Here you could add logic to unlock the next level if passed
-      if (passed) {
-        // Update user progress or unlock next level
-      }
     }
   };
 
