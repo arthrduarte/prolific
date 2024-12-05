@@ -6,6 +6,7 @@ import { supabase } from './src/lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import { TopicScreen } from './src/screens/TopicScreen';
 import { QuizScreen } from './src/screens/QuizScreen';
+import Auth from './src/components/Auth';
 
 type RootStackParamList = {
   Home: undefined;
@@ -30,7 +31,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      {/* {session && session.user ? ( */}
+      {session && session.user ? (
         <Stack.Navigator 
           initialRouteName="Home"
           screenOptions={{
@@ -63,9 +64,9 @@ export default function App() {
             })}
           />
         </Stack.Navigator>
-      {/* ) : (
+      ) : (
         <Auth />
-      )} */}
+      )}
     </NavigationContainer>
   );
 }

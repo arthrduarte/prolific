@@ -18,5 +18,12 @@ export interface Level {
     topic_id: number
     title: string
     description: string
-    is_locked: boolean
+}
+
+export interface User_Progress {
+    id: number
+    user_id: number
+    level_id: number
+    score_percentage: number
+    is_unlocked: boolean
 }
