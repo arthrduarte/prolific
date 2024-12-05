@@ -1,4 +1,4 @@
-import { Card } from '../components/Card'
+import { Card } from '../components/TopicCard'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native';
