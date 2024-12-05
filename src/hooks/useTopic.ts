@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Level, Topic, User_Progress } from '../types/database.types';
 
-interface LevelWithProgress extends Level {
+export interface LevelWithProgress extends Level {
   user_progress?: User_Progress;
 }
 

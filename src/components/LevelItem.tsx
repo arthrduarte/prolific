@@ -1,7 +1,9 @@
 import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
-import { LevelWithProgress } from '../hooks/useTopic';
+import type { LevelWithProgress } from '../hooks/useTopic';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../types/param.types';
 
 interface LevelItemProps {
   item: LevelWithProgress;
@@ -10,7 +12,7 @@ interface LevelItemProps {
 }
 
 export const LevelItem = ({ item, topicId, topicTitle }: LevelItemProps) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const isLocked = !item.user_progress?.is_unlocked;
   const scorePercentage = item.user_progress?.score_percentage;

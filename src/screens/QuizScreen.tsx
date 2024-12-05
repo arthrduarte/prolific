@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { supabase } from '../lib/supabase';
+import type { Question } from '../types/database.types';
 
-type Question = {
-  id: number;
-  level_id: number;
-  question: string;
-  options: string[];
-  correct_answer: number;
-};
 
 export const QuizScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const { levelId, topicId, levelTitle, topicTitle } = route.params;

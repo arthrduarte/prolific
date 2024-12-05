@@ -1,8 +1,9 @@
 export interface Question {
     id: number
+    level_id: number
     question: string
     options: string[]
-    correctAnswer: number
+    correct_answer: number
     created_at: string
 }
 
