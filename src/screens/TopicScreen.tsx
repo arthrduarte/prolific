@@ -55,7 +55,12 @@ export const TopicScreen = ({ route, navigation }: { route: any; navigation: any
       ]}
       onPress={() => {
         if (!item.is_locked) {
-          navigation.navigate('Level', { level: item });
+          navigation.navigate('Quiz', { 
+            levelId: item.id,
+            topicId: topicId,
+            levelTitle: item.title,
+            topicTitle: topic?.title || ''
+          });
         }
       }}
       disabled={item.is_locked}
@@ -126,16 +131,23 @@ const styles = StyleSheet.create({
   },
   topicHeader: {
     marginBottom: 24,
+    alignItems: 'center',
+    padding: 24,
+    borderRadius: 12,
+    width: '100%',
   },
   topicTitle: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 8,
+    marginBottom: 12,
+    textAlign: 'center',
   },
   topicDescription: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 18,
+    color: '#000',
+    textAlign: 'center',
+    paddingHorizontal: 16,
   },
   levelsList: {
     gap: 16,
