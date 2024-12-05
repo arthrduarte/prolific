@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import useTopic from '../hooks/useTopic';
 import { LevelItem } from '../components/LevelItem';
 
 export const TopicScreen = ({ route, navigation }: { route: any; navigation: any }) => {
   const topicId = route.params?.topicId;
-  const { topic, levels, loading, error } = useTopic(topicId);
+  const { topic, levels, loading, error, refresh } = useTopic(topicId);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refresh();
+    }, [refresh])
+  );
 
   if (!topicId) {
     return (

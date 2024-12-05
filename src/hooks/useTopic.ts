@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { Level, Topic, User_Progress } from '../types/database.types';
 
@@ -12,13 +12,13 @@ const useTopic = (topicId: number | undefined) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTopic = async () => {
+  const fetchTopic = useCallback(async () => {
     const { data, error } = await supabase.from('topics').select('*').eq('id', topicId);
     if (error) throw error;
     setTopic(data[0]);
-  };
+  }, [topicId]);
 
-  const fetchLevelsWithProgress = async () => {
+  const fetchLevelsWithProgress = useCallback(async () => {
     try {
       // Get the current user
       const { data: { user } } = await supabase.auth.getUser();
@@ -48,7 +48,6 @@ const useTopic = (topicId: number | undefined) => {
         user_progress: progressData.find(progress => progress.level_id === level.id)
       }));
 
-      console.log("Fetched levels with progress:", levelsWithProgress);
       setLevels(levelsWithProgress);
     } catch (err) {
       console.error('Error in fetchLevelsWithProgress:', err);
@@ -56,19 +55,28 @@ const useTopic = (topicId: number | undefined) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [topicId]);
 
-  useEffect(() => {
+  const refresh = useCallback(async () => {
     if (!topicId) {
       setError('Topic ID is missing');
       setLoading(false);
       return;
     }
-    fetchLevelsWithProgress();
-    fetchTopic();
-  }, [topicId]);
+    setLoading(true);
+    setError(null);
+    try {
+      await Promise.all([fetchLevelsWithProgress(), fetchTopic()]);
+    } finally {
+      setLoading(false);
+    }
+  }, [topicId, fetchLevelsWithProgress, fetchTopic]);
 
-  return { topic, levels, loading, error };
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  return { topic, levels, loading, error, refresh };
 };
 
 export default useTopic; 
