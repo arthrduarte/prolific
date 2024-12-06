@@ -46,9 +46,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   cardsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 4
+    flexDirection: 'column',
   },
 });
