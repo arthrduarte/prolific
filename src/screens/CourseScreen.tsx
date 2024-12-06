@@ -4,10 +4,15 @@ import { supabase } from '../lib/supabase';
 import { Course, Exercise } from '../types/database.types';
 import ExerciseCardComponent from '../components/ExerciseCardComponent';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type NavigationProp = NativeStackNavigationProp<{
+  Exercise: { exerciseId: string; courseId: string };
+}>;
 
 export default function CourseScreen({ route }: { route: any }) {
   const { courseId } = route.params;
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const [course, setCourse] = useState<Course | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
 
@@ -39,6 +44,13 @@ export default function CourseScreen({ route }: { route: any }) {
     fetchExercises();
   }, [courseId]);
 
+  const handleExercisePress = (exercise: Exercise) => {
+    navigation.navigate('Exercise', { 
+      exerciseId: exercise.id,
+      courseId: courseId
+    });
+  };
+
   if (!course) return null;
 
   return (
@@ -52,6 +64,7 @@ export default function CourseScreen({ route }: { route: any }) {
           <ExerciseCardComponent
             key={exercise.id}
             exercise={exercise}
+            onPress={handleExercisePress}
           />
         ))}
       </View>

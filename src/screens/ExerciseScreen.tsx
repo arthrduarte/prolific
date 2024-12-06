@@ -1,7 +1,10 @@
 import React from 'react'
+import { View, Text } from 'react-native'
 
 export default function ExerciseScreen() {
   return (
-    <div>ExerciseScreen</div>
+    <View>
+      <Text>ExerciseScreen</Text>
+    </View>
   )
 }
