@@ -24,6 +24,7 @@ export default function HomeScreen({navigation}: {navigation: any}) {
             <TopicComponent 
               key={topic.id}
               topic={topic}
+              navigation={navigation}
             />
           ))}
       </View>

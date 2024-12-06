@@ -5,11 +5,15 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 interface CourseCardProps {
   course: Course;
   topic: Topic;
+  onPress?: (course: Course) => void;
 }
 
-export const CourseCardComponent: React.FC<CourseCardProps> = ({ course, topic }) => {
+export const CourseCardComponent: React.FC<CourseCardProps> = ({ course, topic, onPress }) => {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity 
+      style={styles.container}
+      onPress={() => onPress && onPress(course)}
+    >
       <View style={styles.square}>
         <View style={styles.placeholder} />
       </View>

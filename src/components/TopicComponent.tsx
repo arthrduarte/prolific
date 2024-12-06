@@ -4,7 +4,7 @@ import { Topic, Course } from '../types/database.types';
 import { CourseCardComponent } from './CourseCardComponent';
 import { supabase } from '../lib/supabase';
 
-export const TopicComponent = ({ topic }: { topic: Topic }) => {
+export const TopicComponent = ({ topic, navigation }: { topic: Topic; navigation: any }) => {
   const [courses, setCourses] = useState<Course[]>([]);
 
   useEffect(() => {
@@ -25,6 +25,13 @@ export const TopicComponent = ({ topic }: { topic: Topic }) => {
     fetchCourses();
   }, [topic.id]);
 
+  const handleCoursePress = (course: Course) => {
+    navigation.navigate('Course', { 
+      courseId: course.id,
+      topicId: topic.id 
+    });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{topic.emoji} {topic.title}</Text>
@@ -37,7 +44,8 @@ export const TopicComponent = ({ topic }: { topic: Topic }) => {
           <CourseCardComponent 
             key={course.id} 
             topic={topic} 
-            course={course} 
+            course={course}
+            onPress={handleCoursePress}
           />
         ))}
       </ScrollView>
