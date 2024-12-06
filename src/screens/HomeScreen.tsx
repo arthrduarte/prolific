@@ -1,9 +1,9 @@
-import { Card } from '../components/TopicCard'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { supabase } from '../lib/supabase';
-import { Topic } from '../types/database.types';
+import { Topic, Course } from '../types/database.types';
+import { TopicComponent } from '../components/TopicComponent';
 
 export default function HomeScreen({navigation}: {navigation: any}) {
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -21,12 +21,9 @@ export default function HomeScreen({navigation}: {navigation: any}) {
       <Text style={styles.title}>Prolific</Text>
       <View style={styles.cardsContainer}>
           {topics.map((topic) => (
-            <Card 
+            <TopicComponent 
               key={topic.id}
-              emoji={topic.emoji}
-              title={topic.title}
-              description={topic.description}
-              onPress={() => navigation.navigate('Topic', { topicId: topic.id })}
+              topic={topic}
             />
           ))}
       </View>
