@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native'
 import { Exercise, Question } from '../types/database.types'
 
 interface QuestionComponentProps {
@@ -10,9 +10,11 @@ interface QuestionComponentProps {
 export default function QuestionComponent({ exercise, questions }: QuestionComponentProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
+  const [textAnswer, setTextAnswer] = useState('')
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false)
 
   const currentQuestion = questions[currentQuestionIndex]
+  const isMultipleChoice = currentQuestion.type === 'multiple_choice'
 
   const handleAnswerSelect = (answer: string) => {
     if (!isAnswerSubmitted) {
@@ -20,8 +22,14 @@ export default function QuestionComponent({ exercise, questions }: QuestionCompo
     }
   }
 
+  const handleTextChange = (text: string) => {
+    if (!isAnswerSubmitted) {
+      setTextAnswer(text)
+    }
+  }
+
   const handleSubmit = () => {
-    if (selectedAnswer) {
+    if ((isMultipleChoice && selectedAnswer) || (!isMultipleChoice && textAnswer)) {
       setIsAnswerSubmitted(true)
     }
   }
@@ -30,11 +38,14 @@ export default function QuestionComponent({ exercise, questions }: QuestionCompo
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
       setSelectedAnswer(null)
+      setTextAnswer('')
       setIsAnswerSubmitted(false)
     }
   }
 
-  const isCorrect = selectedAnswer === currentQuestion.correct_answer
+  const isCorrect = isMultipleChoice 
+    ? selectedAnswer === currentQuestion.correct_answer
+    : textAnswer.trim().toLowerCase() === currentQuestion.correct_answer.toLowerCase()
 
   return (
     <ScrollView style={styles.container}>
@@ -42,30 +53,52 @@ export default function QuestionComponent({ exercise, questions }: QuestionCompo
       <View style={styles.questionContainer}>
         <Text style={styles.questionText}>{currentQuestion.question_text}</Text>
         
-        <View style={styles.optionsContainer}>
-          {currentQuestion.options.map((option, index) => (
-            <TouchableOpacity
-              key={index}
+        {isMultipleChoice ? (
+          // Multiple Choice Question
+          <View style={styles.optionsContainer}>
+            {currentQuestion.options?.map((option, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.optionButton,
+                  selectedAnswer === option && styles.selectedOption,
+                  isAnswerSubmitted && selectedAnswer === option && (
+                    isCorrect ? styles.correctOption : styles.incorrectOption
+                  )
+                ]}
+                onPress={() => handleAnswerSelect(option)}
+                disabled={isAnswerSubmitted}
+              >
+                <Text style={styles.optionText}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : (
+          // Text Input Question
+          <View style={styles.textInputContainer}>
+            <TextInput
               style={[
-                styles.optionButton,
-                selectedAnswer === option && styles.selectedOption,
-                isAnswerSubmitted && selectedAnswer === option && (
-                  isCorrect ? styles.correctOption : styles.incorrectOption
-                )
+                styles.textInput,
+                isAnswerSubmitted && (isCorrect ? styles.correctTextInput : styles.incorrectTextInput)
               ]}
-              onPress={() => handleAnswerSelect(option)}
-              disabled={isAnswerSubmitted}
-            >
-              <Text style={styles.optionText}>{option}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+              value={textAnswer}
+              onChangeText={handleTextChange}
+              placeholder="Type your answer here..."
+              editable={!isAnswerSubmitted}
+            />
+          </View>
+        )}
 
         {!isAnswerSubmitted ? (
           <TouchableOpacity
-            style={[styles.submitButton, !selectedAnswer && styles.disabledButton]}
+            style={[
+              styles.submitButton, 
+              (!selectedAnswer && isMultipleChoice) || (!textAnswer && !isMultipleChoice) 
+                ? styles.disabledButton 
+                : null
+            ]}
             onPress={handleSubmit}
-            disabled={!selectedAnswer}
+            disabled={(!selectedAnswer && isMultipleChoice) || (!textAnswer && !isMultipleChoice)}
           >
             <Text style={styles.buttonText}>Submit</Text>
           </TouchableOpacity>
@@ -105,6 +138,25 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     marginBottom: 24,
+  },
+  textInputContainer: {
+    marginBottom: 24,
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 16,
+    fontSize: 16,
+    backgroundColor: '#fff',
+  },
+  correctTextInput: {
+    backgroundColor: '#e8f5e9',
+    borderColor: '#4caf50',
+  },
+  incorrectTextInput: {
+    backgroundColor: '#ffebee',
+    borderColor: '#f44336',
   },
   optionButton: {
     padding: 16,
