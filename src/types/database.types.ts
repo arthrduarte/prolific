@@ -21,11 +21,13 @@ export interface Exercise {
 
 export interface Question {
     id: string
+    options: string[]
+    correct_answer: string
     exercise_id: string
     question_text: string
-    options: JSON
-    correct_answer: string
     type: string
+    metadata: JSON
+    explanation: string
 }
 
 export interface User_Progress {
