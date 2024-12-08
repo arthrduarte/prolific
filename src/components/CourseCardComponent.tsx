@@ -15,7 +15,9 @@ export const CourseCardComponent: React.FC<CourseCardProps> = ({ course, topic, 
       onPress={() => onPress && onPress(course)}
     >
       <View style={styles.square}>
-        <View style={styles.placeholder} />
+        <View style={styles.iconContainer}>
+          <Text style={styles.emoji}>{topic.emoji}</Text>
+        </View>
       </View>
       <Text style={styles.title} numberOfLines={2}>
         {course.title}
@@ -40,10 +42,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#f0dc1b',
     padding: 16,
+    justifyContent: 'center',
   },
-  placeholder: {
-    flex: 1,
-    backgroundColor: '#ffff',
+  iconContainer: {
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 12
+  },
+  emoji: {
+    fontSize: 42,
   },
   title: {
     fontSize: 14,

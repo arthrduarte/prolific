@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Topic, Course } from '../types/database.types';
 import { CourseCardComponent } from './CourseCardComponent';
 import { supabase } from '../lib/supabase';
@@ -34,7 +34,14 @@ export const TopicComponent = ({ topic, navigation }: { topic: Topic; navigation
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{topic.emoji} {topic.title}</Text>
+      <View style={styles.topicHeader}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.emoji}>{topic.emoji}</Text>
+          <Text style={styles.title}>{topic.title}</Text>
+        </View>
+        <Text style={styles.description}>{topic.description}</Text>
+      </View>
+      
       <ScrollView 
         horizontal 
         showsHorizontalScrollIndicator={false}
@@ -55,16 +62,33 @@ export const TopicComponent = ({ topic, navigation }: { topic: Topic; navigation
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8,
-    marginHorizontal: 16,
+    marginBottom: 32,
+  },
+  topicHeader: {
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  emoji: {
+    fontSize: 24,
+    marginRight: 12,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
-    marginBottom: 12,
+  },
+  description: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
   },
   coursesContainer: {
-    paddingRight: 16,
+    paddingLeft: 16,
+    paddingRight: 8,
   },
 });
