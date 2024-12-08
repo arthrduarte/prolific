@@ -4,17 +4,11 @@ import HomeScreen from './src/screens/HomeScreen';
 import { useState, useEffect } from 'react';
 import { supabase } from './src/lib/supabase';
 import { Session } from '@supabase/supabase-js';
-import { TopicScreen } from './src/screens/TopicScreen';
-import { QuizScreen } from './src/screens/QuizScreen';
 import Auth from './src/components/Auth';
+import CourseScreen from './src/screens/CourseScreen';
+import ExerciseScreen from './src/screens/ExerciseScreen';
 
-type RootStackParamList = {
-  Home: undefined;
-  Topic: { topicId: number; topicTitle: string };
-  Quiz: { levelId: number; topicId: number; levelTitle: string; topicTitle: string };
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -32,36 +26,21 @@ export default function App() {
   return (
     <NavigationContainer>
       {session && session.user ? (
-        <Stack.Navigator 
-          initialRouteName="Home"
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: '#fff',
-            },
-            headerTintColor: '#000000',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-          }}
-        >
+        <Stack.Navigator initialRouteName="Home">
           <Stack.Screen 
             name="Home" 
             component={HomeScreen} 
-            options={{ title: 'Dashboard' }}
+            options={{ title: 'Home' }}
           />
           <Stack.Screen 
-            name="Topic" 
-            component={TopicScreen}
-            options={({ route }) => ({ 
-              title: route.params?.topicTitle || 'Topic'
-            })}
+            name="Course" 
+            component={CourseScreen} 
+            options={{ title: 'Course' }}
           />
           <Stack.Screen 
-            name="Quiz" 
-            component={QuizScreen}
-            options={({ route }) => ({ 
-              title: route.params?.levelTitle || 'Quiz'
-            })}
+            name="Exercise" 
+            component={ExerciseScreen} 
+            options={{ title: 'Exercise' }}
           />
         </Stack.Navigator>
       ) : (
