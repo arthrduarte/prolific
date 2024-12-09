@@ -10,14 +10,11 @@ interface CourseCardProps {
 }
 
 const getGradientColors = (emoji: string): string[] => {
-  // Map emojis to gradient colors
   const colorMap: { [key: string]: string[] } = {
-    '💰': ['#FFD700', '#FFA500'], // Money/Finance
-    '📊': ['#4CAF50', '#2E7D32'], // Charts/Data
-    '🏠': ['#2196F3', '#1565C0'], // House/Real Estate
-    '📈': ['#9C27B0', '#6A1B9A'], // Stocks/Investment
-    '💡': ['#FF9800', '#F57C00'], // Ideas/Innovation
-    '🎯': ['#F44336', '#C62828'], // Goals/Target
+    '💰': ['#FFD700', '#FFA500'], 
+    '📈': ['#9C27B0', '#6A1B9A'], 
+    '🛒': ['#4CAF50', '#2E7D32'], 
+    '💻': ['#2196F3', '#1565C0'], 
     // Add more emoji-to-color mappings as needed
   }
 
