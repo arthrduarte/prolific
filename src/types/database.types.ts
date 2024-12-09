@@ -19,15 +19,16 @@ export interface Exercise {
     description: string
 }
 
-export interface Question {
+export interface Step {
     id: string
+    exercise_id: string
+    type: string
+    content: string
     options: string[]
     correct_answer: string
-    exercise_id: string
-    question_text: string
-    type: string
-    metadata: JSON
     explanation: string
+    order: number
+    rich_content: JSON
 }
 
 export interface User_Progress {

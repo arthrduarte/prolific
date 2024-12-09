@@ -1,115 +1,288 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native'
-import { Exercise, Question } from '../types/database.types'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Dimensions } from 'react-native'
+import { Exercise, Step } from '../types/database.types'
+import { PieChart } from 'react-native-chart-kit'
+
+type StepType = 'content' | 'multiple_choice' | 'true_false' | 'input'
 
 interface QuestionComponentProps {
   exercise: Exercise
-  questions: Question[]
+  steps: Step[]
 }
 
-export default function QuestionComponent({ exercise, questions }: QuestionComponentProps) {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
-  const [textAnswer, setTextAnswer] = useState('')
-  const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false)
+interface ChartData {
+  labels: string[]
+  values: number[]
+}
 
-  const currentQuestion = questions[currentQuestionIndex]
-  const isMultipleChoice = currentQuestion.type === 'multiple_choice'
+interface RichContent {
+  table?: any[]
+  chart?: {
+    data: ChartData
+    type: 'pie'
+  }
+}
 
-  const handleAnswerSelect = (answer: string) => {
-    if (!isAnswerSubmitted) {
-      setSelectedAnswer(answer)
-    }
+const screenWidth = Dimensions.get('window').width
+
+const chartConfig = {
+  backgroundGradientFrom: '#fff',
+  backgroundGradientTo: '#fff',
+  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+  strokeWidth: 2,
+  decimalPlaces: 0,
+}
+
+const formatValue = (value: any): string => {
+  if (typeof value === 'number') {
+    return value.toLocaleString('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })
+  }
+  return value.toString()
+}
+
+const capitalizeHeader = (header: string): string => {
+  return header
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
+export default function QuestionComponent({ exercise, steps }: QuestionComponentProps) {
+  const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [selectedOption, setSelectedOption] = useState<string | null>(null)
+  const [inputAnswer, setInputAnswer] = useState('')
+  const [isAnswered, setIsAnswered] = useState(false)
+  const [isCorrect, setIsCorrect] = useState(false)
+
+  const currentStep = steps[currentStepIndex]
+
+  const handleOptionSelect = (option: string) => {
+    if (isAnswered) return
+    setSelectedOption(option)
   }
 
-  const handleTextChange = (text: string) => {
-    if (!isAnswerSubmitted) {
-      setTextAnswer(text)
-    }
+  const handleInputChange = (text: string) => {
+    if (isAnswered) return
+    setInputAnswer(text)
   }
 
   const handleSubmit = () => {
-    if ((isMultipleChoice && selectedAnswer) || (!isMultipleChoice && textAnswer)) {
-      setIsAnswerSubmitted(true)
+    if (isAnswered) return
+
+    let userAnswer = ''
+    if (currentStep.type === 'multiple_choice' || currentStep.type === 'true_false') {
+      userAnswer = selectedOption || ''
+    } else if (currentStep.type === 'input') {
+      userAnswer = inputAnswer
     }
+
+    const correct = userAnswer.toLowerCase() === currentStep.correct_answer?.toLowerCase()
+    setIsCorrect(correct)
+    setIsAnswered(true)
   }
 
   const handleNext = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
-      setSelectedAnswer(null)
-      setTextAnswer('')
-      setIsAnswerSubmitted(false)
+    if (currentStepIndex < steps.length - 1) {
+      setCurrentStepIndex(currentStepIndex + 1)
+      setSelectedOption(null)
+      setInputAnswer('')
+      setIsAnswered(false)
+      setIsCorrect(false)
     }
   }
 
-  const isCorrect = isMultipleChoice 
-    ? selectedAnswer === currentQuestion.correct_answer
-    : textAnswer.trim().toLowerCase() === currentQuestion.correct_answer.toLowerCase()
+  const renderTable = (richContent: RichContent) => {
+    if (!richContent.table || richContent.table.length === 0) return null
+
+    // Get column headers from the first row
+    const headers = Object.keys(richContent.table[0])
+
+    return (
+      <View style={styles.tableContainer}>
+        <View style={styles.tableHeader}>
+          {headers.map((header, index) => (
+            <Text 
+              key={index} 
+              style={[
+                styles.tableCell, 
+                styles.tableHeaderText,
+                index === headers.length - 1 && styles.lastCell
+              ]}
+            >
+              {capitalizeHeader(header)}
+            </Text>
+          ))}
+        </View>
+        {richContent.table.map((row, rowIndex) => (
+          <View 
+            key={rowIndex} 
+            style={[
+              styles.tableRow,
+              rowIndex % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd
+            ]}
+          >
+            {headers.map((header, colIndex) => (
+              <Text 
+                key={colIndex} 
+                style={[
+                  styles.tableCell,
+                  colIndex === headers.length - 1 && styles.lastCell,
+                  typeof row[header] === 'number' && styles.numberCell
+                ]}
+              >
+                {formatValue(row[header])}
+              </Text>
+            ))}
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  const renderPieChart = (chartData: ChartData) => {
+    const data = chartData.labels.map((label, index) => ({
+      name: label,
+      amount: chartData.values[index],
+      color: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+        '#4BC0C0',
+        '#9966FF',
+        '#FF9F40',
+      ][index % 6],
+      legendFontColor: '#7F7F7F',
+      legendFontSize: 12,
+    }))
+
+    return (
+      <View style={styles.chartContainer}>
+        <PieChart
+          data={data}
+          width={screenWidth - 32} // Accounting for container padding
+          height={220}
+          chartConfig={chartConfig}
+          accessor="amount"
+          backgroundColor="transparent"
+          paddingLeft="0"
+          absolute
+        />
+      </View>
+    )
+  }
+
+  const renderRichContent = (richContent: RichContent) => {
+    return (
+      <>
+        {richContent.chart?.type === 'pie' && renderPieChart(richContent.chart.data)}
+        {richContent.table && renderTable(richContent)}
+      </>
+    )
+  }
+
+  const renderContent = () => {
+    const richContent = currentStep.rich_content as RichContent
+
+    return (
+      <View>
+        <Text style={styles.questionText}>{currentStep.content}</Text>
+        {richContent && renderRichContent(richContent)}
+        {(() => {
+          switch (currentStep.type as StepType) {
+            case 'content':
+              return null
+
+            case 'multiple_choice':
+            case 'true_false':
+              return (
+                <View style={styles.optionsContainer}>
+                  {currentStep.options?.map((option, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.optionButton,
+                        selectedOption === option && styles.selectedOption,
+                        isAnswered && option === currentStep.correct_answer && styles.correctOption,
+                        isAnswered && selectedOption === option && option !== currentStep.correct_answer && styles.incorrectOption,
+                      ]}
+                      onPress={() => handleOptionSelect(option)}
+                      disabled={isAnswered}
+                    >
+                      <Text style={styles.optionText}>{option}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )
+
+            case 'input':
+              return (
+                <View style={styles.textInputContainer}>
+                  <TextInput
+                    style={[
+                      styles.textInput,
+                      isAnswered && isCorrect && styles.correctTextInput,
+                      isAnswered && !isCorrect && styles.incorrectTextInput,
+                    ]}
+                    value={inputAnswer}
+                    onChangeText={handleInputChange}
+                    placeholder="Type your answer here..."
+                    editable={!isAnswered}
+                  />
+                </View>
+              )
+
+            default:
+              return null
+          }
+        })()}
+      </View>
+    )
+  }
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.exerciseTitle}>{exercise.title}</Text>
       <View style={styles.questionContainer}>
-        <Text style={styles.questionText}>{currentQuestion.question_text}</Text>
-        
-        {isMultipleChoice ? (
-          // Multiple Choice Question
-          <View style={styles.optionsContainer}>
-            {currentQuestion.options?.map((option, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.optionButton,
-                  selectedAnswer === option && styles.selectedOption,
-                  isAnswerSubmitted && selectedAnswer === option && (
-                    isCorrect ? styles.correctOption : styles.incorrectOption
-                  )
-                ]}
-                onPress={() => handleAnswerSelect(option)}
-                disabled={isAnswerSubmitted}
-              >
-                <Text style={styles.optionText}>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : (
-          // Text Input Question
-          <View style={styles.textInputContainer}>
-            <TextInput
-              style={[
-                styles.textInput,
-                isAnswerSubmitted && (isCorrect ? styles.correctTextInput : styles.incorrectTextInput)
-              ]}
-              value={textAnswer}
-              onChangeText={handleTextChange}
-              placeholder="Type your answer here..."
-              editable={!isAnswerSubmitted}
-            />
-          </View>
-        )}
-
-        {!isAnswerSubmitted ? (
+        {renderContent()}
+        {currentStep.type !== 'content' && !isAnswered && (
           <TouchableOpacity
             style={[
-              styles.submitButton, 
-              (!selectedAnswer && isMultipleChoice) || (!textAnswer && !isMultipleChoice) 
-                ? styles.disabledButton 
-                : null
+              styles.button,
+              (!selectedOption && currentStep.type !== 'input') ||
+              (currentStep.type === 'input' && !inputAnswer)
+                ? styles.buttonDisabled
+                : styles.buttonEnabled,
             ]}
             onPress={handleSubmit}
-            disabled={(!selectedAnswer && isMultipleChoice) || (!textAnswer && !isMultipleChoice)}
+            disabled={
+              (!selectedOption && currentStep.type !== 'input') ||
+              (currentStep.type === 'input' && !inputAnswer)
+            }
           >
             <Text style={styles.buttonText}>Submit</Text>
           </TouchableOpacity>
-        ) : (
+        )}
+        {(isAnswered || currentStep.type === 'content') && (
           <>
-            <Text style={styles.explanationText}>{currentQuestion.explanation}</Text>
-            {currentQuestionIndex < questions.length - 1 && (
-              <TouchableOpacity style={styles.submitButton} onPress={handleNext}>
-                <Text style={styles.buttonText}>Next Question</Text>
-              </TouchableOpacity>
+            {isAnswered && currentStep.explanation && (
+              <View style={styles.explanationContainer}>
+                <Text style={styles.explanationText}>{currentStep.explanation}</Text>
+              </View>
             )}
+            <TouchableOpacity
+              style={[styles.button, styles.buttonEnabled]}
+              onPress={handleNext}
+              disabled={currentStepIndex === steps.length - 1}
+            >
+              <Text style={styles.buttonText}>
+                {currentStepIndex === steps.length - 1 ? 'Finish' : 'Continue'}
+              </Text>
+            </TouchableOpacity>
           </>
         )}
       </View>
@@ -135,6 +308,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 16,
     color: '#333',
+    lineHeight: 24,
   },
   optionsContainer: {
     marginBottom: 24,
@@ -182,26 +356,95 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  submitButton: {
-    backgroundColor: '#2196f3',
+  button: {
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
+    marginTop: 16,
   },
-  disabledButton: {
-    backgroundColor: '#bdbdbd',
+  buttonEnabled: {
+    backgroundColor: '#2196f3',
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
+  },
+  explanationContainer: {
+    padding: 16,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    marginTop: 16,
+    marginBottom: 16,
   },
   explanationText: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 16,
-    padding: 16,
-    backgroundColor: '#f5f5f5',
+    lineHeight: 24,
+  },
+  // Table styles
+  tableContainer: {
+    marginBottom: 24,
     borderRadius: 8,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#f5f5f5',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  tableHeaderText: {
+    fontWeight: '600',
+    color: '#333',
+    fontSize: 14,
+    textTransform: 'uppercase',
+  },
+  tableRow: {
+    flexDirection: 'row',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  tableRowEven: {
+    backgroundColor: '#fff',
+  },
+  tableRowOdd: {
+    backgroundColor: '#fafafa',
+  },
+  tableCell: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+    paddingHorizontal: 4,
+  },
+  lastCell: {
+    textAlign: 'right',
+  },
+  numberCell: {
+    textAlign: 'right',
+    fontVariant: ['tabular-nums'],
+  },
+  chartContainer: {
+    marginBottom: 24,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 })

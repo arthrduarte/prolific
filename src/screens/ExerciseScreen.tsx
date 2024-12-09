@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, Text } from 'react-native'
 import { supabase } from '../lib/supabase'
-import { Exercise, Question } from '../types/database.types'
+import { Exercise, Step } from '../types/database.types'
 import QuestionComponent from '../components/QuestionComponent'
 
 export default function ExerciseScreen({ route }: { route: any }) {
   const { exerciseId } = route.params
   const [exercise, setExercise] = useState<Exercise | null>(null)
-  const [questions, setQuestions] = useState<Question[]>([])
+  const [steps, setSteps] = useState<Step[]>([])
 
   useEffect(() => {
     const fetchExercise = async () => {
@@ -21,26 +21,28 @@ export default function ExerciseScreen({ route }: { route: any }) {
         setExercise(exerciseData as Exercise)
       }
 
-      const { data: questionsData, error: questionsError } = await supabase
-        .from('questions')
+      const { data: stepsData, error: stepsError } = await supabase
+        .from('steps')
         .select('*')
         .eq('exercise_id', exerciseId)
+        .order('order', { ascending: true })
+        console.log(stepsData)
 
-      if (!questionsError && questionsData) {
-        setQuestions(questionsData as Question[])
+      if (!stepsError && stepsData) {
+        setSteps(stepsData as Step[])
       }
     }
-
+    console.log(steps)
     fetchExercise()
   }, [exerciseId])
 
-  if (!exercise || questions.length === 0) return null
+  if (!exercise || !steps.length) return <Text>Loading...</Text>
 
   return (
     <View style={styles.container}>
       <QuestionComponent 
         exercise={exercise}
-        questions={questions}
+        steps={steps}
       />
     </View>
   )
