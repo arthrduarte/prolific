@@ -4,19 +4,19 @@ import { Exercise, Step } from '../types/database.types'
 
 type StepType = 'content' | 'multiple_choice' | 'true_false' | 'input'
 
-interface QuestionComponentProps {
+interface QuestionProps {
   exercise: Exercise
   steps: Step[]
   currentStepIndex: number
   onStepComplete: () => void
 }
 
-export default function QuestionComponent({ 
+export default function Question({ 
   exercise, 
   steps, 
   currentStepIndex,
   onStepComplete 
-}: QuestionComponentProps) {
+}: QuestionProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [inputAnswer, setInputAnswer] = useState('')
   const [isAnswered, setIsAnswered] = useState(false)

@@ -8,6 +8,7 @@ interface ExerciseCardProps {
   index: number;
   isActive: boolean;
   onPress: (exercise: Exercise) => void;
+  topicEmoji?: string;
 }
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
@@ -15,6 +16,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   index,
   isActive,
   onPress,
+  topicEmoji = '📝',
 }) => {
   return (
     <TouchableOpacity
@@ -22,12 +24,15 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
       onPress={() => onPress(exercise)}
       activeOpacity={0.7}
     >
-      {/* Circle connector */}
+      {/* Circle connector with number */}
       <View style={styles.connector}>
         <View style={[
           styles.circle,
           isActive && styles.activeCircle
-        ]} />
+        ]}>
+          <Text style={styles.circleNumber}>{index + 1}</Text>
+        </View>
+        <View style={styles.verticalLine} />
       </View>
 
       {/* Exercise card */}
@@ -35,27 +40,23 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
         styles.card,
         isActive && styles.activeCard
       ]}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.exerciseNumber}>Exercise {index + 1}</Text>
-          <FontAwesome name="chevron-right" size={14} color="#adb5bd" />
-        </View>
-        <Text style={styles.title}>{exercise.title}</Text>
-        <Text style={styles.description} numberOfLines={2}>
-          {exercise.description}
-        </Text>
-        <View style={styles.footer}>
-          <View style={styles.tag}>
-            <Text style={styles.tagText}>5 min</Text>
+        <View style={styles.cardContent}>
+          <View style={styles.emojiContainer}>
+            <Text style={styles.emoji}>{topicEmoji}</Text>
           </View>
-          <View style={[styles.tag, styles.statusTag]}>
-            <View style={[
-              styles.statusDot,
-              { backgroundColor: isActive ? '#40c057' : '#adb5bd' }
-            ]} />
-            <Text style={styles.tagText}>
-              {isActive ? 'Ready' : 'Locked'}
+          
+          <View style={styles.textContainer}>
+            <Text style={styles.title} numberOfLines={1}>
+              {exercise.title}
             </Text>
           </View>
+
+          <FontAwesome 
+            name="chevron-right" 
+            size={16} 
+            color="#adb5bd"
+            style={styles.chevron}
+          />
         </View>
       </View>
     </TouchableOpacity>
@@ -66,96 +67,80 @@ const styles = StyleSheet.create({
   exerciseContainer: {
     flexDirection: 'row',
     marginBottom: 16,
+    alignItems: 'center',
   },
   connector: {
-    width: 20,
-    height: '100%',
+    width: 40,
     alignItems: 'center',
-    paddingTop: 24,
+  },
+  verticalLine: {
+    width: 2,
+    flex: 1,
+    backgroundColor: '#e9ecef',
+    position: 'absolute',
+    top: 40,
+    bottom: -24,
   },
   circle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: '#e9ecef',
-    borderWidth: 4,
-    borderColor: '#fff',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#f8f9fa',
+    borderWidth: 2,
+    borderColor: '#e9ecef',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  circleNumber: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#495057',
   },
   activeCircle: {
     backgroundColor: '#f0dc1b',
+    borderColor: '#f0dc1b',
   },
   card: {
     flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
     marginLeft: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
     borderWidth: 1,
-    borderColor: '#f1f3f5',
-    opacity: 0.7,
+    borderColor: '#e9ecef',
   },
   activeCard: {
-    opacity: 1,
+    backgroundColor: '#fff',
     borderColor: '#f0dc1b',
-    shadowOpacity: 0.1,
   },
-  cardHeader: {
+  cardContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    padding: 12,
   },
-  exerciseNumber: {
-    fontSize: 12,
-    color: '#868e96',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+  emojiContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  emoji: {
+    fontSize: 20,
+  },
+  textContainer: {
+    flex: 1,
+    marginRight: 12,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 8,
-  },
-  description: {
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: '600',
     color: '#495057',
-    lineHeight: 20,
-    marginBottom: 12,
   },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  tag: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 6,
-  },
-  statusTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  tagText: {
-    fontSize: 12,
-    color: '#495057',
-    fontWeight: '500',
+  chevron: {
+    marginLeft: 'auto',
   },
 }); 

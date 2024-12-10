@@ -3,12 +3,12 @@ import { View, StyleSheet } from 'react-native';
 import { Exercise } from '../types/database.types';
 import { ExerciseCard } from './ExerciseCard';
 
-interface CoursePathComponentProps {
+interface CoursePathProps {
   exercises: Exercise[];
   onExercisePress: (exercise: Exercise) => void;
 }
 
-export const CoursePathComponent: React.FC<CoursePathComponentProps> = ({
+export const CoursePath: React.FC<CoursePathProps> = ({
   exercises,
   onExercisePress,
 }) => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated } from 'react-native';
 import { Topic, Course } from '../types/database.types';
-import { CourseCardComponent } from './CourseCard';
+import { CourseCard } from './CourseCard';
 import { supabase } from '../lib/supabase';
 
 interface TopicComponentProps {
@@ -81,7 +81,7 @@ export const TopicComponent: React.FC<TopicComponentProps> = ({ topic, navigatio
         }
       ]}>
         {courses.map((course) => (
-          <CourseCardComponent 
+          <CourseCard 
             key={course.id} 
             topic={topic} 
             course={course}

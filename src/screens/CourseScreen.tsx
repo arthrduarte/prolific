@@ -5,7 +5,7 @@ import { Course, Exercise } from '../types/database.types';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import { CoursePathComponent } from '../components/CoursePath';
+import { CoursePath } from '../components/CoursePath';
 
 type NavigationProp = NativeStackNavigationProp<{
   Exercise: { exerciseId: string; courseId: string };
@@ -124,7 +124,7 @@ export default function CourseScreen({ route }: { route: any }) {
             </View>
 
             <View style={styles.exercisesContainer}>
-              <CoursePathComponent
+              <CoursePath
                 exercises={exercises}
                 onExercisePress={handleExercisePress}
               />

@@ -21,7 +21,7 @@ const getGradientColors = (emoji: string): string[] => {
   return colorMap[emoji] || ['#6c5ce7', '#a55eea'] // Default gradient
 }
 
-export const CourseCardComponent: React.FC<CourseCardProps> = ({ course, topic, onPress }) => {
+export const CourseCard: React.FC<CourseCardProps> = ({ course, topic, onPress }) => {
   const gradientColors = getGradientColors(topic.emoji)
 
   return (
