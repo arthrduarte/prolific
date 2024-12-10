@@ -40,9 +40,11 @@ export const CourseCardComponent: React.FC<CourseCardProps> = ({ course, topic, 
           <View style={styles.iconContainer}>
             <Text style={styles.emoji}>{topic.emoji}</Text>
           </View>
-          <Text style={styles.title} numberOfLines={2}>
-            {course.title}
-          </Text>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title} numberOfLines={2}>
+              {course.title}
+            </Text>
+          </View>
           <Text style={styles.description} numberOfLines={2}>
             {course.description}
           </Text>
@@ -57,9 +59,8 @@ const cardWidth = width * 0.75 // 75% of screen width
 
 const styles = StyleSheet.create({
   container: {
-    width: cardWidth,
-    marginRight: 16,
-    height: 180,
+    width: '100%',
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   card: {
-    flex: 1,
+    minHeight: 180,
     borderRadius: 20,
     overflow: 'hidden',
   },
@@ -99,11 +100,14 @@ const styles = StyleSheet.create({
   emoji: {
     fontSize: 28,
   },
+  titleContainer: {
+    flex: 1,
+  },
   title: {
     fontSize: 20,
     fontWeight: '700',
     color: '#fff',
-    marginBottom: 8,
+    marginBottom: 12,
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,

@@ -81,13 +81,7 @@ export const TopicComponent: React.FC<TopicComponentProps> = ({ topic, navigatio
       </TouchableOpacity>
       
       {isExpanded && (
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.coursesContainer}
-          decelerationRate="fast"
-          snapToAlignment="start"
-        >
+        <View style={styles.coursesContainer}>
           {courses.map((course) => (
             <CourseCardComponent 
               key={course.id} 
@@ -96,7 +90,7 @@ export const TopicComponent: React.FC<TopicComponentProps> = ({ topic, navigatio
               onPress={handleCoursePress}
             />
           ))}
-        </ScrollView>
+        </View>
       )}
     </View>
   );
@@ -181,7 +175,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   coursesContainer: {
-    paddingLeft: 16,
-    paddingRight: 8,
+    paddingHorizontal: 16,
+    gap: 12,
   },
 });
