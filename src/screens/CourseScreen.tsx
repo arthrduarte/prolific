@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Animated } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Course, Exercise } from '../types/database.types';
-import ExerciseCardComponent from '../components/ExerciseCardComponent';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
+import { CoursePathComponent } from '../components/CoursePathComponent';
 
 type NavigationProp = NativeStackNavigationProp<{
   Exercise: { exerciseId: string; courseId: string };
@@ -124,14 +124,10 @@ export default function CourseScreen({ route }: { route: any }) {
             </View>
 
             <View style={styles.exercisesContainer}>
-              {exercises.map((exercise, index) => (
-                <ExerciseCardComponent
-                  key={exercise.id}
-                  exercise={exercise}
-                  onPress={handleExercisePress}
-                  index={index}
-                />
-              ))}
+              <CoursePathComponent
+                exercises={exercises}
+                onExercisePress={handleExercisePress}
+              />
             </View>
           </View>
         </ScrollView>
@@ -231,7 +227,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   exercisesContainer: {
-    marginHorizontal: -8,
+    flex: 1,
+    paddingRight: 24,
   },
   scrollView: {
     flex: 1,
