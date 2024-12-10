@@ -101,22 +101,6 @@ export default function CourseScreen({ route }: { route: any }) {
           scrollEventThrottle={16}
         >
           <View style={styles.content}>
-            <View style={styles.statsContainer}>
-              <View style={styles.stat}>
-                <Text style={styles.statNumber}>{exercises.length}</Text>
-                <Text style={styles.statLabel}>Exercises</Text>
-              </View>
-              <View style={[styles.stat, styles.statBorder]}>
-                <Text style={styles.statNumber}>45</Text>
-                <Text style={styles.statLabel}>Minutes</Text>
-              </View>
-              <View style={styles.stat}>
-                <Text style={styles.statNumber}>0%</Text>
-                <Text style={styles.statLabel}>Complete</Text>
-              </View>
-            </View>
-
-            <Text style={styles.description}>{course.description}</Text>
             
             <View style={styles.exercisesHeader}>
               <Text style={styles.sectionTitle}>Course Content</Text>

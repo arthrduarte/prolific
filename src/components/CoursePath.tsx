@@ -14,8 +14,6 @@ export const CoursePath: React.FC<CoursePathProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      {/* Vertical line that connects all exercises */}
-      <View style={styles.verticalLine} />
       
       {exercises.map((exercise, index) => (
         <ExerciseCard

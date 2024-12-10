@@ -46,7 +46,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
           </View>
           
           <View style={styles.textContainer}>
-            <Text style={styles.title} numberOfLines={1}>
+            <Text style={styles.title} numberOfLines={5}>
               {exercise.title}
             </Text>
           </View>
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   connector: {
-    width: 40,
+    width: 20,
     alignItems: 'center',
   },
   verticalLine: {
@@ -78,12 +78,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e9ecef',
     position: 'absolute',
-    top: 40,
-    bottom: -24,
+    top: 30,
+    bottom: -60,
   },
   circle: {
-    width: 32,
-    height: 32,
+    width: 24,
+    height: 24,
     borderRadius: 16,
     backgroundColor: '#f8f9fa',
     borderWidth: 2,
@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
     color: '#495057',
   },
   activeCircle: {
-    backgroundColor: '#f0dc1b',
-    borderColor: '#f0dc1b',
+    backgroundColor: '#a1ff9c',
+    borderColor: '#a1ff9c',
   },
   card: {
     flex: 1,
@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
     borderColor: '#e9ecef',
   },
   activeCard: {
-    backgroundColor: '#fff',
-    borderColor: '#f0dc1b',
+    backgroundColor: '#a1ff9c',
+    borderColor: '#a1ff9c',
   },
   cardContent: {
     flexDirection: 'row',
