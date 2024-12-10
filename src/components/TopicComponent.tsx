@@ -12,7 +12,7 @@ interface TopicComponentProps {
 export const TopicComponent: React.FC<TopicComponentProps> = ({ topic, navigation }) => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isExpanded, setIsExpanded] = useState(true);
-  const rotateAnim = useState(new Animated.Value(0))[0];
+  const heightAnim = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -40,17 +40,16 @@ export const TopicComponent: React.FC<TopicComponentProps> = ({ topic, navigatio
   };
 
   const toggleExpanded = () => {
-    Animated.spring(rotateAnim, {
-      toValue: isExpanded ? 1 : 0,
-      useNativeDriver: true,
+    const toValue = isExpanded ? 0 : 1;
+    
+    Animated.timing(heightAnim, {
+      toValue,
+      duration: 200,
+      useNativeDriver: false,
     }).start();
+
     setIsExpanded(!isExpanded);
   };
-
-  const rotate = rotateAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
-  });
 
   return (
     <View style={styles.container}>
@@ -71,18 +70,25 @@ export const TopicComponent: React.FC<TopicComponentProps> = ({ topic, navigatio
         </View>
       </TouchableOpacity>
       
-      {isExpanded && (
-        <View style={styles.coursesContainer}>
-          {courses.map((course) => (
-            <CourseCardComponent 
-              key={course.id} 
-              topic={topic} 
-              course={course}
-              onPress={handleCoursePress}
-            />
-          ))}
-        </View>
-      )}
+      <Animated.View style={[
+        styles.coursesContainer,
+        {
+          opacity: heightAnim,
+          maxHeight: heightAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 1000]
+          }),
+        }
+      ]}>
+        {courses.map((course) => (
+          <CourseCardComponent 
+            key={course.id} 
+            topic={topic} 
+            course={course}
+            onPress={handleCoursePress}
+          />
+        ))}
+      </Animated.View>
     </View>
   );
 };
@@ -105,8 +111,8 @@ const styles = StyleSheet.create({
   },
   rightColumn: {
     width: 48,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   courseCount: {
     fontSize: 14,
@@ -132,5 +138,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 12,
     marginTop: 16,
+    overflow: 'hidden',
   },
 });
