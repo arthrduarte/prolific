@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated } from 'react-native';
 import { Topic, Course } from '../types/database.types';
-import { CourseCardComponent } from './CourseCardComponent';
+import { CourseCardComponent } from './CourseCard';
 import { supabase } from '../lib/supabase';
 
 interface TopicComponentProps {

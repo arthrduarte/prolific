@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text, ScrollView, SafeAreaView, Dimensions, Image } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Topic } from '../types/database.types'
-import { TopicComponent } from '../components/TopicComponent'
+import { TopicComponent } from '../components/Topic'
 import { LinearGradient } from 'expo-linear-gradient'
 
 const { width } = Dimensions.get('window')
