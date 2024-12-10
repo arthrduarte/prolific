@@ -57,16 +57,38 @@ export default function CourseScreen({ route }: { route: any }) {
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 120],
-    outputRange: [120, 80],
+    outputRange: [180, 100],
+    extrapolate: 'clamp',
+  });
+
+  const headerTitleSize = scrollY.interpolate({
+    inputRange: [0, 120],
+    outputRange: [32, 24],
+    extrapolate: 'clamp',
+  });
+
+  const headerPadding = scrollY.interpolate({
+    inputRange: [0, 120],
+    outputRange: [24, 16],
     extrapolate: 'clamp',
   });
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <LinearGradient colors={['#ffffff', '#f8f9fa']} style={styles.container}>
+      <LinearGradient
+        colors={['#ffffff', '#f8f9fa', '#f1f3f5']}
+        style={styles.container}
+      >
         <Animated.View style={[styles.header, { height: headerHeight }]}>
-          <Text style={styles.smallTitle}>Course</Text>
-          <Text style={styles.title} numberOfLines={2}>{course.title}</Text>
+          <Animated.View style={{ padding: headerPadding }}>
+            <Text style={styles.smallTitle}>Course</Text>
+            <Animated.Text 
+              style={[styles.title, { fontSize: headerTitleSize }]} 
+              numberOfLines={2}
+            >
+              {course.title}
+            </Animated.Text>
+          </Animated.View>
         </Animated.View>
 
         <ScrollView 
@@ -76,16 +98,38 @@ export default function CourseScreen({ route }: { route: any }) {
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
             { useNativeDriver: false }
           )}
+          scrollEventThrottle={16}
         >
           <View style={styles.content}>
+            <View style={styles.statsContainer}>
+              <View style={styles.stat}>
+                <Text style={styles.statNumber}>{exercises.length}</Text>
+                <Text style={styles.statLabel}>Exercises</Text>
+              </View>
+              <View style={[styles.stat, styles.statBorder]}>
+                <Text style={styles.statNumber}>45</Text>
+                <Text style={styles.statLabel}>Minutes</Text>
+              </View>
+              <View style={styles.stat}>
+                <Text style={styles.statNumber}>0%</Text>
+                <Text style={styles.statLabel}>Complete</Text>
+              </View>
+            </View>
+
             <Text style={styles.description}>{course.description}</Text>
-            <Text style={styles.sectionTitle}>Exercises</Text>
+            
+            <View style={styles.exercisesHeader}>
+              <Text style={styles.sectionTitle}>Course Content</Text>
+              <Text style={styles.exerciseCount}>{exercises.length} exercises</Text>
+            </View>
+
             <View style={styles.exercisesContainer}>
               {exercises.map((exercise, index) => (
                 <ExerciseCardComponent
                   key={exercise.id}
                   exercise={exercise}
                   onPress={handleExercisePress}
+                  index={index}
                 />
               ))}
             </View>
@@ -105,44 +149,89 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 24,
-    paddingTop: 20,
+    backgroundColor: '#f0dc1b',
     justifyContent: 'flex-end',
-    paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
+    borderBottomColor: '#f1f3f5',
   },
   smallTitle: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
+    color: '#868e96',
+    marginBottom: 8,
     textTransform: 'uppercase',
     letterSpacing: 1,
+    fontWeight: '600',
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#000',
     letterSpacing: -0.5,
   },
   content: {
     padding: 24,
   },
+  statsContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#f1f3f5',
+  },
+  stat: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statBorder: {
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: '#f1f3f5',
+    paddingHorizontal: 20,
+  },
+  statNumber: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#868e96',
+    fontWeight: '500',
+  },
   description: {
     fontSize: 16,
-    color: '#666',
+    color: '#495057',
     lineHeight: 24,
     marginBottom: 32,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
+  exercisesHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
   },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000',
+  },
+  exerciseCount: {
+    fontSize: 14,
+    color: '#868e96',
+    fontWeight: '600',
+  },
   exercisesContainer: {
-    gap: 12,
+    marginHorizontal: -8,
   },
   scrollView: {
     flex: 1,
