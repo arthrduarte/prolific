@@ -29,6 +29,12 @@ export interface Step {
     explanation: string
     order: number
     rich_content: JSON
+    audio_id: string
+}
+
+export interface Audio {
+    id: string
+    file_url: string
 }
 
 export interface User_Progress {
