@@ -28,37 +28,37 @@ export default function HomeScreen({navigation}: {navigation: any}) {
         colors={['#ffffff', '#f8f9fa', '#f1f3f5']}
         style={styles.container}
       >
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.welcomeText}>Welcome to</Text>
-            <Text style={styles.title}>Prolific</Text>
-          </View>
-          <Text style={styles.subtitle}>
-            Master new skills through interactive learning
-          </Text>
-          
-          {/* Stats Section */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{topics.length}</Text>
-              <Text style={styles.statLabel}>Learning{'\n'}Paths</Text>
-            </View>
-            <View style={[styles.statItem, styles.statItemBorder]}>
-              <Text style={styles.statNumber}>24</Text>
-              <Text style={styles.statLabel}>Interactive{'\n'}Courses</Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statNumber}>120</Text>
-              <Text style={styles.statLabel}>Hands-on{'\n'}Exercises</Text>
-            </View>
-          </View>
-        </View>
-        
         <ScrollView 
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
+          <View style={styles.header}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.welcomeText}>Welcome to</Text>
+              <Text style={styles.title}>Prolific</Text>
+            </View>
+            <Text style={styles.subtitle}>
+              Master new skills through interactive learning
+            </Text>
+            
+            {/* Stats Section */}
+            <View style={styles.statsContainer}>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>{topics.length}</Text>
+                <Text style={styles.statLabel}>Learning{'\n'}Paths</Text>
+              </View>
+              <View style={[styles.statItem, styles.statItemBorder]}>
+                <Text style={styles.statNumber}>24</Text>
+                <Text style={styles.statLabel}>Interactive{'\n'}Courses</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>120</Text>
+                <Text style={styles.statLabel}>Hands-on{'\n'}Exercises</Text>
+              </View>
+            </View>
+          </View>
+
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Learning Paths</Text>
             <Text style={styles.sectionSubtitle}>Choose your journey</Text>
