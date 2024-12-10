@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { Alert, StyleSheet, View, AppState } from 'react-native'
+import { Alert, StyleSheet, View, Text, SafeAreaView, AppState } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Button, Input } from '@rneui/themed'
+import { LinearGradient } from 'expo-linear-gradient'
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -47,42 +48,113 @@ export default function Auth() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input
-          label="Email"
-          leftIcon={{ type: 'font-awesome', name: 'envelope' }}
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-          placeholder="email@address.com"
-          autoCapitalize={'none'}
-        />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Input
-          label="Password"
-          leftIcon={{ type: 'font-awesome', name: 'lock' }}
-          onChangeText={(text) => setPassword(text)}
-          value={password}
-          secureTextEntry={true}
-          placeholder="Password"
-          autoCapitalize={'none'}
-        />
-      </View>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
-      </View>
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <LinearGradient
+        colors={['#ffffff', '#f8f9fa', '#f1f3f5']}
+        style={styles.container}
+      >
+        <View style={styles.contentContainer}>
+          <View style={styles.header}>
+            <Text style={styles.welcomeText}>Welcome to</Text>
+            <Text style={styles.title}>Prolific</Text>
+            <Text style={styles.subtitle}>
+              Master new skills through interactive learning
+            </Text>
+          </View>
+
+          <View style={styles.formContainer}>
+            <View style={[styles.verticallySpaced, styles.mt20]}>
+              <Input
+                label="Email"
+                leftIcon={{ type: 'font-awesome', name: 'envelope', color: '#495057' }}
+                onChangeText={(text) => setEmail(text)}
+                value={email}
+                placeholder="email@address.com"
+                autoCapitalize={'none'}
+                inputContainerStyle={styles.inputContainer}
+                labelStyle={styles.inputLabel}
+                placeholderTextColor="#adb5bd"
+              />
+            </View>
+            <View style={styles.verticallySpaced}>
+              <Input
+                label="Password"
+                leftIcon={{ type: 'font-awesome', name: 'lock', color: '#495057' }}
+                onChangeText={(text) => setPassword(text)}
+                value={password}
+                secureTextEntry={true}
+                placeholder="Password"
+                autoCapitalize={'none'}
+                inputContainerStyle={styles.inputContainer}
+                labelStyle={styles.inputLabel}
+                placeholderTextColor="#adb5bd"
+              />
+            </View>
+            <View style={[styles.verticallySpaced, styles.mt20]}>
+              <Button 
+                title={loading ? "Loading..." : "Sign in"} 
+                disabled={loading} 
+                onPress={() => signInWithEmail()}
+                buttonStyle={styles.button}
+                titleStyle={styles.buttonText}
+                disabledStyle={styles.buttonDisabled}
+              />
+            </View>
+            <View style={styles.verticallySpaced}>
+              <Button 
+                title="Sign up" 
+                disabled={loading} 
+                onPress={() => signUpWithEmail()}
+                buttonStyle={[styles.button, styles.secondaryButton]}
+                titleStyle={styles.buttonText}
+                disabledStyle={styles.buttonDisabled}
+              />
+            </View>
+          </View>
+        </View>
+      </LinearGradient>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
-    marginTop: 40,
-    padding: 12,
+    flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingBottom: '20%',
+  },
+  header: {
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+  },
+  welcomeText: {
+    fontSize: 16,
+    color: '#6c757d',
+    marginBottom: 4,
+    fontWeight: '500',
+  },
+  title: {
+    fontSize: 42,
+    fontWeight: '800',
+    color: '#000',
+    letterSpacing: -1,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#495057',
+    lineHeight: 24,
+  },
+  formContainer: {
+    marginTop: 20,
+    padding: 24,
   },
   verticallySpaced: {
     paddingTop: 4,
@@ -91,5 +163,38 @@ const styles = StyleSheet.create({
   },
   mt20: {
     marginTop: 20,
+  },
+  inputContainer: {
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#fff',
+  },
+  inputLabel: {
+    color: '#495057',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  button: {
+    backgroundColor: '#f0dc1b',
+    borderRadius: 12,
+    padding: 16,
+  },
+  secondaryButton: {
+    backgroundColor: '#f8f9fa',
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  buttonText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  buttonDisabled: {
+    backgroundColor: '#e9ecef',
+    opacity: 0.8,
   },
 })
