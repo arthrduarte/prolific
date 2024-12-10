@@ -7,6 +7,9 @@ import { Session } from '@supabase/supabase-js';
 import Auth from './src/components/Auth';
 import CourseScreen from './src/screens/CourseScreen';
 import ExerciseScreen from './src/screens/ExerciseScreen';
+import { TouchableOpacity } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import Account from './src/components/Account';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,17 +33,54 @@ export default function App() {
           <Stack.Screen 
             name="Home" 
             component={HomeScreen} 
-            options={{ title: 'Home' }}
+            options={({ navigation }) => ({
+              title: 'Home',
+              headerRight: () => (
+                <TouchableOpacity 
+                  onPress={() => navigation.navigate('Account')}
+                  style={{ marginRight: 16 }}
+                >
+                  <FontAwesome name="user-circle" size={24} color="#495057" />
+                </TouchableOpacity>
+              ),
+            })}
           />
           <Stack.Screen 
             name="Course" 
             component={CourseScreen} 
-            options={{ title: 'Course' }}
+            options={({ navigation }) => ({
+              title: 'Course',
+              headerRight: () => (
+                <TouchableOpacity 
+                  onPress={() => navigation.navigate('Account')}
+                  style={{ marginRight: 16 }}
+                >
+                  <FontAwesome name="user-circle" size={24} color="#495057" />
+                </TouchableOpacity>
+              ),
+            })}
           />
           <Stack.Screen 
             name="Exercise" 
             component={ExerciseScreen} 
-            options={{ title: 'Exercise' }}
+            options={({ navigation }) => ({
+              title: 'Exercise',
+              headerRight: () => (
+                <TouchableOpacity 
+                  onPress={() => navigation.navigate('Account')}
+                  style={{ marginRight: 16 }}
+                >
+                  <FontAwesome name="user-circle" size={24} color="#495057" />
+                </TouchableOpacity>
+              ),
+            })}
+          />
+          <Stack.Screen 
+            name="Account" 
+            component={() => <Account session={session} />} 
+            options={{ 
+              title: 'Account',
+            }}
           />
         </Stack.Navigator>
       ) : (
