@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet, Text, SafeAreaView, Animated } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Exercise, Step } from '../types/database.types'
 import QuestionComponent from '../components/QuestionComponent'
+import { LinearGradient } from 'expo-linear-gradient'
 
-export default function ExerciseScreen({ route }: { route: any }) {
+export default function ExerciseScreen({ route, navigation }: { route: any, navigation: any }) {
   const { exerciseId } = route.params
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [steps, setSteps] = useState<Step[]>([])
+  const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const progressWidth = new Animated.Value(0)
 
   useEffect(() => {
     const fetchExercise = async () => {
@@ -26,31 +29,138 @@ export default function ExerciseScreen({ route }: { route: any }) {
         .select('*')
         .eq('exercise_id', exerciseId)
         .order('order', { ascending: true })
-        console.log(stepsData)
 
       if (!stepsError && stepsData) {
         setSteps(stepsData as Step[])
       }
     }
-    console.log(steps)
+
     fetchExercise()
   }, [exerciseId])
 
-  if (!exercise || !steps.length) return <Text>Loading...</Text>
+  useEffect(() => {
+    if (steps.length > 0) {
+      Animated.spring(progressWidth, {
+        toValue: (currentStepIndex + 1) / steps.length,
+        useNativeDriver: false,
+        damping: 20,
+        mass: 0.5,
+      }).start()
+    }
+  }, [currentStepIndex, steps.length])
+
+  if (!exercise || !steps.length) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading exercise...</Text>
+      </View>
+    )
+  }
+
+  const handleStepComplete = () => {
+    if (currentStepIndex < steps.length - 1) {
+      setCurrentStepIndex(currentStepIndex + 1)
+    }
+  }
 
   return (
-    <View style={styles.container}>
-      <QuestionComponent 
-        exercise={exercise}
-        steps={steps}
-      />
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <LinearGradient
+        colors={['#ffffff', '#f8f9fa', '#f1f3f5']}
+        style={styles.container}
+      >
+        <View style={styles.header}>
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBackground}>
+              <Animated.View 
+                style={[
+                  styles.progressBar,
+                  {
+                    width: progressWidth.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0%', '100%']
+                    })
+                  }
+                ]}
+              />
+            </View>
+            <Text style={styles.progressText}>
+              Step {currentStepIndex + 1} of {steps.length}
+            </Text>
+          </View>
+          <Text style={styles.title}>{exercise.title}</Text>
+        </View>
+
+        <View style={styles.content}>
+          <QuestionComponent 
+            exercise={exercise}
+            steps={steps}
+            currentStepIndex={currentStepIndex}
+            onStepComplete={handleStepComplete}
+          />
+        </View>
+      </LinearGradient>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#fff',
   },
-})
+  container: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#666',
+    fontWeight: '500',
+  },
+  header: {
+    paddingTop: 16,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f3f5',
+  },
+  progressContainer: {
+    marginBottom: 16,
+  },
+  progressBackground: {
+    height: 4,
+    backgroundColor: '#f1f3f5',
+    borderRadius: 2,
+    marginBottom: 8,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: '#2196f3',
+    borderRadius: 2,
+  },
+  progressText: {
+    fontSize: 14,
+    color: '#868e96',
+    fontWeight: '600',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#000',
+    letterSpacing: -0.5,
+  },
+  content: {
+    flex: 1,
+  },
+});
