@@ -13,6 +13,11 @@ import Account from './src/components/Account';
 
 const Stack = createNativeStackNavigator();
 
+function AccountScreen({ route }: any) {
+  const { session } = route.params;
+  return <Account session={session} />;
+}
+
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
 
@@ -77,7 +82,8 @@ export default function App() {
           />
           <Stack.Screen 
             name="Account" 
-            component={() => <Account session={session} />} 
+            component={AccountScreen}
+            initialParams={{ session }}
             options={{ 
               title: 'Account',
             }}
