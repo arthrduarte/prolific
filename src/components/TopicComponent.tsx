@@ -59,24 +59,15 @@ export const TopicComponent: React.FC<TopicComponentProps> = ({ topic, navigatio
         activeOpacity={0.7}
         style={styles.topicHeader}
       >
-        <View style={styles.headerContent}>
-          <View style={styles.titleContainer}>
-            <View style={styles.iconContainer}>
-              <Text style={styles.emoji}>{topic.emoji}</Text>
-            </View>
-            <View style={styles.textContainer}>
-              <Text style={styles.title}>{topic.title}</Text>
-              <Text style={styles.description} numberOfLines={2}>
-                {topic.description}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.statsContainer}>
-            <Text style={styles.statsText}>{courses.length} Courses</Text>
-            <Animated.View style={[styles.arrow, { transform: [{ rotate }] }]}>
-              <Text style={styles.arrowText}>↓</Text>
-            </Animated.View>
-          </View>
+        <View style={styles.leftColumn}>
+          <Text style={styles.courseCount}>{courses.length} Courses</Text>
+          <Text style={styles.title}>{topic.title}</Text>
+          <Text style={styles.description} numberOfLines={2}>
+            {topic.description}
+          </Text>
+        </View>
+        <View style={styles.rightColumn}>
+          <Text style={styles.emoji}>{topic.emoji}</Text>
         </View>
       </TouchableOpacity>
       
@@ -98,84 +89,48 @@ export const TopicComponent: React.FC<TopicComponentProps> = ({ topic, navigatio
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 32,
+    marginBottom: 24,
   },
   topicHeader: {
+    flexDirection: 'row',
     marginHorizontal: 16,
-    borderRadius: 20,
-    marginBottom: 16,
-    padding: 16,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#f1f3f5',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e9ecef',
   },
-  headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  titleContainer: {
+  leftColumn: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingRight: 16,
   },
-  iconContainer: {
+  rightColumn: {
     width: 48,
-    height: 48,
-    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-    marginRight: 12,
   },
-  textContainer: {
-    flex: 1,
-  },
-  emoji: {
-    fontSize: 24,
+  courseCount: {
+    fontSize: 14,
+    color: '#868e96',
+    fontWeight: '600',
+    marginBottom: 8,
   },
   title: {
     fontSize: 18,
     fontWeight: '700',
     color: '#000',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   description: {
     fontSize: 14,
-    color: '#666',
+    color: '#495057',
     lineHeight: 20,
   },
-  statsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 12,
-  },
-  statsText: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '600',
-    marginRight: 8,
-  },
-  arrow: {
-    width: 24,
-    height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  arrowText: {
-    fontSize: 16,
-    color: '#666',
+  emoji: {
+    fontSize: 40,
   },
   coursesContainer: {
     paddingHorizontal: 16,
     gap: 12,
+    marginTop: 16,
   },
 });
