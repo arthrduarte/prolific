@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Dimensions, Animated } from 'react-native'
 import { Exercise, Step } from '../types/database.types'
+import { AudioPlayer } from './AudioPlayer'
 
 type StepType = 'content' | 'multiple_choice' | 'true_false' | 'input'
 
@@ -124,6 +125,9 @@ export default function Question({
     return (
       <Animated.View style={{ opacity: fadeAnim }}>
         <Text style={styles.questionText}>{currentStep.content}</Text>
+        {currentStep.audio_id && (
+          <AudioPlayer audioId={currentStep.audio_id} />
+        )}
         {currentStep.rich_content && renderTable(currentStep.rich_content)}
         {(() => {
           switch (currentStep.type as StepType) {
