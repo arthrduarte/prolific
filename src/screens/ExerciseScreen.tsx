@@ -69,9 +69,18 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
         colors={['#ffffff', '#f8f9fa', '#f1f3f5']}
         style={styles.container}
       >
-        <View style={styles.header}>
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBackground}>
+        <View style={[
+          styles.header,
+          { paddingBottom: currentStepIndex === 0 ? 24 : 16 }
+        ]}>
+          <View style={[
+            styles.progressContainer,
+            { marginBottom: currentStepIndex === 0 ? 16 : 0 }
+          ]}>
+            <View style={[
+              styles.progressBackground,
+              { marginBottom: currentStepIndex === 0 ? 8 : 0 }
+            ]}>
               <Animated.View 
                 style={[
                   styles.progressBar,
@@ -84,11 +93,10 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
                 ]}
               />
             </View>
-            <Text style={styles.progressText}>
-              Step {currentStepIndex + 1} of {steps.length}
-            </Text>
           </View>
-          <Text style={styles.title}>{exercise.title}</Text>
+          {currentStepIndex === 0 && (
+            <Text style={styles.title}>{exercise.title}</Text>
+          )}
         </View>
 
         <View style={styles.content}>
@@ -126,19 +134,16 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 16,
     paddingHorizontal: 24,
-    paddingBottom: 24,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#f1f3f5',
   },
   progressContainer: {
-    marginBottom: 16,
   },
   progressBackground: {
     height: 4,
     backgroundColor: '#f1f3f5',
     borderRadius: 2,
-    marginBottom: 8,
     overflow: 'hidden',
   },
   progressBar: {
