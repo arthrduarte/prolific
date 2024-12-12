@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Dimensions, Animated } from 'react-native'
 import { Exercise, Step } from '../types/database.types'
 import { AudioPlayer } from './AudioPlayer'
+import { useAudioPreloader } from '../hooks/useAudioPreloader'
 
 type StepType = 'content' | 'multiple_choice' | 'true_false' | 'input'
 
@@ -23,8 +24,17 @@ export default function Question({
   const [isAnswered, setIsAnswered] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
   const fadeAnim = useState(new Animated.Value(1))[0]
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
   const currentStep = steps[currentStepIndex]
+  const previousStep = currentStepIndex > 0 ? steps[currentStepIndex - 1] : null
+  const nextStep = currentStepIndex < steps.length - 1 ? steps[currentStepIndex + 1] : null
+
+  const { getAudio, isLoaded } = useAudioPreloader(
+    currentStep?.audio_id || null,
+    previousStep?.audio_id || null,
+    nextStep?.audio_id || null
+  )
 
   useEffect(() => {
     setSelectedOption(null)
@@ -45,6 +55,16 @@ export default function Question({
         useNativeDriver: true,
       }),
     ]).start()
+  }, [currentStepIndex])
+
+  // Handle transitions
+  useEffect(() => {
+    setIsTransitioning(true)
+    const timer = setTimeout(() => {
+      setIsTransitioning(false)
+    }, 400) // Match the fade animation duration
+
+    return () => clearTimeout(timer)
   }, [currentStepIndex])
 
   const handleOptionSelect = (option: string) => {
@@ -126,7 +146,10 @@ export default function Question({
       <Animated.View style={{ opacity: fadeAnim }}>
         <Text style={styles.questionText}>{currentStep.content}</Text>
         {currentStep.audio_id && (
-          <AudioPlayer audioId={currentStep.audio_id} />
+          <AudioPlayer
+            sound={getAudio(currentStep.audio_id)}
+            shouldPlay={!isTransitioning && isLoaded(currentStep.audio_id)}
+          />
         )}
         {currentStep.rich_content && renderTable(currentStep.rich_content)}
         {(() => {
