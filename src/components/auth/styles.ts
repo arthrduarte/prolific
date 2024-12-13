@@ -3,7 +3,10 @@ import { StyleSheet } from 'react-native'
 export const authStyles = StyleSheet.create({
   header: {
     paddingHorizontal: 24,
-    paddingBottom: 24,
+    height: 240,
+    backgroundColor: '#f0dc1b',
+    justifyContent: 'center',
+    paddingTop: 20,
   },
   title: {
     fontSize: 32,
@@ -17,7 +20,11 @@ export const authStyles = StyleSheet.create({
     lineHeight: 24,
   },
   formContainer: {
-    marginTop: 20,
+    flex: 1,
+    backgroundColor: '#fff',
+    marginTop: -20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     padding: 24,
   },
   verticallySpaced: {
