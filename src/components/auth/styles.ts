@@ -66,4 +66,8 @@ export const authStyles = StyleSheet.create({
     color: '#495057',
     marginTop: 16,
   },
+  inputError: {
+    borderColor: '#dc3545',
+    borderWidth: 1,
+  },
 }) 

@@ -11,9 +11,20 @@ interface SignupProps {
 export default function Signup({ onSwitchToLogin }: SignupProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
   async function signUpWithEmail() {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match')
+      return
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters long')
+      return
+    }
+
     setLoading(true)
     const {
       data: { session },
@@ -23,8 +34,8 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
       password: password,
     })
 
-    if (error) Alert.alert(error.message)
-    if (!session) Alert.alert('Please check your inbox for email verification!')
+    if (error) Alert.alert('Error', error.message)
+    if (!session) Alert.alert('Success', 'Please check your inbox for email verification!')
     setLoading(false)
   }
 
@@ -48,6 +59,8 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
             inputContainerStyle={styles.inputContainer}
             labelStyle={styles.inputLabel}
             placeholderTextColor="#adb5bd"
+            keyboardType="email-address"
+            autoComplete="email"
           />
         </View>
         <View style={styles.verticallySpaced}>
@@ -57,11 +70,35 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
             onChangeText={setPassword}
             value={password}
             secureTextEntry={true}
-            placeholder="Password"
+            placeholder="Password (min. 6 characters)"
             autoCapitalize={'none'}
             inputContainerStyle={styles.inputContainer}
             labelStyle={styles.inputLabel}
             placeholderTextColor="#adb5bd"
+            autoComplete="new-password"
+          />
+        </View>
+        <View style={styles.verticallySpaced}>
+          <Input
+            label="Confirm Password"
+            leftIcon={{ type: 'font-awesome', name: 'lock', color: '#495057' }}
+            onChangeText={setConfirmPassword}
+            value={confirmPassword}
+            secureTextEntry={true}
+            placeholder="Confirm your password"
+            autoCapitalize={'none'}
+            inputContainerStyle={[
+              styles.inputContainer,
+              confirmPassword && password !== confirmPassword && styles.inputError
+            ]}
+            labelStyle={styles.inputLabel}
+            placeholderTextColor="#adb5bd"
+            autoComplete="new-password"
+            errorMessage={
+              confirmPassword && password !== confirmPassword 
+                ? "Passwords don't match" 
+                : ''
+            }
           />
         </View>
         <View style={[styles.verticallySpaced, styles.mt20]}>
