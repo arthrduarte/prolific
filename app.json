@@ -10,6 +10,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "developmentClient": {
+      "fastRefresh": true
+    },
     "ios": {
       "supportsTablet": true
     },

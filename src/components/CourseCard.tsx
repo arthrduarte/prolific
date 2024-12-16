@@ -71,14 +71,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   card: {
-    minHeight: 180,
     borderRadius: 20,
     overflow: 'hidden',
   },
   contentContainer: {
-    flex: 1,
     padding: 20,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
   },
   iconContainer: {
     width: 56,
@@ -101,13 +99,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
   },
   titleContainer: {
-    flex: 1,
+    marginBottom: 5,
   },
   title: {
     fontSize: 20,
     fontWeight: '700',
     color: '#fff',
-    marginBottom: 12,
+    lineHeight: 28,
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
@@ -116,6 +114,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.9)',
     lineHeight: 20,
+    marginTop: 0,
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
