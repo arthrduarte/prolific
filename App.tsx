@@ -4,6 +4,8 @@ import { supabase } from './src/lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import Auth from './src/components/Auth';
 import { TabNavigator } from './src/components/Navbar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -19,13 +21,16 @@ export default function App() {
   }, [])
 
   return (
-    <NavigationContainer>
-      {session && session.user ? (
-        <TabNavigator session={session} />
-      ) : (
-        <Auth />
-      )}
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <StatusBar style="dark" />
+      <NavigationContainer>
+        {session && session.user ? (
+          <TabNavigator session={session} />
+        ) : (
+          <Auth />
+        )}
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
