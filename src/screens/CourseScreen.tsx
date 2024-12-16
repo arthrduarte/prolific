@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Animated } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Course, Exercise } from '../types/database.types';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { LinearGradient } from 'expo-linear-gradient';
 import { CoursePath } from '../components/CoursePath';
+import { FontAwesome } from '@expo/vector-icons';
 
 type NavigationProp = NativeStackNavigationProp<{
   Exercise: { exerciseId: string; courseId: string };
@@ -16,7 +16,7 @@ export default function CourseScreen({ route }: { route: any }) {
   const navigation = useNavigation<NavigationProp>();
   const [course, setCourse] = useState<Course | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  const scrollY = new Animated.Value(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -39,6 +39,8 @@ export default function CourseScreen({ route }: { route: any }) {
 
       if (!error && data) {
         setExercises(data as Exercise[]);
+        // Placeholder progress calculation - you might want to implement actual progress tracking
+        setProgress(0.3); // 30% progress for demonstration
       }
     };
 
@@ -55,58 +57,31 @@ export default function CourseScreen({ route }: { route: any }) {
 
   if (!course) return null;
 
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, 120],
-    outputRange: [180, 100],
-    extrapolate: 'clamp',
-  });
-
-  const headerTitleSize = scrollY.interpolate({
-    inputRange: [0, 120],
-    outputRange: [32, 24],
-    extrapolate: 'clamp',
-  });
-
-  const headerPadding = scrollY.interpolate({
-    inputRange: [0, 120],
-    outputRange: [24, 16],
-    extrapolate: 'clamp',
-  });
-
   return (
     <SafeAreaView style={styles.safeArea}>
-      <LinearGradient
-        colors={['#ffffff', '#f8f9fa', '#f1f3f5']}
-        style={styles.container}
-      >
-        <Animated.View style={[styles.header, { height: headerHeight }]}>
-          <Animated.View style={{ padding: headerPadding }}>
-            <Text style={styles.smallTitle}>Course</Text>
-            <Animated.Text 
-              style={[styles.title, { fontSize: headerTitleSize }]} 
-              numberOfLines={2}
-            >
-              {course.title}
-            </Animated.Text>
-          </Animated.View>
-        </Animated.View>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.header}>
+        </View>
 
-        <ScrollView 
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: false }
-          )}
-          scrollEventThrottle={16}
-        >
-          <View style={styles.content}>
-            
-            <View style={styles.exercisesHeader}>
-              <Text style={styles.sectionTitle}>Course Content</Text>
-              <Text style={styles.exerciseCount}>{exercises.length} exercises</Text>
+        <View style={styles.content}>
+          <Text style={styles.title}>{course.title}</Text>
+          <View style={styles.metaContainer}>
+            <Text style={styles.metaText}>{exercises.length} exercises</Text>
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBar}>
+                <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+              </View>
+              <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
             </View>
+          </View>
+          <Text style={styles.description}>
+            {course.description || 'Learn the fundamentals and advanced concepts through practical exercises.'}
+          </Text>
+        </View>
 
+        <View style={styles.content}>
+          <View style={styles.exercisesSection}>
+            <Text style={styles.sectionTitle}>Course Content</Text>
             <View style={styles.exercisesContainer}>
               <CoursePath
                 exercises={exercises}
@@ -114,8 +89,8 @@ export default function CourseScreen({ route }: { route: any }) {
               />
             </View>
           </View>
-        </ScrollView>
-      </LinearGradient>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -123,98 +98,78 @@ export default function CourseScreen({ route }: { route: any }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f0dc1b',
   },
-  container: {
+  scrollView: {
     flex: 1,
+    backgroundColor: '#f8f9fa',
   },
   header: {
     backgroundColor: '#f0dc1b',
-    justifyContent: 'flex-end',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f3f5',
-  },
-  smallTitle: {
-    fontSize: 14,
-    color: '#868e96',
-    marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontWeight: '600',
+    padding: 24,
+    height: 200,
+    paddingTop: 20,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
   },
   title: {
+    fontSize: 28,
     fontWeight: '800',
     color: '#000',
-    letterSpacing: -0.5,
   },
-  content: {
-    padding: 24,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: '#f1f3f5',
-  },
-  stat: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statBorder: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: '#f1f3f5',
-    paddingHorizontal: 20,
-  },
-  statNumber: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#868e96',
-    fontWeight: '500',
-  },
-  description: {
-    fontSize: 16,
-    color: '#495057',
-    lineHeight: 24,
-    marginBottom: 32,
-  },
-  exercisesHeader: {
+  metaContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginVertical: 16,
+  },
+  metaText: {
+    fontSize: 14,
+    color: '#495057',
+    fontWeight: '600',
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  progressBar: {
+    width: 100,
+    height: 4,
+    backgroundColor: 'rgba(0,0,0,0.1)',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#000',
+    borderRadius: 2,
+  },
+  progressText: {
+    fontSize: 14,
+    color: '#495057',
+    fontWeight: '600',
+  },
+  content: {
+    flex: 1,
+    padding: 24,
+  },
+  description: {
+    fontSize: 14,
+    color: '#495057',
+    lineHeight: 18,
+    opacity: 0.5,
+  },
+  exercisesSection: {
+    flex: 1,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#000',
-  },
-  exerciseCount: {
-    fontSize: 14,
-    color: '#868e96',
-    fontWeight: '600',
+    marginBottom: 16,
   },
   exercisesContainer: {
-    flex: 1,
-    paddingRight: 24,
-  },
-  scrollView: {
     flex: 1,
   },
 });
