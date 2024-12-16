@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
     borderWidth: 2,
     borderColor: '#e9ecef',
   },
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
   explanationContainer: {
     padding: 16,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
     borderRadius: 12,
     marginTop: 24,
     marginBottom: 24,
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
     padding: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#e9ecef',
@@ -400,13 +400,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f8f9fa',
+    borderBottomColor: '#fff',
   },
   tableRowEven: {
     backgroundColor: '#fff',
   },
   tableRowOdd: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
   },
   tableCell: {
     flex: 1,

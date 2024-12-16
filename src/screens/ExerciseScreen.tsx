@@ -66,7 +66,7 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
   return (
     <SafeAreaView style={styles.safeArea}>
       <LinearGradient
-        colors={['#ffffff', '#f8f9fa', '#f1f3f5']}
+        colors={['#ffffff', '#fff', '#f1f3f5']}
         style={styles.container}
       >
         <View style={[

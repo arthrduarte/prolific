@@ -55,7 +55,7 @@ export const authStyles = StyleSheet.create({
     padding: 16,
   },
   secondaryButton: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#e9ecef',
   },

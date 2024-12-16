@@ -25,7 +25,7 @@ export default function HomeScreen({navigation}: {navigation: any}) {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="dark" />
       <LinearGradient
-        colors={['#ffffff', '#f8f9fa', '#f1f3f5']}
+        colors={['#ffffff', '#fff', '#f1f3f5']}
         style={styles.container}
       >
         <ScrollView 

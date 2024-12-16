@@ -24,17 +24,6 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
       onPress={() => onPress(exercise)}
       activeOpacity={0.7}
     >
-      {/* Circle connector with number */}
-      <View style={styles.connector}>
-        <View style={[
-          styles.circle,
-          isActive && styles.activeCircle
-        ]}>
-          <Text style={styles.circleNumber}>{index + 1}</Text>
-        </View>
-        <View style={styles.verticalLine} />
-      </View>
-
       {/* Exercise card */}
       <View style={[
         styles.card,
@@ -69,48 +58,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     alignItems: 'center',
   },
-  connector: {
-    width: 20,
-    alignItems: 'center',
-  },
-  verticalLine: {
-    width: 2,
-    flex: 1,
-    backgroundColor: '#e9ecef',
-    position: 'absolute',
-    top: 30,
-    bottom: -60,
-  },
-  circle: {
-    width: 24,
-    height: 24,
-    borderRadius: 16,
-    backgroundColor: '#f8f9fa',
-    borderWidth: 2,
-    borderColor: '#e9ecef',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  circleNumber: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#495057',
-  },
-  activeCircle: {
-    backgroundColor: '#a1ff9c',
-    borderColor: '#a1ff9c',
-  },
   card: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
     borderRadius: 12,
-    marginLeft: 12,
     borderWidth: 1,
     borderColor: '#e9ecef',
   },
   activeCard: {
-    backgroundColor: '#a1ff9c',
     borderColor: '#a1ff9c',
+    borderWidth: 2,
   },
   cardContent: {
     flexDirection: 'row',
@@ -133,12 +90,11 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    marginRight: 12,
   },
   title: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#495057',
+    color: '#000',
   },
   chevron: {
     marginLeft: 'auto',

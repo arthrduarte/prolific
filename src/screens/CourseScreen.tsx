@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CoursePath } from '../components/CoursePath';
 import { FontAwesome } from '@expo/vector-icons';
+import { ExerciseCard } from '../components/ExerciseCard';
 
 type NavigationProp = NativeStackNavigationProp<{
   Exercise: { exerciseId: string; courseId: string };
@@ -83,10 +84,15 @@ export default function CourseScreen({ route }: { route: any }) {
           <View style={styles.exercisesSection}>
             <Text style={styles.sectionTitle}>Course Content</Text>
             <View style={styles.exercisesContainer}>
-              <CoursePath
-                exercises={exercises}
-                onExercisePress={handleExercisePress}
-              />
+              {exercises.map((exercise, index) => (
+                <ExerciseCard
+                  key={exercise.id}
+                  exercise={exercise}
+                  index={index}
+                  isActive={index === 0}
+                  onPress={handleExercisePress}
+                />
+              ))}
             </View>
           </View>
         </View>
@@ -102,7 +108,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fff',
   },
   header: {
     backgroundColor: '#f0dc1b',
@@ -113,6 +119,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 50,
   },
   title: {
+    marginTop: 20,
     fontSize: 28,
     fontWeight: '800',
     color: '#000',
@@ -152,7 +159,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 24,
+    paddingHorizontal: 24,
   },
   description: {
     fontSize: 14,
@@ -162,6 +169,7 @@ const styles = StyleSheet.create({
   },
   exercisesSection: {
     flex: 1,
+    marginTop: 20,
   },
   sectionTitle: {
     fontSize: 20,
