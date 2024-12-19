@@ -258,16 +258,19 @@ export default function Question({
             <Explanation
               isCorrect={isCorrect}
               explanation={currentStep.explanation}
+              onContinue={handleNext}
             />
           )}
-          <TouchableOpacity
-            style={[styles.button, styles.buttonEnabled]}
-            onPress={handleNext}
-          >
-            <Text style={styles.buttonText}>
-              Continue
-            </Text>
-          </TouchableOpacity>
+          {currentStep.type === 'content' && (
+            <TouchableOpacity
+              style={[styles.button, styles.buttonEnabled]}
+              onPress={handleNext}
+            >
+              <Text style={styles.buttonText}>
+                Continue
+              </Text>
+            </TouchableOpacity>
+          )}
         </>
       )}
     </ScrollView>
