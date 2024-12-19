@@ -7,6 +7,7 @@ import { TextContent } from './TextContent'
 import { Input } from './options/Input'
 import { MultipleChoice } from './options/MultipleChoice'
 import { TrueFalse } from './options/TrueFalse'
+import { Explanation } from './Explanation'
 
 interface QuestionProps {
   exercise: Exercise
@@ -254,14 +255,10 @@ export default function Question({
       {(isAnswered || currentStep.type === 'content') && (
         <>
           {isAnswered && currentStep.explanation && (
-            <View style={styles.explanationContainer}>
-              <Text style={styles.explanationTitle}>
-                {isCorrect ? '🎉 Correct!' : ' Explanation'}
-              </Text>
-              <Text style={styles.explanationText}>
-                {currentStep.explanation}
-              </Text>
-            </View>
+            <Explanation
+              isCorrect={isCorrect}
+              explanation={currentStep.explanation}
+            />
           )}
           <TouchableOpacity
             style={[styles.button, styles.buttonEnabled]}
@@ -306,24 +303,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  explanationContainer: {
-    padding: 16,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginTop: 24,
-    marginBottom: 24,
-  },
-  explanationTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 8,
-  },
-  explanationText: {
-    fontSize: 16,
-    color: '#495057',
-    lineHeight: 24,
   },
   tableContainer: {
     marginBottom: 24,
