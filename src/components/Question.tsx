@@ -39,12 +39,12 @@ export default function Question({
   // New Animated.Values for rich content and options
   const richContentAnim = useState(new Animated.Value(0))[0]
   const optionsAnim = useState(new Animated.Value(0))[0]
-  const [wordAnimations, setWordAnimations] = useState<Animated.Value[]>([])
+  const [wordAnimations, setWordAnimations] = useState<(Animated.Value | null)[]>([])
 
   useEffect(() => {
-    // Initialize word animations based on the number of words
-    const words = currentStep.content.split(' ')
-    const animations = words.map(() => new Animated.Value(0))
+    // Initialize word animations based on the number of words and line breaks
+    const words = currentStep.content.split(/(\n|\s+)/).filter(Boolean)
+    const animations = words.map(word => word === '\n' ? null : new Animated.Value(0))
     setWordAnimations(animations)
 
     // Reset animation values
@@ -55,13 +55,15 @@ export default function Question({
     richContentAnim.setValue(0)
     optionsAnim.setValue(0)
     
-    // Animate words sequentially
+    // Animate words sequentially, skipping line breaks
     Animated.stagger(100, animations.map(anim => 
-      Animated.timing(anim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      })
+      anim 
+        ? Animated.timing(anim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          })
+        : Animated.delay(100)
     )).start(() => {
       // Animate rich content after text
       Animated.timing(richContentAnim, {
@@ -221,7 +223,7 @@ export default function Question({
   }
 
   const renderContent = () => {
-    const words = currentStep.content.split(' ')
+    const words = currentStep.content.split(/(\n|\s+)/).filter(Boolean)
 
     return (
       <>
@@ -231,15 +233,19 @@ export default function Question({
           flexWrap: 'wrap'
         }}>
           {words.map((word, index) => (
-            <Animated.Text
-              key={index}
-              style={[
-                styles.questionText,
-                { opacity: wordAnimations[index] || 0 }
-              ]}
-            >
-              {word + ' '}
-            </Animated.Text>
+            word === '\n' ? (
+              <View key={index} style={{ width: '100%', height: 0 }} />
+            ) : (
+              <Animated.Text
+                key={index}
+                style={[
+                  styles.questionText,
+                  { opacity: wordAnimations[index] || 0 }
+                ]}
+              >
+                {word}
+              </Animated.Text>
+            )
           ))}
         </Animated.View>
         
@@ -320,8 +326,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#000',
-    lineHeight: 28,
-    marginBottom: 24,
+    marginBottom: 12,
   },
   optionsContainer: {
     marginBottom: 24,
