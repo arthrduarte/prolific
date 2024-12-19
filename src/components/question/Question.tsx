@@ -4,6 +4,9 @@ import { Exercise, Step } from '../../types/database.types'
 import { AudioPlayer } from '../AudioPlayer'
 import { useAudioPreloader } from '../../hooks/useAudioPreloader'
 import { TextContent } from './TextContent'
+import { Input } from './options/Input'
+import { MultipleChoice } from './options/MultipleChoice'
+import { TrueFalse } from './options/TrueFalse'
 
 interface QuestionProps {
   exercise: Exercise
@@ -172,51 +175,34 @@ export default function Question({
     if (currentStep.type === 'content') return null
 
     return (
-      <Animated.View style={{ 
-        opacity: optionsAnim 
-      }}>
-        {currentStep.type === 'multiple_choice' || currentStep.type === 'true_false' ? (
-          <View style={styles.optionsContainer}>
-            {currentStep.options?.map((option, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.optionButton,
-                  selectedOption === option && styles.selectedOption,
-                  isAnswered && option === currentStep.correct_answer && styles.correctOption,
-                  isAnswered && selectedOption === option && option !== currentStep.correct_answer && styles.incorrectOption,
-                ]}
-                onPress={() => handleOptionSelect(option)}
-                disabled={isAnswered}
-                activeOpacity={0.7}
-              >
-                <Text style={[
-                  styles.optionText,
-                  selectedOption === option && styles.selectedOptionText,
-                  isAnswered && option === currentStep.correct_answer && styles.correctOptionText,
-                  isAnswered && selectedOption === option && option !== currentStep.correct_answer && styles.incorrectOptionText,
-                ]}>
-                  {option}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : currentStep.type === 'input' ? (
-          <View style={styles.textInputContainer}>
-            <TextInput
-              style={[
-                styles.textInput,
-                isAnswered && isCorrect && styles.correctTextInput,
-                isAnswered && !isCorrect && styles.incorrectTextInput,
-              ]}
-              value={inputAnswer}
-              onChangeText={handleInputChange}
-              placeholder="Type your answer here..."
-              placeholderTextColor="#adb5bd"
-              editable={!isAnswered}
-            />
-          </View>
-        ) : null}
+      <Animated.View style={{ opacity: optionsAnim }}>
+        {currentStep.type === 'multiple_choice' && (
+          <MultipleChoice
+            options={currentStep.options || []}
+            selectedOption={selectedOption}
+            correctAnswer={currentStep.correct_answer}
+            isAnswered={isAnswered}
+            onSelect={handleOptionSelect}
+          />
+        )}
+        
+        {currentStep.type === 'true_false' && (
+          <TrueFalse
+            selectedOption={selectedOption}
+            correctAnswer={currentStep.correct_answer}
+            isAnswered={isAnswered}
+            onSelect={handleOptionSelect}
+          />
+        )}
+        
+        {currentStep.type === 'input' && (
+          <Input
+            value={inputAnswer}
+            isAnswered={isAnswered}
+            isCorrect={isCorrect}
+            onChangeText={handleInputChange}
+          />
+        )}
       </Animated.View>
     )
   }
@@ -270,7 +256,7 @@ export default function Question({
           {isAnswered && currentStep.explanation && (
             <View style={styles.explanationContainer}>
               <Text style={styles.explanationTitle}>
-                {isCorrect ? '🎉 Correct!' : '�� Explanation'}
+                {isCorrect ? '🎉 Correct!' : ' Explanation'}
               </Text>
               <Text style={styles.explanationText}>
                 {currentStep.explanation}
@@ -303,66 +289,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
     marginBottom: 12,
-  },
-  optionsContainer: {
-    marginBottom: 24,
-  },
-  textInputContainer: {
-    marginBottom: 24,
-  },
-  textInput: {
-    borderWidth: 2,
-    borderColor: '#e9ecef',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    backgroundColor: '#fff',
-    color: '#000',
-  },
-  correctTextInput: {
-    backgroundColor: '#d3f9d8',
-    borderColor: '#40c057',
-  },
-  incorrectTextInput: {
-    backgroundColor: '#ffe3e3',
-    borderColor: '#fa5252',
-  },
-  optionButton: {
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#e9ecef',
-  },
-  selectedOption: {
-    backgroundColor: '#e7f5ff',
-    borderColor: '#339af0',
-  },
-  correctOption: {
-    backgroundColor: '#d3f9d8',
-    borderColor: '#40c057',
-  },
-  incorrectOption: {
-    backgroundColor: '#ffe3e3',
-    borderColor: '#fa5252',
-  },
-  optionText: {
-    fontSize: 16,
-    color: '#495057',
-    fontWeight: '500',
-  },
-  selectedOptionText: {
-    color: '#1971c2',
-    fontWeight: '600',
-  },
-  correctOptionText: {
-    color: '#2b8a3e',
-    fontWeight: '600',
-  },
-  incorrectOptionText: {
-    color: '#c92a2a',
-    fontWeight: '600',
   },
   button: {
     padding: 16,
