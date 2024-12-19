@@ -36,26 +36,48 @@ export default function Question({
     nextStep?.audio_id || null
   )
 
+  // New Animated.Values for rich content and options
+  const richContentAnim = useState(new Animated.Value(0))[0]
+  const optionsAnim = useState(new Animated.Value(0))[0]
+  const [wordAnimations, setWordAnimations] = useState<Animated.Value[]>([])
+
   useEffect(() => {
+    // Initialize word animations based on the number of words
+    const words = currentStep.content.split(' ')
+    const animations = words.map(() => new Animated.Value(0))
+    setWordAnimations(animations)
+
+    // Reset animation values
     setSelectedOption(null)
     setInputAnswer('')
     setIsAnswered(false)
     setIsCorrect(false)
+    richContentAnim.setValue(0)
+    optionsAnim.setValue(0)
     
-    // Fade out and in animation when step changes
-    Animated.sequence([
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeAnim, {
+    // Animate words sequentially
+    Animated.stagger(100, animations.map(anim => 
+      Animated.timing(anim, {
         toValue: 1,
-        duration: 200,
+        duration: 300,
         useNativeDriver: true,
-      }),
-    ]).start()
-  }, [currentStepIndex])
+      })
+    )).start(() => {
+      // Animate rich content after text
+      Animated.timing(richContentAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        // Animate options after rich content
+        Animated.timing(optionsAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }).start()
+      })
+    })
+  }, [currentStepIndex, currentStep.content, richContentAnim, optionsAnim])
 
   // Handle transitions
   useEffect(() => {
@@ -100,116 +122,137 @@ export default function Question({
     if (!richContent?.table) return null
 
     return (
-      <View style={styles.tableContainer}>
-        <View style={styles.tableHeader}>
-          {Object.keys(richContent.table[0]).map((header, index) => (
-            <Text 
-              key={index} 
-              style={[
-                styles.tableCell, 
-                styles.tableHeaderText,
-                index === Object.keys(richContent.table[0]).length - 1 && styles.lastCell
-              ]}
-            >
-              {header.charAt(0).toUpperCase() + header.slice(1)}
-            </Text>
-          ))}
-        </View>
-        {richContent.table.map((row: any, rowIndex: number) => (
-          <View 
-            key={rowIndex} 
-            style={[
-              styles.tableRow,
-              rowIndex % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd
-            ]}
-          >
-            {Object.values(row).map((value: any, colIndex: number) => (
+      <Animated.View style={{ 
+        opacity: richContentAnim 
+      }}>
+        <View style={styles.tableContainer}>
+          <View style={styles.tableHeader}>
+            {Object.keys(richContent.table[0]).map((header, index) => (
               <Text 
-                key={colIndex} 
+                key={index} 
                 style={[
-                  styles.tableCell,
-                  colIndex === Object.values(row).length - 1 && styles.lastCell,
-                  typeof value === 'number' && styles.numberCell
+                  styles.tableCell, 
+                  styles.tableHeaderText,
+                  index === Object.keys(richContent.table[0]).length - 1 && styles.lastCell
                 ]}
               >
-                {typeof value === 'number' ? value.toLocaleString() : value}
+                {header.charAt(0).toUpperCase() + header.slice(1)}
               </Text>
             ))}
           </View>
-        ))}
-      </View>
+          {richContent.table.map((row: any, rowIndex: number) => (
+            <View 
+              key={rowIndex} 
+              style={[
+                styles.tableRow,
+                rowIndex % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd
+              ]}
+            >
+              {Object.values(row).map((value: any, colIndex: number) => (
+                <Text 
+                  key={colIndex} 
+                  style={[
+                    styles.tableCell,
+                    colIndex === Object.values(row).length - 1 && styles.lastCell,
+                    typeof value === 'number' && styles.numberCell
+                  ]}
+                >
+                  {typeof value === 'number' ? value.toLocaleString() : value}
+                </Text>
+              ))}
+            </View>
+          ))}
+        </View>
+      </Animated.View>
+    )
+  }
+
+  const renderOptions = () => {
+    if (currentStep.type === 'content') return null
+
+    return (
+      <Animated.View style={{ 
+        opacity: optionsAnim 
+      }}>
+        {currentStep.type === 'multiple_choice' || currentStep.type === 'true_false' ? (
+          <View style={styles.optionsContainer}>
+            {currentStep.options?.map((option, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.optionButton,
+                  selectedOption === option && styles.selectedOption,
+                  isAnswered && option === currentStep.correct_answer && styles.correctOption,
+                  isAnswered && selectedOption === option && option !== currentStep.correct_answer && styles.incorrectOption,
+                ]}
+                onPress={() => handleOptionSelect(option)}
+                disabled={isAnswered}
+                activeOpacity={0.7}
+              >
+                <Text style={[
+                  styles.optionText,
+                  selectedOption === option && styles.selectedOptionText,
+                  isAnswered && option === currentStep.correct_answer && styles.correctOptionText,
+                  isAnswered && selectedOption === option && option !== currentStep.correct_answer && styles.incorrectOptionText,
+                ]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : currentStep.type === 'input' ? (
+          <View style={styles.textInputContainer}>
+            <TextInput
+              style={[
+                styles.textInput,
+                isAnswered && isCorrect && styles.correctTextInput,
+                isAnswered && !isCorrect && styles.incorrectTextInput,
+              ]}
+              value={inputAnswer}
+              onChangeText={handleInputChange}
+              placeholder="Type your answer here..."
+              placeholderTextColor="#adb5bd"
+              editable={!isAnswered}
+            />
+          </View>
+        ) : null}
+      </Animated.View>
     )
   }
 
   const renderContent = () => {
+    const words = currentStep.content.split(' ')
+
     return (
-      <Animated.View style={{ opacity: fadeAnim }}>
-        <Text style={styles.questionText}>{currentStep.content}</Text>
+      <>
+        <Animated.View style={{ 
+          marginBottom: 24,
+          flexDirection: 'row',
+          flexWrap: 'wrap'
+        }}>
+          {words.map((word, index) => (
+            <Animated.Text
+              key={index}
+              style={[
+                styles.questionText,
+                { opacity: wordAnimations[index] || 0 }
+              ]}
+            >
+              {word + ' '}
+            </Animated.Text>
+          ))}
+        </Animated.View>
+        
         {currentStep.audio_id && (
           <AudioPlayer
             sound={getAudio(currentStep.audio_id)}
             shouldPlay={!isTransitioning && isLoaded(currentStep.audio_id)}
           />
         )}
+
         {currentStep.rich_content && renderTable(currentStep.rich_content)}
-        {(() => {
-          switch (currentStep.type as StepType) {
-            case 'content':
-              return null
-
-            case 'multiple_choice':
-            case 'true_false':
-              return (
-                <View style={styles.optionsContainer}>
-                  {currentStep.options?.map((option, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={[
-                        styles.optionButton,
-                        selectedOption === option && styles.selectedOption,
-                        isAnswered && option === currentStep.correct_answer && styles.correctOption,
-                        isAnswered && selectedOption === option && option !== currentStep.correct_answer && styles.incorrectOption,
-                      ]}
-                      onPress={() => handleOptionSelect(option)}
-                      disabled={isAnswered}
-                      activeOpacity={0.7}
-                    >
-                      <Text style={[
-                        styles.optionText,
-                        selectedOption === option && styles.selectedOptionText,
-                        isAnswered && option === currentStep.correct_answer && styles.correctOptionText,
-                        isAnswered && selectedOption === option && option !== currentStep.correct_answer && styles.incorrectOptionText,
-                      ]}>
-                        {option}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )
-
-            case 'input':
-              return (
-                <View style={styles.textInputContainer}>
-                  <TextInput
-                    style={[
-                      styles.textInput,
-                      isAnswered && isCorrect && styles.correctTextInput,
-                      isAnswered && !isCorrect && styles.incorrectTextInput,
-                    ]}
-                    value={inputAnswer}
-                    onChangeText={handleInputChange}
-                    placeholder="Type your answer here..."
-                    placeholderTextColor="#adb5bd"
-                    editable={!isAnswered}
-                  />
-                </View>
-              )
-
-            default:
-              return null
-          }
-        })()}
-      </Animated.View>
+        {renderOptions()}
+      </>
     )
   }
 
