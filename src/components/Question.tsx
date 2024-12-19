@@ -4,8 +4,6 @@ import { Exercise, Step } from '../types/database.types'
 import { AudioPlayer } from './AudioPlayer'
 import { useAudioPreloader } from '../hooks/useAudioPreloader'
 
-type StepType = 'content' | 'multiple_choice' | 'true_false' | 'input'
-
 interface QuestionProps {
   exercise: Exercise
   steps: Step[]
@@ -56,14 +54,14 @@ export default function Question({
     optionsAnim.setValue(0)
     
     // Animate words sequentially, skipping line breaks
-    Animated.stagger(100, animations.map(anim => 
+    Animated.stagger(150, animations.map(anim => 
       anim 
         ? Animated.timing(anim, {
             toValue: 1,
             duration: 300,
             useNativeDriver: true,
           })
-        : Animated.delay(100)
+        : Animated.delay(350)
     )).start(() => {
       // Animate rich content after text
       Animated.timing(richContentAnim, {
