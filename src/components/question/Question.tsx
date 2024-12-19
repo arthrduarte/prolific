@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Dimensions, Animated } from 'react-native'
-import { Exercise, Step } from '../types/database.types'
-import { AudioPlayer } from './AudioPlayer'
-import { useAudioPreloader } from '../hooks/useAudioPreloader'
+import { Exercise, Step } from '../../types/database.types'
+import { AudioPlayer } from '../AudioPlayer'
+import { useAudioPreloader } from '../../hooks/useAudioPreloader'
+import { TextContent } from './TextContent'
 
 interface QuestionProps {
   exercise: Exercise
@@ -221,38 +222,15 @@ export default function Question({
   }
 
   const renderContent = () => {
-    const words = currentStep.content.split(/(\n|\s+)/).filter(Boolean)
-
     return (
       <>
-        <Animated.View style={{ 
-          marginBottom: 24,
-          flexDirection: 'row',
-          flexWrap: 'wrap'
-        }}>
-          {words.map((word, index) => (
-            word === '\n' ? (
-              <View key={index} style={{ width: '100%', height: 0 }} />
-            ) : (
-              <Animated.Text
-                key={index}
-                style={[
-                  styles.questionText,
-                  { opacity: wordAnimations[index] || 0 }
-                ]}
-              >
-                {word}
-              </Animated.Text>
-            )
-          ))}
-        </Animated.View>
-        
-        {currentStep.audio_id && (
-          <AudioPlayer
-            sound={getAudio(currentStep.audio_id)}
-            shouldPlay={!isTransitioning && isLoaded(currentStep.audio_id)}
-          />
-        )}
+        <TextContent
+          currentStep={currentStep}
+          wordAnimations={wordAnimations}
+          isTransitioning={isTransitioning}
+          isLoaded={isLoaded}
+          getAudio={getAudio}
+        />
 
         {currentStep.rich_content && renderTable(currentStep.rich_content)}
         {renderOptions()}
@@ -292,7 +270,7 @@ export default function Question({
           {isAnswered && currentStep.explanation && (
             <View style={styles.explanationContainer}>
               <Text style={styles.explanationTitle}>
-                {isCorrect ? '🎉 Correct!' : '💡 Explanation'}
+                {isCorrect ? '🎉 Correct!' : '�� Explanation'}
               </Text>
               <Text style={styles.explanationText}>
                 {currentStep.explanation}

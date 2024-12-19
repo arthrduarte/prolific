@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text, SafeAreaView, Animated } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Exercise, Step } from '../types/database.types'
-import QuestionComponent from '../components/Question'
+import QuestionComponent from '../components/question/Question'
 import { LinearGradient } from 'expo-linear-gradient'
 
 export default function ExerciseScreen({ route, navigation }: { route: any, navigation: any }) {
