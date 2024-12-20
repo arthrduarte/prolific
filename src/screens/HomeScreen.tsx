@@ -24,10 +24,7 @@ export default function HomeScreen({navigation}: {navigation: any}) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="dark" />
-      <LinearGradient
-        colors={['#ffffff', '#fff', '#f1f3f5']}
-        style={styles.container}
-      >
+      
         <ScrollView 
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
@@ -74,7 +71,6 @@ export default function HomeScreen({navigation}: {navigation: any}) {
             ))}
           </View>
         </ScrollView>
-      </LinearGradient>
     </SafeAreaView>
   )
 }

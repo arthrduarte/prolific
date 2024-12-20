@@ -65,10 +65,6 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <LinearGradient
-        colors={['#ffffff', '#fff', '#f1f3f5']}
-        style={styles.container}
-      >
         <View style={[
           styles.header,
           { paddingBottom: currentStepIndex === 0 ? 24 : 16 }
@@ -107,7 +103,6 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
             onStepComplete={handleStepComplete}
           />
         </View>
-      </LinearGradient>
     </SafeAreaView>
   )
 }
