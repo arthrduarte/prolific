@@ -5,14 +5,14 @@ import { Session } from '@supabase/supabase-js';
 import HomeScreen from '../screens/HomeScreen';
 import CourseScreen from '../screens/CourseScreen';
 import ExerciseScreen from '../screens/ExerciseScreen';
-import Account from './Account';
+import Account from './Settings';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function AccountScreen({ route }: any) {
+function SettingsScreen({ route }: any) {
   const { session } = route.params;
   return <Account session={session} />;
 }
@@ -75,12 +75,12 @@ export function TabNavigator({ session }: { session: Session }) {
           }}
         />
         <Tab.Screen
-          name="Account"
-          component={AccountScreen}
+          name="Settings"
+          component={SettingsScreen}
           initialParams={{ session }}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <FontAwesome name="user-circle" size={size} color={color} />
+              <FontAwesome name="gear" size={size} color={color} />
             ),
           }}
         />
