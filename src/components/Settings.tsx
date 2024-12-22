@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { StyleSheet, View, Alert, ScrollView } from 'react-native'
 import { Button } from '@rneui/themed'
 import { Session } from '@supabase/supabase-js'
 import { Text, Switch, View as UIView } from 'react-native-ui-lib'
+import { usePreferences } from '../contexts/PreferencesContext'
 
 interface SettingsProps {
   session: Session
@@ -11,7 +12,7 @@ interface SettingsProps {
 
 export default function Settings({ session }: SettingsProps) {
   const [loading, setLoading] = useState(false)
-  const [voiceMode, setVoiceMode] = useState(true)
+  const { voiceMode, setVoiceMode } = usePreferences()
   const [notifications, setNotifications] = useState(true)
   const [darkMode, setDarkMode] = useState(false)
 
