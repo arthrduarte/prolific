@@ -8,6 +8,7 @@ import { Input } from './options/Input'
 import { MultipleChoice } from './options/MultipleChoice'
 import { TrueFalse } from './options/TrueFalse'
 import { Explanation } from './Explanation'
+import { usePreferences } from '../../contexts/PreferencesContext'
 
 interface QuestionProps {
   exercise: Exercise
@@ -22,6 +23,7 @@ export default function Question({
   currentStepIndex,
   onStepComplete 
 }: QuestionProps) {
+  const { voiceMode } = usePreferences()
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [inputAnswer, setInputAnswer] = useState('')
   const [isAnswered, setIsAnswered] = useState(false)
@@ -34,9 +36,9 @@ export default function Question({
   const nextStep = currentStepIndex < steps.length - 1 ? steps[currentStepIndex + 1] : null
 
   const { getAudio, isLoaded } = useAudioPreloader(
-    currentStep?.audio_id || null,
-    previousStep?.audio_id || null,
-    nextStep?.audio_id || null
+    voiceMode ? currentStep?.audio_id || null : null,
+    voiceMode ? previousStep?.audio_id || null : null,
+    voiceMode ? nextStep?.audio_id || null : null
   )
 
   // New Animated.Values for rich content and options

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Audio as ExpoAudio } from 'expo-av';
+import { usePreferences } from '../contexts/PreferencesContext';
 
 interface AudioPlayerProps {
   sound: ExpoAudio.Sound | null;
@@ -12,8 +13,10 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   onComplete,
   shouldPlay = false
 }) => {
+  const { voiceMode } = usePreferences();
+
   useEffect(() => {
-    if (sound && shouldPlay) {
+    if (sound && shouldPlay && voiceMode) {
       const playAudio = async () => {
         try {
           await sound.setPositionAsync(0);
@@ -37,7 +40,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         sound.stopAsync();
       }
     };
-  }, [sound, shouldPlay]);
+  }, [sound, shouldPlay, voiceMode]);
 
   return null;
 }; 
