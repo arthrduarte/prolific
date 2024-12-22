@@ -4,19 +4,23 @@ import { supabase } from '../lib/supabase';
 import { Course, Exercise } from '../types/database.types';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CoursePath } from '../components/CoursePath';
-import { FontAwesome } from '@expo/vector-icons';
 import { ExerciseCard } from '../components/ExerciseCard';
 
 type NavigationProp = NativeStackNavigationProp<{
   Exercise: { exerciseId: string; courseId: string };
 }>;
 
+type GroupedExercises = {
+  [key: string]: Exercise[];
+};
+
+const DIFFICULTY_ORDER = ['EASY', 'MEDIUM', 'HARD'];
+
 export default function CourseScreen({ route }: { route: any }) {
   const { courseId } = route.params;
   const navigation = useNavigation<NavigationProp>();
   const [course, setCourse] = useState<Course | null>(null);
-  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [groupedExercises, setGroupedExercises] = useState<GroupedExercises>({});
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -36,10 +40,22 @@ export default function CourseScreen({ route }: { route: any }) {
       const { data, error } = await supabase
         .from('exercises')
         .select('*')
-        .eq('course_id', courseId);
+        .eq('course_id', courseId)
+        .order('difficulty', { ascending: true })
+        .order('order', { ascending: true });
 
       if (!error && data) {
-        setExercises(data as Exercise[]);
+        // Group exercises by difficulty
+        const grouped = (data as Exercise[]).reduce((acc: GroupedExercises, exercise) => {
+          const difficulty = exercise.difficulty.toUpperCase();
+          if (!acc[difficulty]) {
+            acc[difficulty] = [];
+          }
+          acc[difficulty].push(exercise);
+          return acc;
+        }, {});
+
+        setGroupedExercises(grouped);
         // Placeholder progress calculation - you might want to implement actual progress tracking
         setProgress(0.3); // 30% progress for demonstration
       }
@@ -67,7 +83,9 @@ export default function CourseScreen({ route }: { route: any }) {
         <View style={styles.content}>
           <Text style={styles.title}>{course.title}</Text>
           <View style={styles.metaContainer}>
-            <Text style={styles.metaText}>{exercises.length} exercises</Text>
+            <Text style={styles.metaText}>
+              {Object.values(groupedExercises).reduce((total, exercises) => total + exercises.length, 0)} exercises
+            </Text>
             <View style={styles.progressContainer}>
               <View style={styles.progressBar}>
                 <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
@@ -84,15 +102,25 @@ export default function CourseScreen({ route }: { route: any }) {
           <View style={styles.exercisesSection}>
             <Text style={styles.sectionTitle}>Course Content</Text>
             <View style={styles.exercisesContainer}>
-              {exercises.map((exercise, index) => (
-                <ExerciseCard
-                  key={exercise.id}
-                  exercise={exercise}
-                  index={index}
-                  isActive={index === 0}
-                  onPress={handleExercisePress}
-                />
-              ))}
+              {DIFFICULTY_ORDER.map((difficulty) => {
+                const exercises = groupedExercises[difficulty];
+                if (!exercises?.length) return null;
+                
+                return (
+                  <View key={difficulty} style={styles.difficultySection}>
+                    <Text style={styles.difficultyTitle}>{difficulty}:</Text>
+                    {exercises.map((exercise, index) => (
+                      <ExerciseCard
+                        key={exercise.id}
+                        exercise={exercise}
+                        index={index}
+                        isActive={index === 0}
+                        onPress={handleExercisePress}
+                      />
+                    ))}
+                  </View>
+                );
+              })}
             </View>
           </View>
         </View>
@@ -179,5 +207,16 @@ const styles = StyleSheet.create({
   },
   exercisesContainer: {
     flex: 1,
+  },
+  difficultySection: {
+    marginBottom: 24,
+  },
+  difficultyTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#000',
+    opacity: 0.3,
+    marginBottom: 12,
+    textTransform: 'capitalize',
   },
 });

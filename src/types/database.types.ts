@@ -17,6 +17,8 @@ export interface Exercise {
     course_id: string
     title: string
     description: string
+    difficulty: string
+    order: number
 }
 
 export interface Step {
