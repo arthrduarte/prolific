@@ -111,9 +111,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  container: {
-    flex: 1,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -147,11 +144,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: '#2196f3',
     borderRadius: 2,
-  },
-  progressText: {
-    fontSize: 14,
-    color: '#868e96',
-    fontWeight: '600',
   },
   title: {
     fontSize: 24,

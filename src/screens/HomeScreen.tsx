@@ -1,11 +1,9 @@
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, ScrollView, SafeAreaView, Dimensions } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, SafeAreaView } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Topic } from '../types/database.types'
 import { TopicComponent } from '../components/Topic'
-
-const { width } = Dimensions.get('window')
 
 export default function HomeScreen({navigation}: {navigation: any}) {
   const [topics, setTopics] = useState<Topic[]>([])
@@ -78,9 +76,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  container: {
-    flex: 1,
   },
   header: {
     paddingHorizontal: 24,

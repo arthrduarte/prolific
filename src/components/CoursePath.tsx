@@ -33,12 +33,4 @@ const styles = StyleSheet.create({
     position: 'relative',
     paddingLeft: 20,
   },
-  verticalLine: {
-    position: 'absolute',
-    left: 29,
-    top: 0,
-    bottom: 0,
-    width: 2,
-    backgroundColor: '#e9ecef',
-  },
 });
