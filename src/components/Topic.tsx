@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { Topic, Course } from '../types/database.types';
 import { CourseCard } from './CourseCard';
 import { supabase } from '../lib/supabase';
