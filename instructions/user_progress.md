@@ -22,7 +22,7 @@ completion detection
 for an exercise to be considered “complete,” the user must have gone through all steps in that exercise.
 each step can be “completed” only if the user’s response is correct or if the user explicitly taps “finish” on non-quiz steps (e.g., video or explanation).
 consider partial completions: if the user abandons halfway, we store partial data but do not mark that exercise as complete.
-a final pass is triggered once the user successfully completes the last step, at which point we update user_progress.score_percentage (or we do a final recalculation if needed) and set that exercise to complete.
+a final pass is triggered once the user successfully completes the last step, at which point we update user_progress.progress_percentage (or we do a final recalculation if needed) and set that exercise to complete.
 
 edge cases
 

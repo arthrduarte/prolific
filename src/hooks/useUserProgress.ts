@@ -58,7 +58,7 @@ export function useUserProgress(courseId: string): UseUserProgressReturn {
             id: crypto.randomUUID(),
             user_id: user.id,
             exercise_id: firstExercise.id,
-            score_percentage: 0,
+            progress_percentage: 0,
             is_unlocked: true
           }
 
@@ -94,7 +94,7 @@ export function useUserProgress(courseId: string): UseUserProgressReturn {
     if (!previousExercise) return false
 
     const previousProgress = userProgress[previousExercise.id]
-    return previousProgress?.score_percentage >= 100
+    return previousProgress?.progress_percentage >= 100
   }
 
   const updateProgress = async (exerciseId: string, scorePercentage: number) => {
@@ -110,7 +110,7 @@ export function useUserProgress(courseId: string): UseUserProgressReturn {
         id: userProgress[exerciseId]?.id || crypto.randomUUID(),
         user_id: user.id,
         exercise_id: exerciseId,
-        score_percentage: scorePercentage,
+        progress_percentage: scorePercentage,
         is_unlocked: true
       }
 
@@ -128,7 +128,7 @@ export function useUserProgress(courseId: string): UseUserProgressReturn {
             id: userProgress[nextExercise.id]?.id || crypto.randomUUID(),
             user_id: user.id,
             exercise_id: nextExercise.id,
-            score_percentage: 0,
+            progress_percentage: 0,
             is_unlocked: true
           }
 

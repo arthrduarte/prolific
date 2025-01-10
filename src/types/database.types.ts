@@ -43,6 +43,6 @@ export interface User_Progress {
     id: string
     user_id: string
     exercise_id: string
-    score_percentage: number
+    progress_percentage: number
     is_unlocked: boolean
 }
