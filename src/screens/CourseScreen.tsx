@@ -5,6 +5,7 @@ import { Course, Exercise } from '../types/database.types';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ExerciseCard } from '../components/ExerciseCard';
+import { useUserProgress } from '../hooks/useUserProgress';
 
 type NavigationProp = NativeStackNavigationProp<{
   Exercise: { exerciseId: string; courseId: string };
@@ -22,6 +23,12 @@ export default function CourseScreen({ route }: { route: any }) {
   const [course, setCourse] = useState<Course | null>(null);
   const [groupedExercises, setGroupedExercises] = useState<GroupedExercises>({});
   const [progress, setProgress] = useState(0);
+
+  const { 
+    loading: progressLoading,
+    userProgress,
+    isExerciseUnlocked
+  } = useUserProgress(courseId);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -114,7 +121,7 @@ export default function CourseScreen({ route }: { route: any }) {
                         key={exercise.id}
                         exercise={exercise}
                         index={index}
-                        isActive={index === 0}
+                        isActive={isExerciseUnlocked(exercise)}
                         onPress={handleExercisePress}
                       />
                     ))}
