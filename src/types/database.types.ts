@@ -17,6 +17,8 @@ export interface Exercise {
     course_id: string
     title: string
     description: string
+    difficulty: string
+    order: number
 }
 
 export interface Step {
@@ -29,12 +31,18 @@ export interface Step {
     explanation: string
     order: number
     rich_content: JSON
+    audio_id: string
+}
+
+export interface Audio {
+    id: string
+    file_url: string
 }
 
 export interface User_Progress {
     id: string
     user_id: string
     exercise_id: string
-    score_percentage: number
+    progress_percentage: number
     is_unlocked: boolean
 }

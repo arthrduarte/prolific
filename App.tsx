@@ -1,14 +1,12 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './src/screens/HomeScreen';
 import { useState, useEffect } from 'react';
 import { supabase } from './src/lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import Auth from './src/components/Auth';
-import CourseScreen from './src/screens/CourseScreen';
-import ExerciseScreen from './src/screens/ExerciseScreen';
-
-const Stack = createNativeStackNavigator();
+import { TabNavigator } from './src/components/Navbar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { PreferencesProvider } from './src/contexts/PreferencesContext';
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -24,29 +22,18 @@ export default function App() {
   }, [])
 
   return (
-    <NavigationContainer>
-      {session && session.user ? (
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen 
-            name="Home" 
-            component={HomeScreen} 
-            options={{ title: 'Home' }}
-          />
-          <Stack.Screen 
-            name="Course" 
-            component={CourseScreen} 
-            options={{ title: 'Course' }}
-          />
-          <Stack.Screen 
-            name="Exercise" 
-            component={ExerciseScreen} 
-            options={{ title: 'Exercise' }}
-          />
-        </Stack.Navigator>
-      ) : (
-        <Auth />
-      )}
-    </NavigationContainer>
+    <PreferencesProvider>
+      <SafeAreaProvider>
+        <StatusBar style="dark" />
+        <NavigationContainer>
+          {session && session.user ? (
+            <TabNavigator session={session} />
+          ) : (
+            <Auth />
+          )}
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </PreferencesProvider>
   );
 }
 
