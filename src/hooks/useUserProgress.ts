@@ -80,8 +80,10 @@ export function useUserProgress(courseId: string): UseUserProgressReturn {
   }, [courseId])
 
   const isExerciseUnlocked = (exercise: Exercise): boolean => {
-    // First exercise is always unlocked
-    if (exercise.order === 1) return true
+      // First exercise is always unlocked
+      if (exercise.order === 1){
+        return true
+    } 
 
     // Check if this exercise has a progress entry and is marked as unlocked
     const progress = userProgress[exercise.id]

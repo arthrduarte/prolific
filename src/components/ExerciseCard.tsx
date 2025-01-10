@@ -20,22 +20,30 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
 }) => {
   return (
     <TouchableOpacity
-      style={styles.exerciseContainer}
+      style={[
+        styles.exerciseContainer,
+        !isActive && styles.lockedContainer
+      ]}
       onPress={() => onPress(exercise)}
       activeOpacity={0.7}
     >
-      {/* Exercise card */}
       <View style={[
         styles.card,
-        isActive && styles.activeCard
+        isActive && styles.activeCard,
+        !isActive && styles.lockedCard
       ]}>
         <View style={styles.cardContent}>
           <View style={styles.emojiContainer}>
-            <Text style={styles.emoji}>{topicEmoji}</Text>
+            <Text style={styles.emoji}>
+              {isActive ? topicEmoji : '🔒'}
+            </Text>
           </View>
           
           <View style={styles.textContainer}>
-            <Text style={styles.title} numberOfLines={5}>
+            <Text style={[
+              styles.title,
+              !isActive && styles.lockedText
+            ]} numberOfLines={5}>
               {exercise.title}
             </Text>
           </View>
@@ -43,7 +51,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
           <FontAwesome 
             name="chevron-right" 
             size={16} 
-            color="#adb5bd"
+            color={isActive ? "#adb5bd" : "#dee2e6"}
             style={styles.chevron}
           />
         </View>
@@ -98,5 +106,14 @@ const styles = StyleSheet.create({
   },
   chevron: {
     marginLeft: 'auto',
+  },
+  lockedContainer: {
+    opacity: 0.7,
+  },
+  lockedCard: {
+    backgroundColor: '#f8f9fa',
+  },
+  lockedText: {
+    color: '#adb5bd',
   },
 }); 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Alert } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Course, Exercise } from '../types/database.types';
 import { useNavigation } from '@react-navigation/native';
@@ -73,6 +73,16 @@ export default function CourseScreen({ route }: { route: any }) {
   }, [courseId]);
 
   const handleExercisePress = (exercise: Exercise) => {
+    if (!isExerciseUnlocked(exercise)) {
+      // You can show an alert, toast, or custom modal here
+      Alert.alert(
+        "Exercise Locked",
+        "Complete the previous exercise to unlock this one.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
     navigation.navigate('Exercise', { 
       exerciseId: exercise.id,
       courseId: courseId
