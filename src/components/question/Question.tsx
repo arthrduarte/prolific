@@ -9,6 +9,7 @@ import { MultipleChoice } from './options/MultipleChoice'
 import { TrueFalse } from './options/TrueFalse'
 import { Explanation } from './Explanation'
 import { usePreferences } from '../../contexts/PreferencesContext'
+import { useNavigation } from '@react-navigation/native'
 
 interface QuestionProps {
   exercise: Exercise
@@ -30,6 +31,7 @@ export default function Question({
   const [isCorrect, setIsCorrect] = useState(false)
   const fadeAnim = useState(new Animated.Value(1))[0]
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const navigation = useNavigation()
 
   const currentStep = steps[currentStepIndex]
   const previousStep = currentStepIndex > 0 ? steps[currentStepIndex - 1] : null
@@ -122,8 +124,17 @@ export default function Question({
   }
 
   const handleNext = () => {
-    onStepComplete()
-  }
+    // Check if this is the last step
+    const isLastStep = currentStepIndex === steps.length - 1;
+    
+    if (isLastStep) {
+      // Navigate back to course screen
+      navigation.goBack();
+    } else {
+      // Continue to next step
+      onStepComplete();
+    }
+  };
 
   const renderTable = (richContent: any) => {
     if (!richContent?.table) return null
