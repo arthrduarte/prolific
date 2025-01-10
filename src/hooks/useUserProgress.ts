@@ -88,22 +88,19 @@ export function useUserProgress(courseId: string): UseUserProgressReturn {
   }, [courseId])
 
   const isExerciseUnlocked = (exercise: Exercise): boolean => {
-      // First exercise is always unlocked
-      if (exercise.order === 1){
-        return true
-    } 
+    // First exercise is always unlocked
+    if (exercise.order === 1) {
+      return true;
+    }
 
     // Check if this exercise has a progress entry and is marked as unlocked
-    const progress = userProgress[exercise.id]
-    if (progress?.is_unlocked) return true
+    const progress = userProgress[exercise.id];
+    if (progress?.is_unlocked) {
+      return true;
+    }
 
-    // Otherwise, check if previous exercise is completed
-    const previousExercise = exercises.find(ex => ex.order === exercise.order - 1)
-    if (!previousExercise) return false
-
-    const previousProgress = userProgress[previousExercise.id]
-    return previousProgress?.progress_percentage >= 100
-  }
+    return false; // If none of the above conditions are met, exercise is locked
+  };
 
   const updateProgress = async (exerciseId: string, scorePercentage: number) => {
     try {
