@@ -53,44 +53,65 @@ export default function Question({
   const [wordAnimations, setWordAnimations] = useState<(Animated.Value | null)[]>([])
 
   useEffect(() => {
-    // Initialize word animations based on the number of words and line breaks
-    const words = currentStep.content.split(/(\n|\s+)/).filter(Boolean)
-    const animations = words.map(word => word === '\n' ? null : new Animated.Value(0))
-    setWordAnimations(animations)
-
-    // Reset animation values
-    setSelectedOption(null)
-    setInputAnswer('')
-    setIsAnswered(false)
-    setIsCorrect(false)
-    richContentAnim.setValue(0)
-    optionsAnim.setValue(0)
+    setIsTransitioning(true)
     
-    // Animate words sequentially, skipping line breaks
-    Animated.stagger(150, animations.map(anim => 
-      anim 
-        ? Animated.timing(anim, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-          })
-        : Animated.delay(350)
-    )).start(() => {
-      // Animate rich content after text
-      Animated.timing(richContentAnim, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }).start(() => {
-        // Animate options after rich content
-        Animated.timing(optionsAnim, {
+    // Fade out existing content first
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      // After fade out, reset all states and values
+      setSelectedOption(null)
+      setInputAnswer('')
+      setIsAnswered(false)
+      setIsCorrect(false)
+      richContentAnim.setValue(0)
+      optionsAnim.setValue(0)
+      
+      // Initialize word animations after content is cleared
+      const words = currentStep.content.split(/(\n|\s+)/).filter(Boolean)
+      const animations = words.map(word => word === '\n' ? null : new Animated.Value(0))
+      setWordAnimations(animations)
+
+      // Short delay before starting fade in
+      setTimeout(() => {
+        // Fade in the container
+        Animated.timing(fadeAnim, {
           toValue: 1,
-          duration: 500,
+          duration: 200,
           useNativeDriver: true,
-        }).start()
-      })
+        }).start(() => {
+          // Start word animations after container fade in
+          Animated.stagger(150, animations.map(anim => 
+            anim 
+              ? Animated.timing(anim, {
+                  toValue: 1,
+                  duration: 300,
+                  useNativeDriver: true,
+                })
+              : Animated.delay(350)
+          )).start(() => {
+            // Animate rich content after text
+            Animated.timing(richContentAnim, {
+              toValue: 1,
+              duration: 500,
+              useNativeDriver: true,
+            }).start(() => {
+              // Animate options after rich content
+              Animated.timing(optionsAnim, {
+                toValue: 1,
+                duration: 500,
+                useNativeDriver: true,
+              }).start(() => {
+                setIsTransitioning(false)
+              })
+            })
+          })
+        })
+      }, 100)
     })
-  }, [currentStepIndex, currentStep.content, richContentAnim, optionsAnim])
+  }, [currentStepIndex, currentStep.content])
 
   // Handle transitions
   useEffect(() => {
@@ -247,7 +268,9 @@ export default function Question({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
       >
-        {renderContent()}
+        <Animated.View style={{ opacity: fadeAnim }}>
+          {renderContent()}
+        </Animated.View>
         
         {currentStep.type !== 'content' && !isAnswered && (
           <TouchableOpacity
