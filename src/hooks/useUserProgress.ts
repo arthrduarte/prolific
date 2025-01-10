@@ -10,6 +10,14 @@ interface UseUserProgressReturn {
   updateProgress: (exerciseId: string, scorePercentage: number) => Promise<void>
 }
 
+const generateUUID = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 export function useUserProgress(courseId: string): UseUserProgressReturn {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
@@ -55,7 +63,7 @@ export function useUserProgress(courseId: string): UseUserProgressReturn {
         if (exercisesData.length > 0 && !progressMap[exercisesData[0].id]) {
           const firstExercise = exercisesData[0]
           progressMap[firstExercise.id] = {
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             user_id: user.id,
             exercise_id: firstExercise.id,
             progress_percentage: 0,
@@ -107,7 +115,7 @@ export function useUserProgress(courseId: string): UseUserProgressReturn {
 
       // Update current exercise progress
       const progressUpdate: User_Progress = {
-        id: userProgress[exerciseId]?.id || crypto.randomUUID(),
+        id: userProgress[exerciseId]?.id || generateUUID(),
         user_id: user.id,
         exercise_id: exerciseId,
         progress_percentage: scorePercentage,
@@ -125,7 +133,7 @@ export function useUserProgress(courseId: string): UseUserProgressReturn {
         const nextExercise = exercises.find(ex => ex.order === exercise.order + 1)
         if (nextExercise) {
           const nextProgressUpdate: User_Progress = {
-            id: userProgress[nextExercise.id]?.id || crypto.randomUUID(),
+            id: userProgress[nextExercise.id]?.id || generateUUID(),
             user_id: user.id,
             exercise_id: nextExercise.id,
             progress_percentage: 0,
