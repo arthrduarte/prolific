@@ -16,13 +16,15 @@ interface QuestionProps {
   steps: Step[]
   currentStepIndex: number
   onStepComplete: () => void
+  onExerciseComplete: () => Promise<void>
 }
 
 export default function Question({ 
   exercise, 
   steps, 
   currentStepIndex,
-  onStepComplete 
+  onStepComplete,
+  onExerciseComplete 
 }: QuestionProps) {
   const { voiceMode } = usePreferences()
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -123,15 +125,13 @@ export default function Question({
     setIsAnswered(true)
   }
 
-  const handleNext = () => {
-    // Check if this is the last step
+  const handleNext = async () => {
     const isLastStep = currentStepIndex === steps.length - 1;
     
     if (isLastStep) {
-      // Navigate back to course screen
+      await onExerciseComplete();
       navigation.goBack();
     } else {
-      // Continue to next step
       onStepComplete();
     }
   };

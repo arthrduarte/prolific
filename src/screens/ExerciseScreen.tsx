@@ -3,9 +3,11 @@ import { View, StyleSheet, Text, SafeAreaView, Animated } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Exercise, Step } from '../types/database.types'
 import QuestionComponent from '../components/question/Question'
+import { useUserProgress } from '../hooks/useUserProgress'
 
 export default function ExerciseScreen({ route, navigation }: { route: any, navigation: any }) {
-  const { exerciseId } = route.params
+  const { exerciseId, courseId } = route.params
+  const { updateProgress } = useUserProgress(courseId)
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [steps, setSteps] = useState<Step[]>([])
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
@@ -62,6 +64,14 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
     }
   }
 
+  const handleExerciseComplete = async () => {
+    try {
+      await updateProgress(exerciseId, 100)
+    } catch (error) {
+      console.error('Failed to update progress:', error)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
         <View style={[
@@ -100,6 +110,7 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
             steps={steps}
             currentStepIndex={currentStepIndex}
             onStepComplete={handleStepComplete}
+            onExerciseComplete={handleExerciseComplete}
           />
         </View>
     </SafeAreaView>
