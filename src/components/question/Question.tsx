@@ -10,6 +10,7 @@ import { TrueFalse } from './options/TrueFalse'
 import { Explanation } from './Explanation'
 import { usePreferences } from '../../contexts/PreferencesContext'
 import { useNavigation } from '@react-navigation/native'
+import { Complete } from './Complete'
 
 interface QuestionProps {
   exercise: Exercise
@@ -34,6 +35,7 @@ export default function Question({
   const fadeAnim = useState(new Animated.Value(1))[0]
   const [isTransitioning, setIsTransitioning] = useState(false)
   const navigation = useNavigation()
+  const [showComplete, setShowComplete] = useState(false)
 
   const currentStep = steps[currentStepIndex]
   const previousStep = currentStepIndex > 0 ? steps[currentStepIndex - 1] : null
@@ -130,7 +132,7 @@ export default function Question({
     
     if (isLastStep) {
       await onExerciseComplete();
-      navigation.goBack();
+      setShowComplete(true);
     } else {
       onStepComplete();
     }
@@ -239,54 +241,58 @@ export default function Question({
   }
 
   return (
-    <ScrollView 
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.contentContainer}
-    >
-      {renderContent()}
-      
-      {currentStep.type !== 'content' && !isAnswered && (
-        <TouchableOpacity
-          style={[
-            styles.button,
-            (!selectedOption && currentStep.type !== 'input') ||
-            (currentStep.type === 'input' && !inputAnswer)
-              ? styles.buttonDisabled
-              : styles.buttonEnabled,
-          ]}
-          onPress={handleSubmit}
-          disabled={
-            (!selectedOption && currentStep.type !== 'input') ||
-            (currentStep.type === 'input' && !inputAnswer)
-          }
-        >
-          <Text style={styles.buttonText}>Check Answer</Text>
-        </TouchableOpacity>
-      )}
+    <>
+      <ScrollView 
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contentContainer}
+      >
+        {renderContent()}
+        
+        {currentStep.type !== 'content' && !isAnswered && (
+          <TouchableOpacity
+            style={[
+              styles.button,
+              (!selectedOption && currentStep.type !== 'input') ||
+              (currentStep.type === 'input' && !inputAnswer)
+                ? styles.buttonDisabled
+                : styles.buttonEnabled,
+            ]}
+            onPress={handleSubmit}
+            disabled={
+              (!selectedOption && currentStep.type !== 'input') ||
+              (currentStep.type === 'input' && !inputAnswer)
+            }
+          >
+            <Text style={styles.buttonText}>Check Answer</Text>
+          </TouchableOpacity>
+        )}
 
-      {(isAnswered || currentStep.type === 'content') && (
-        <>
-          {isAnswered && currentStep.explanation && (
-            <Explanation
-              isCorrect={isCorrect}
-              explanation={currentStep.explanation}
-              onContinue={handleNext}
-            />
-          )}
-          {currentStep.type === 'content' && (
-            <TouchableOpacity
-              style={[styles.button, styles.buttonEnabled]}
-              onPress={handleNext}
-            >
-              <Text style={styles.buttonText}>
-                Continue
-              </Text>
-            </TouchableOpacity>
-          )}
-        </>
-      )}
-    </ScrollView>
+        {(isAnswered || currentStep.type === 'content') && (
+          <>
+            {isAnswered && currentStep.explanation && (
+              <Explanation
+                isCorrect={isCorrect}
+                explanation={currentStep.explanation}
+                onContinue={handleNext}
+              />
+            )}
+            {currentStep.type === 'content' && (
+              <TouchableOpacity
+                style={[styles.button, styles.buttonEnabled]}
+                onPress={handleNext}
+              >
+                <Text style={styles.buttonText}>
+                  Continue
+                </Text>
+              </TouchableOpacity>
+            )}
+          </>
+        )}
+      </ScrollView>
+
+      <Complete visible={showComplete} courseId={exercise.course_id} />
+    </>
   )
 }
 
