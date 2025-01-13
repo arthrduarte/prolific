@@ -261,6 +261,13 @@ export default function Question({
     )
   }
 
+  const handleExplanationDismiss = () => {
+    setIsAnswered(false)
+    setSelectedOption(null)
+    setInputAnswer('')
+    setIsCorrect(false)
+  }
+
   return (
     <>
       <ScrollView 
@@ -298,6 +305,7 @@ export default function Question({
                 isCorrect={isCorrect}
                 explanation={currentStep.explanation}
                 onContinue={handleNext}
+                onDismiss={handleExplanationDismiss}
               />
             )}
             {currentStep.type === 'content' && (

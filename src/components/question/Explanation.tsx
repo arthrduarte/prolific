@@ -8,15 +8,22 @@ interface ExplanationProps {
   isCorrect: boolean
   explanation: string
   onContinue: () => void
+  onDismiss: () => void
 }
 
 export const Explanation: React.FC<ExplanationProps> = ({
   isCorrect,
   explanation,
   onContinue,
+  onDismiss,
 }) => {
   const [showExplanation, setShowExplanation] = useState(false)
   const [showResult, setShowResult] = useState(true)
+
+  const handleDismiss = () => {
+    setShowResult(false)
+    onDismiss()
+  }
 
   return (
     <>
@@ -28,7 +35,7 @@ export const Explanation: React.FC<ExplanationProps> = ({
           styles.resultDialog,
           isCorrect ? styles.correctBackground : styles.incorrectBackground
         ]}
-        onDismiss={() => setShowResult(false)}
+        onDismiss={handleDismiss}
       >
         <View style={styles.resultContent}>
           <Text text50 white style={styles.resultText}>
