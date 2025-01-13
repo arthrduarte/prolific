@@ -16,18 +16,19 @@ export const Explanation: React.FC<ExplanationProps> = ({
   onContinue,
 }) => {
   const [showExplanation, setShowExplanation] = useState(false)
+  const [showResult, setShowResult] = useState(true)
 
   return (
     <>
       <Dialog
-        visible={true}
+        visible={showResult}
         bottom
         width="100%"
         containerStyle={[
           styles.resultDialog,
           isCorrect ? styles.correctBackground : styles.incorrectBackground
         ]}
-        ignoreBackgroundPress
+        onDismiss={() => setShowResult(false)}
       >
         <View style={styles.resultContent}>
           <Text text50 white style={styles.resultText}>
