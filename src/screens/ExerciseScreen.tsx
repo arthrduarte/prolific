@@ -5,6 +5,7 @@ import { Exercise, Step } from '../types/database.types'
 import QuestionComponent from '../components/question/Question'
 import { useUserProgress } from '../hooks/useUserProgress'
 import { FontAwesome } from '@expo/vector-icons'
+import UnderConstruction from '../components/UnderConstruction'
 
 export default function ExerciseScreen({ route, navigation }: { route: any, navigation: any }) {
   const { exerciseId, courseId } = route.params
@@ -52,11 +53,7 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
   }, [currentStepIndex, steps.length])
 
   if (!exercise || !steps.length) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Loading exercise...</Text>
-      </View>
-    )
+    return <UnderConstruction />
   }
 
   const handleStepComplete = () => {
