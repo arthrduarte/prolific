@@ -1,11 +1,34 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, SafeAreaView } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import Login from './auth/Login'
 import Signup from './auth/SignUp'
+import Facebook from './auth/Facebook'
+import { supabase } from '../lib/supabase'
 
 export default function Auth() {
   const [showLogin, setShowLogin] = useState(true)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Check for an existing session
+    supabase.auth.getSession().then(({ data: { session }}) => {
+      setLoading(false)
+    })
+
+    // Listen for auth changes
+    const { data: { subscription }} = supabase.auth.onAuthStateChange((_event, session) => {
+      setLoading(false)
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
+
+  if (loading) {
+    return null // Or a loading spinner
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -19,6 +42,7 @@ export default function Auth() {
           ) : (
             <Signup onSwitchToLogin={() => setShowLogin(true)} />
           )}
+          <Facebook />
         </View>
       </LinearGradient>
     </SafeAreaView>
