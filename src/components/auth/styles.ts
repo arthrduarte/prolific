@@ -77,4 +77,20 @@ export const authStyles = StyleSheet.create({
     borderColor: '#dc3545',
     borderWidth: 1,
   },
+  orContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 15,
+    paddingHorizontal: 10,
+  },
+  orLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#dee2e6',
+  },
+  orText: {
+    marginHorizontal: 10,
+    color: '#868e96',
+    fontSize: 14,
+  },
 }) 

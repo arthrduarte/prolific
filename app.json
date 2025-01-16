@@ -7,19 +7,28 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "developmentClient": {
-      "fastRefresh": true
-    },
+    "icon": "./assets/icon.png",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "be.prolific"
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "be.prolific"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "75c952d9-5984-4e50-b674-dba4f60790be"
       }
-    }
+    },
+    "entryPoint": "./index.ts",
+    "scheme": "be.prolific"
   }
 }

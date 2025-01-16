@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, Text, SafeAreaView, Animated } from 'react-native'
+import { View, StyleSheet, Text, SafeAreaView, Animated, TouchableOpacity } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Exercise, Step } from '../types/database.types'
 import QuestionComponent from '../components/question/Question'
 import { useUserProgress } from '../hooks/useUserProgress'
+import { FontAwesome } from '@expo/vector-icons'
+import UnderConstruction from '../components/UnderConstruction'
 
 export default function ExerciseScreen({ route, navigation }: { route: any, navigation: any }) {
   const { exerciseId, courseId } = route.params
@@ -51,11 +53,7 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
   }, [currentStepIndex, steps.length])
 
   if (!exercise || !steps.length) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Loading exercise...</Text>
-      </View>
-    )
+    return <UnderConstruction />
   }
 
   const handleStepComplete = () => {
@@ -72,16 +70,32 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
     }
   }
 
+  const handleGoBack = () => {
+    if (currentStepIndex > 0) {
+      setCurrentStepIndex(currentStepIndex - 1)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
         <View style={[
           styles.header,
           { paddingBottom: currentStepIndex === 0 ? 24 : 16 }
         ]}>
+          
           <View style={[
             styles.progressContainer,
             { marginBottom: currentStepIndex === 0 ? 16 : 0 }
           ]}>
+            {currentStepIndex > 0 && (
+              <TouchableOpacity 
+                style={styles.backButton}
+                onPress={handleGoBack}
+                activeOpacity={0.7}
+              >
+                <FontAwesome name="chevron-left" size={16} color="#000" />
+              </TouchableOpacity>
+            )}
             <View style={[
               styles.progressBackground,
               { marginBottom: currentStepIndex === 0 ? 8 : 0 }
@@ -141,8 +155,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f1f3f5',
   },
   progressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   progressBackground: {
+    flex: 1,
     height: 4,
     backgroundColor: '#f1f3f5',
     borderRadius: 2,
@@ -164,5 +182,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  backButton: {
+    width: 16,
+    height: 32,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    justifyContent: 'center',
+    // alignItems: 'center',
   },
 });

@@ -8,26 +8,34 @@ interface ExplanationProps {
   isCorrect: boolean
   explanation: string
   onContinue: () => void
+  onDismiss: () => void
 }
 
 export const Explanation: React.FC<ExplanationProps> = ({
   isCorrect,
   explanation,
   onContinue,
+  onDismiss,
 }) => {
   const [showExplanation, setShowExplanation] = useState(false)
+  const [showResult, setShowResult] = useState(true)
+
+  const handleDismiss = () => {
+    setShowResult(false)
+    onDismiss()
+  }
 
   return (
     <>
       <Dialog
-        visible={true}
+        visible={showResult}
         bottom
         width="100%"
         containerStyle={[
           styles.resultDialog,
           isCorrect ? styles.correctBackground : styles.incorrectBackground
         ]}
-        ignoreBackgroundPress
+        onDismiss={handleDismiss}
       >
         <View style={styles.resultContent}>
           <Text text50 white style={styles.resultText}>
@@ -85,8 +93,8 @@ const styles = StyleSheet.create({
   resultDialog: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingTop: 32,
-    paddingBottom: 48, // Extra padding for bottom safe area
+    paddingTop: 24,
+    paddingBottom: 32,
     paddingHorizontal: 24,
   },
   correctBackground: {
@@ -96,35 +104,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#fa8490',
   },
   resultContent: {
-    alignItems: 'center',
+    width: '100%',
   },
   resultText: {
     marginBottom: 24,
     fontSize: 24,
     fontWeight: '700',
+    color: '#fff',
+    textAlign: 'center',
   },
   buttonContainer: {
-    flexDirection: 'row',
     width: '100%',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     gap: 12,
   },
   whyButton: {
-    width: width * 0.2,
     height: 48,
-    borderColor: '#000',
-    opacity: 1,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#fff',
   },
   whyButtonLabel: {
-    color: '#000',
-    opacity: 0.5,
+    color: '#fff',
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: '600',
   },
   continueButton: {
-    width: width * 0.7,
     height: 48,
+    borderRadius: 12,
   },
   continueButtonLabel: {
     fontSize: 16,
