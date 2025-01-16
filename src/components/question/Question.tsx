@@ -209,8 +209,8 @@ export default function Question({
 
         {currentStep.rich_content && (
           <RichContent 
-            content={currentStep.rich_content} 
-            animation={richContentAnim} 
+            richContent={currentStep.rich_content} 
+            richContentAnim={richContentAnim} 
           />
         )}
         {renderOptions()}
