@@ -3,6 +3,7 @@ import { Alert, View, Text, TouchableOpacity } from 'react-native'
 import { supabase } from '../../lib/supabase'
 import { Button, Input } from '@rneui/themed'
 import { authStyles as styles } from './styles'
+import FacebookAuth from './Facebook'
 
 interface SignupProps {
   onSwitchToLogin: () => void
@@ -110,6 +111,14 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
             titleStyle={styles.buttonText}
             disabledStyle={styles.buttonDisabled}
           />
+        </View>
+        <View style={styles.orContainer}>
+          <View style={styles.orLine} />
+          <Text style={styles.orText}>or</Text>
+          <View style={styles.orLine} />
+        </View>
+        <View style={styles.verticallySpaced}>
+          <FacebookAuth />
         </View>
         <TouchableOpacity onPress={onSwitchToLogin}>
           <Text style={styles.switchText}>Already have an account? Sign in</Text>

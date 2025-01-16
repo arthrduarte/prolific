@@ -3,7 +3,6 @@ import { StyleSheet, View, SafeAreaView } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import Login from './auth/Login'
 import Signup from './auth/SignUp'
-import Facebook from './auth/Facebook'
 import { supabase } from '../lib/supabase'
 
 export default function Auth() {
@@ -42,7 +41,6 @@ export default function Auth() {
           ) : (
             <Signup onSwitchToLogin={() => setShowLogin(true)} />
           )}
-          <Facebook />
         </View>
       </LinearGradient>
     </SafeAreaView>
