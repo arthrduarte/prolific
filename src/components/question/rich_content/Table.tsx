@@ -1,12 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
+import { RichContentProps } from './rich_content.type';
 
-interface TableProps {
-  richContent: any;
-  richContentAnim: Animated.Value;
-}
-
-export const Table = ({ richContent, richContentAnim }: TableProps) => {
+export const Table = ({ richContent, richContentAnim }: RichContentProps) => {
   if (!richContent?.table) return null;
   
   return (
