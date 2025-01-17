@@ -15,7 +15,7 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
   const [steps, setSteps] = useState<Step[]>([])
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
-  const progressWidth = new Animated.Value(0)
+  const [progressWidth] = useState(() => new Animated.Value(0))
 
   useEffect(() => {
     const fetchExercise = async () => {
@@ -62,7 +62,7 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
         mass: 0.5,
       }).start()
     }
-  }, [currentStepIndex, steps.length])
+  }, [currentStepIndex, steps.length, progressWidth])
 
   if (isLoading) {
     return <SkeletonLoading />
