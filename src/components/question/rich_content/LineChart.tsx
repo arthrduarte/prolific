@@ -1,5 +1,5 @@
 import { View, useWindowDimensions } from "react-native";
-import { LineChart as RNLineChart } from "react-native-chart-kit";
+import { LineChart as GiftedLineChart } from "react-native-gifted-charts";
 import { RichContentProps } from "./rich_content.type";
 
 interface DataPoint extends Record<string, unknown> {
@@ -14,38 +14,32 @@ export function LineChart({ richContent }: RichContentProps) {
   
   const data = richContent.data as DataPoint[];
   
-  const chartData = {
-    labels: data.map(point => point.x),
-    datasets: [
-      {
-        data: data.map(point => point.y),
-        color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`, // red color
-        strokeWidth: 3,
-      },
-    ],
-  };
+  const chartData = data.map(point => ({
+    label: point.x,
+    value: point.y,
+  }));
 
   return (
-    <View style={{ marginVertical: 10 }}>
-      <RNLineChart
+    <View style={{ 
+      marginVertical: 10,
+      backgroundColor: '#ffffff',
+      borderRadius: 16,
+      padding: 16,
+    }}>
+      <GiftedLineChart
         data={chartData}
-        width={windowWidth - 16} // -16 for some padding
+        width={windowWidth - 48} // accounting for padding
         height={220}
-        chartConfig={{
-          backgroundColor: "#ffffff",
-          backgroundGradientFrom: "#ffffff",
-          backgroundGradientTo: "#ffffff",
-          decimalPlaces: 0,
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          style: {
-            borderRadius: 16,
-          },
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-        }}
+        spacing={40}
+        initialSpacing={20}
+        color="#FF0000"
+        thickness={3}
+        maxValue={Math.max(...data.map(point => point.y)) * 1.2}
+        noOfSections={5}
+        yAxisTextStyle={{ color: '#000' }}
+        xAxisLabelTextStyle={{ color: '#000' }}
+        hideDataPoints
+        curved
       />
     </View>
   );
