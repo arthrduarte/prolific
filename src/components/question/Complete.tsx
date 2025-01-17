@@ -3,6 +3,8 @@ import { StyleSheet, View, Animated, Dimensions } from 'react-native';
 import { Dialog, Text, Button } from 'react-native-ui-lib';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
+import { Audio } from 'expo-av';
+import { usePreferences } from '../../contexts/PreferencesContext';
 
 interface CompleteProps {
   visible: boolean;
@@ -21,6 +23,34 @@ export const Complete: React.FC<CompleteProps> = ({ visible, courseId }) => {
   const navigation = useNavigation<NavigationProps>();
   const [fireworks] = React.useState(new Animated.Value(0));
   const [progress] = React.useState(new Animated.Value(0));
+  const [sound, setSound] = React.useState<Audio.Sound | null>(null);
+  const { voiceMode } = usePreferences();
+
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
+  React.useEffect(() => {
+    if (visible && voiceMode) {
+      const playCompletionSound = async () => {
+        try {
+          const { sound } = await Audio.Sound.createAsync(
+            { uri: 'https://hqxndbfvgznviymezjta.supabase.co/storage/v1/object/public/audio/Modern_app_notificat.mp3' },
+            { shouldPlay: true }
+          );
+          setSound(sound);
+        } catch (error) {
+          console.error('Error playing completion sound:', error);
+        }
+      };
+
+      playCompletionSound();
+    }
+  }, [visible, voiceMode]);
 
   React.useEffect(() => {
     if (visible) {
