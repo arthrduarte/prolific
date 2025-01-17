@@ -8,6 +8,7 @@ import ExerciseScreen from '../screens/ExerciseScreen';
 import Account from './Settings';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -68,11 +69,20 @@ export function TabNavigator({ session }: { session: Session }) {
         <Tab.Screen
           name="Home"
           component={HomeStack}
-          options={{
+          options={({ route }) => ({
             tabBarIcon: ({ color, size }) => (
               <FontAwesome name="home" size={size} color={color} />
             ),
-          }}
+            tabBarStyle: ((getFocusedRouteNameFromRoute(route) === 'Exercise'))
+              ? { display: 'none' }
+              : {
+                  borderTopWidth: 1,
+                  borderTopColor: '#f1f3f5',
+                  height: 60 + insets.bottom,
+                  paddingBottom: 8 + insets.bottom,
+                  paddingTop: 8,
+                }
+          })}
         />
         <Tab.Screen
           name="Settings"
