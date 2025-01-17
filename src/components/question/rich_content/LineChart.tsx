@@ -22,15 +22,16 @@ export function LineChart({ richContent }: RichContentProps) {
   return (
     <View style={{ 
       marginVertical: 10,
-      backgroundColor: '#ffffff',
+      marginHorizontal: 'auto',
+      backgroundColor: '#fffff',
       borderRadius: 16,
-      padding: 16,
+      padding: 0,
     }}>
       <GiftedLineChart
         data={chartData}
-        width={windowWidth - 48} // accounting for padding
-        height={220}
-        spacing={40}
+        // width={windowWidth - 88} // accounting for padding
+        // height={220}
+        // spacing={40}
         initialSpacing={20}
         color="#FF0000"
         thickness={3}
@@ -39,7 +40,7 @@ export function LineChart({ richContent }: RichContentProps) {
         yAxisTextStyle={{ color: '#000' }}
         xAxisLabelTextStyle={{ color: '#000' }}
         hideDataPoints
-        curved
+        // curved
       />
     </View>
   );
