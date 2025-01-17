@@ -25,6 +25,33 @@ export const Explanation: React.FC<ExplanationProps> = ({
     onDismiss()
   }
 
+  const renderButtons = () => {
+    const buttons = [
+      <Button
+        outline
+        outlineColor="#fff"
+        label="Why?"
+        labelStyle={styles.whyButtonLabel}
+        style={styles.whyButton}
+        onPress={() => setShowExplanation(true)}
+        key="why"
+      />,
+      <Button
+        label="Continue"
+        backgroundColor="#fff"
+        labelStyle={[
+          styles.continueButtonLabel,
+          isCorrect ? styles.correctText : styles.incorrectText
+        ]}
+        style={styles.continueButton}
+        onPress={onContinue}
+        key="continue"
+      />
+    ];
+
+    return isCorrect ? buttons.reverse() : buttons;
+  };
+
   return (
     <>
       <Dialog
@@ -42,24 +69,7 @@ export const Explanation: React.FC<ExplanationProps> = ({
             {isCorrect ? '🎉 Correct!' : '❌ Wrong'}
           </Text>
           <View style={styles.buttonContainer}>
-            <Button
-              outline
-              outlineColor="#fff"
-              label="Why?"
-              labelStyle={styles.whyButtonLabel}
-              style={styles.whyButton}
-              onPress={() => setShowExplanation(true)}
-            />
-            <Button
-              label="Continue"
-              backgroundColor="#fff"
-              labelStyle={[
-                styles.continueButtonLabel,
-                isCorrect ? styles.correctText : styles.incorrectText
-              ]}
-              style={styles.continueButton}
-              onPress={onContinue}
-            />
+            {renderButtons()}
           </View>
         </View>
       </Dialog>
