@@ -6,6 +6,7 @@ import QuestionComponent from '../components/question/Question'
 import { useUserProgress } from '../hooks/useUserProgress'
 import { FontAwesome } from '@expo/vector-icons'
 import UnderConstruction from '../components/UnderConstruction'
+import { SkeletonLoading } from '../components/SkeletonLoading'
 
 export default function ExerciseScreen({ route, navigation }: { route: any, navigation: any }) {
   const { exerciseId, courseId } = route.params
@@ -13,28 +14,39 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [steps, setSteps] = useState<Step[]>([])
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
   const progressWidth = new Animated.Value(0)
 
   useEffect(() => {
     const fetchExercise = async () => {
-      const { data: exerciseData, error: exerciseError } = await supabase
-        .from('exercises')
-        .select('*')
-        .eq('id', exerciseId)
-        .single()
+      setIsLoading(true)
+      try {
+        const { data: exerciseData, error: exerciseError } = await supabase
+          .from('exercises')
+          .select('*')
+          .eq('id', exerciseId)
+          .single()
 
-      if (!exerciseError && exerciseData) {
-        setExercise(exerciseData as Exercise)
-      }
+        if (!exerciseError && exerciseData) {
+          setExercise(exerciseData as Exercise)
+        }
 
-      const { data: stepsData, error: stepsError } = await supabase
-        .from('steps')
-        .select('*')
-        .eq('exercise_id', exerciseId)
-        .order('order', { ascending: true })
+        const { data: stepsData, error: stepsError } = await supabase
+          .from('steps')
+          .select('*')
+          .eq('exercise_id', exerciseId)
+          .order('order', { ascending: true })
 
-      if (!stepsError && stepsData) {
-        setSteps(stepsData as Step[])
+        if (!stepsError && stepsData) {
+          setSteps(stepsData as Step[])
+        }
+      } catch (error) {
+        console.error('Error fetching exercise:', error)
+      } finally {
+        // Add a minimum delay of 500ms to prevent flickering
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 500)
       }
     }
 
@@ -52,8 +64,18 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
     }
   }, [currentStepIndex, steps.length])
 
-  if (!exercise || !steps.length) {
+  if (isLoading) {
+    return <SkeletonLoading />
+  }
+
+  // Show UnderConstruction only if we have the exercise data but no steps
+  if (exercise && steps.length === 0) {
     return <UnderConstruction />
+  }
+
+  // Show nothing if we don't have exercise data yet
+  if (!exercise) {
+    return null
   }
 
   const handleStepComplete = () => {

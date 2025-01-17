@@ -56,13 +56,15 @@ export const Explanation: React.FC<ExplanationProps> = ({
     <>
       <Dialog
         visible={showResult}
-        bottom
+        bottom={true}
         width="100%"
         containerStyle={[
           styles.resultDialog,
           isCorrect ? styles.correctBackground : styles.incorrectBackground
         ]}
         onDismiss={handleDismiss}
+        ignoreBackgroundPress={false}
+        overlayBackgroundColor={'rgba(0, 0, 0, 0.6)'}
       >
         <View style={styles.resultContent}>
           <Text text50 white style={styles.resultText}>
@@ -77,11 +79,13 @@ export const Explanation: React.FC<ExplanationProps> = ({
       <Dialog
         visible={showExplanation}
         onDismiss={() => setShowExplanation(false)}
-        bottom
+        bottom={true}
         containerStyle={styles.explanationDialog}
         pannableHeaderProps={{
           title: 'Explanation',
         }}
+        ignoreBackgroundPress={false}
+        overlayBackgroundColor={'rgba(0, 0, 0, 0.6)'}
       >
         <View style={styles.explanationContent}>
           <Text text70 style={styles.explanationText}>
