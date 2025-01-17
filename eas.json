@@ -10,21 +10,24 @@
       "env": {
         "SUPABASE_URL": "@SUPABASE_URL",
         "SUPABASE_ANON_KEY": "@SUPABASE_ANON_KEY"
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
       "env": {
         "SUPABASE_URL": "@SUPABASE_URL",
         "SUPABASE_ANON_KEY": "@SUPABASE_ANON_KEY"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "autoIncrement": true,
       "env": {
         "SUPABASE_URL": "@SUPABASE_URL",
         "SUPABASE_ANON_KEY": "@SUPABASE_ANON_KEY"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {
