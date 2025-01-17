@@ -28,7 +28,6 @@
         "projectId": "75c952d9-5984-4e50-b674-dba4f60790be"
       }
     },
-    "entryPoint": "./index.ts",
     "scheme": "be.prolific"
   }
 }

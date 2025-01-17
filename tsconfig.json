@@ -5,5 +5,5 @@
     "esModuleInterop": true,
     "jsx": "react-native"
   },
-  "typeRoots": ["./types"]
+  "typeRoots": ["./types", "./node_modules"]
 }
