@@ -72,7 +72,7 @@ export default function Question({
       
       // Initialize word animations after content is cleared
       const words = currentStep.content.split(/(\n|\s+)/).filter(Boolean)
-      const animations = words.map(word => word === '\n' ? null : new Animated.Value(0))
+      const animations = words.map(word => word === '\n' ? null : new Animated.Value(voiceMode ? 0 : 1))
       setWordAnimations(animations)
 
       // Short delay before starting fade in
@@ -83,36 +83,43 @@ export default function Question({
           duration: 200,
           useNativeDriver: true,
         }).start(() => {
-          // Start word animations after container fade in
-          Animated.stagger(150, animations.map(anim => 
-            anim 
-              ? Animated.timing(anim, {
-                  toValue: 1,
-                  duration: 300,
-                  useNativeDriver: true,
-                })
-              : Animated.delay(350)
-          )).start(() => {
-            // Animate rich content after text
-            Animated.timing(richContentAnim, {
-              toValue: 1,
-              duration: 500,
-              useNativeDriver: true,
-            }).start(() => {
-              // Animate options after rich content
-              Animated.timing(optionsAnim, {
+          if (voiceMode) {
+            // Start word animations after container fade in only if voice mode is enabled
+            Animated.stagger(150, animations.map(anim => 
+              anim 
+                ? Animated.timing(anim, {
+                    toValue: 1,
+                    duration: 300,
+                    useNativeDriver: true,
+                  })
+                : Animated.delay(350)
+            )).start(() => {
+              // Animate rich content after text
+              Animated.timing(richContentAnim, {
                 toValue: 1,
                 duration: 500,
                 useNativeDriver: true,
               }).start(() => {
-                setIsTransitioning(false)
+                // Animate options after rich content
+                Animated.timing(optionsAnim, {
+                  toValue: 1,
+                  duration: 500,
+                  useNativeDriver: true,
+                }).start(() => {
+                  setIsTransitioning(false)
+                })
               })
             })
-          })
+          } else {
+            // If voice mode is disabled, show everything immediately
+            richContentAnim.setValue(1)
+            optionsAnim.setValue(1)
+            setIsTransitioning(false)
+          }
         })
       }, 100)
     })
-  }, [currentStepIndex, currentStep.content])
+  }, [currentStepIndex, currentStep.content, voiceMode])
 
   // Handle transitions
   useEffect(() => {
