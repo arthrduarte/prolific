@@ -28,12 +28,6 @@
         "projectId": "75c952d9-5984-4e50-b674-dba4f60790be"
       }
     },
-    "scheme": "be.prolific",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/75c952d9-5984-4e50-b674-dba4f60790be"
-    }
+    "scheme": "be.prolific"
   }
 }
