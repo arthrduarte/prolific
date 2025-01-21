@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { StyleSheet, View, Alert, ScrollView } from 'react-native'
-import { Button } from '@rneui/themed'
+import { Button, Text, Switch } from '@rneui/themed'
 import { Session } from '@supabase/supabase-js'
-import { Text, Switch, View as UIView } from 'react-native-ui-lib'
 import { usePreferences } from '../contexts/PreferencesContext'
 
 interface SettingsProps {
@@ -30,67 +29,55 @@ export default function Settings({ session }: SettingsProps) {
     }
   }
 
+  const SettingItem = ({ title, description, value, onValueChange }) => (
+    <View style={styles.settingItem}>
+      <View style={styles.settingRow}>
+        <View style={styles.settingTextContainer}>
+          <Text style={styles.settingTitle}>{title}</Text>
+          <Text style={styles.settingDescription}>{description}</Text>
+        </View>
+        <Switch value={value} onValueChange={onValueChange} />
+      </View>
+    </View>
+  )
+
   return (
     <ScrollView style={styles.container}>
-      <Text text40 style={styles.title}>Settings</Text>
+      <Text h4 style={styles.title}>Settings</Text>
       
       {/* Learning Section */}
       <View style={styles.section}>
-        <Text text65 style={styles.sectionTitle}>Learning</Text>
-        <View style={styles.settingItem}>
-          <UIView spread row centerV>
-            <View>
-              <Text text65>Voice Mode</Text>
-              <Text text90 style={styles.settingDescription}>
-                Enable audio for questions and explanations
-              </Text>
-            </View>
-            <Switch
-              value={voiceMode}
-              onValueChange={setVoiceMode}
-            />
-          </UIView>
-        </View>
+        <Text style={styles.sectionTitle}>Learning</Text>
+        <SettingItem
+          title="Voice Mode"
+          description="Enable audio for questions and explanations"
+          value={voiceMode}
+          onValueChange={setVoiceMode}
+        />
       </View>
 
       {/* Preferences Section */}
       <View style={styles.section}>
-        <Text text65 style={styles.sectionTitle}>Preferences</Text>
-        <View style={styles.settingItem}>
-          <UIView spread row centerV>
-            <View>
-              <Text text65>Push Notifications</Text>
-              <Text text90 style={styles.settingDescription}>
-                Get reminders for daily practice
-              </Text>
-            </View>
-            <Switch
-              value={notifications}
-              onValueChange={setNotifications}
-            />
-          </UIView>
-        </View>
-        <View style={styles.settingItem}>
-          <UIView spread row centerV>
-            <View>
-              <Text text65>Dark Mode</Text>
-              <Text text90 style={styles.settingDescription}>
-                Switch to dark theme
-              </Text>
-            </View>
-            <Switch
-              value={darkMode}
-              onValueChange={setDarkMode}
-            />
-          </UIView>
-        </View>
+        <Text style={styles.sectionTitle}>Preferences</Text>
+        <SettingItem
+          title="Push Notifications"
+          description="Get reminders for daily practice"
+          value={notifications}
+          onValueChange={setNotifications}
+        />
+        <SettingItem
+          title="Dark Mode"
+          description="Switch to dark theme"
+          value={darkMode}
+          onValueChange={setDarkMode}
+        />
       </View>
 
       {/* Account Section */}
       <View style={styles.section}>
-        <Text text65 style={styles.sectionTitle}>Account</Text>
+        <Text style={styles.sectionTitle}>Account</Text>
         <View style={styles.settingItem}>
-          <Text text65 style={styles.email}>{session.user.email}</Text>
+          <Text style={styles.email}>{session.user.email}</Text>
         </View>
         <Button
           title={loading ? "Signing out..." : "Sign Out"}
@@ -101,7 +88,7 @@ export default function Settings({ session }: SettingsProps) {
         />
       </View>
 
-      <Text text90 style={styles.version}>Version 1.0.0</Text>
+      <Text style={styles.version}>Version 1.0.0</Text>
     </ScrollView>
   )
 }
@@ -155,5 +142,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#adb5bd',
     paddingVertical: 24,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  settingTextContainer: {
+    flex: 1,
+    marginRight: 16,
+  },
+  settingTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#495057',
   },
 })
