@@ -185,8 +185,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#f0dc1b',
     borderRadius: 12,
-    height: 56,
-    width: '100%',
+    paddingHorizontal:32,
+    paddingVertical: 16,
   },
   buttonLabel: {
     fontSize: 16,
