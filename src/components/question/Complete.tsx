@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Animated, Dimensions } from 'react-native';
-import { Dialog, Text, Button } from 'react-native-ui-lib';
+import { StyleSheet, View, Animated, Dimensions, Modal } from 'react-native';
+import { Text, Button } from '@rneui/themed';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
@@ -86,67 +86,75 @@ export const Complete: React.FC<CompleteProps> = ({ visible, courseId }) => {
   };
 
   return (
-    <Dialog
+    <Modal
       visible={visible}
-      width="100%"
-      height={400}
-      bottom
-      containerStyle={styles.dialog}
-      ignoreBackgroundPress
+      transparent
+      animationType="slide"
     >
-      <View style={styles.content}>
-        <Animated.View 
-          style={[
-            styles.celebrationContainer,
-            {
-              transform: [{
-                scale: fireworks
-              }],
-              opacity: fireworks
-            }
-          ]}
-        >
-          <Text style={styles.emoji}>🎉</Text>
-          <Text style={styles.emoji}>🌟</Text>
-          <Text style={styles.emoji}>🎊</Text>
-        </Animated.View>
-
-        <Text style={styles.title}>Well done!</Text>
-        <Text style={styles.subtitle}>You've completed this exercise</Text>
-
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBackground}>
+      <View style={styles.modalOverlay}>
+        <View style={styles.dialog}>
+          <View style={styles.content}>
             <Animated.View 
               style={[
-                styles.progressBar,
+                styles.celebrationContainer,
                 {
-                  width: progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ['0%', '100%']
-                  })
+                  transform: [{
+                    scale: fireworks
+                  }],
+                  opacity: fireworks
                 }
               ]}
+            >
+              <Text style={styles.emoji}>🎉</Text>
+              <Text style={styles.emoji}>🌟</Text>
+              <Text style={styles.emoji}>🎊</Text>
+            </Animated.View>
+
+            <Text h3 style={styles.title}>Well done!</Text>
+            <Text style={styles.subtitle}>You've completed this exercise</Text>
+
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBackground}>
+                <Animated.View 
+                  style={[
+                    styles.progressBar,
+                    {
+                      width: progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0%', '100%']
+                      })
+                    }
+                  ]}
+                />
+              </View>
+              <Text style={styles.progressText}>100%</Text>
+            </View>
+
+            <Button
+              title="Start Another Course"
+              buttonStyle={styles.button}
+              titleStyle={styles.buttonLabel}
+              onPress={handleStartAnother}
             />
           </View>
-          <Text style={styles.progressText}>100%</Text>
         </View>
-
-        <Button
-          label="Start Another Course"
-          style={styles.button}
-          labelStyle={styles.buttonLabel}
-          onPress={handleStartAnother}
-        />
       </View>
-    </Dialog>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  },
   dialog: {
     backgroundColor: '#fff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+    height: 400,
+    width: '100%',
   },
   content: {
     padding: 32,
