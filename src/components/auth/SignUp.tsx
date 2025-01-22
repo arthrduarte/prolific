@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase'
 import { Button, Input } from '@rneui/themed'
 import { authStyles as styles } from './styles'
 import FacebookAuth from './Facebook'
+import * as Linking from 'expo-linking'
 
 interface SignupProps {
   onSwitchToLogin: () => void
@@ -33,6 +34,9 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
     } = await supabase.auth.signUp({
       email: email,
       password: password,
+      options: {
+        emailRedirectTo: Linking.createURL('/')
+      }
     })
 
     if (error) Alert.alert('Error', error.message)

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { StyleSheet, Dimensions } from 'react-native'
-import { View, Text, Button, Dialog } from 'react-native-ui-lib'
+import { StyleSheet, Dimensions, View, Modal } from 'react-native'
+import { Text, Button } from '@rneui/themed'
 
 const { width } = Dimensions.get('window')
 
@@ -25,77 +25,100 @@ export const Explanation: React.FC<ExplanationProps> = ({
     onDismiss()
   }
 
+  const renderButtons = () => {
+    const buttons = [
+      <Button
+        type="outline"
+        title="Why?"
+        titleStyle={styles.whyButtonLabel}
+        buttonStyle={[styles.whyButton, { borderColor: '#fff' }]}
+        onPress={() => setShowExplanation(true)}
+        key="why"
+      />,
+      <Button
+        title="Continue"
+        buttonStyle={[styles.continueButton, { backgroundColor: '#fff' }]}
+        titleStyle={[
+          styles.continueButtonLabel,
+          isCorrect ? styles.correctText : styles.incorrectText
+        ]}
+        onPress={onContinue}
+        key="continue"
+      />
+    ];
+
+    return isCorrect ? buttons.reverse() : buttons;
+  };
+
   return (
     <>
-      <Dialog
+      <Modal
         visible={showResult}
-        bottom
-        width="100%"
-        containerStyle={[
-          styles.resultDialog,
-          isCorrect ? styles.correctBackground : styles.incorrectBackground
-        ]}
-        onDismiss={handleDismiss}
+        transparent
+        animationType="slide"
+        onRequestClose={handleDismiss}
       >
-        <View style={styles.resultContent}>
-          <Text text50 white style={styles.resultText}>
-            {isCorrect ? '🎉 Correct!' : '❌ Wrong'}
-          </Text>
-          <View style={styles.buttonContainer}>
-            <Button
-              outline
-              outlineColor="#fff"
-              label="Why?"
-              labelStyle={styles.whyButtonLabel}
-              style={styles.whyButton}
-              onPress={() => setShowExplanation(true)}
-            />
-            <Button
-              label="Continue"
-              backgroundColor="#fff"
-              labelStyle={[
-                styles.continueButtonLabel,
-                isCorrect ? styles.correctText : styles.incorrectText
-              ]}
-              style={styles.continueButton}
-              onPress={onContinue}
-            />
+        <View style={styles.modalOverlay}>
+          <View style={[
+            styles.resultDialog,
+            isCorrect ? styles.correctBackground : styles.incorrectBackground
+          ]}>
+            <View style={styles.resultContent}>
+              <Text h4 style={styles.resultText}>
+                {isCorrect ? '🎉 Correct!' : '❌ Wrong'}
+              </Text>
+              <View style={styles.buttonContainer}>
+                {renderButtons()}
+              </View>
+            </View>
           </View>
         </View>
-      </Dialog>
+      </Modal>
 
-      <Dialog
+      <Modal
         visible={showExplanation}
-        onDismiss={() => setShowExplanation(false)}
-        bottom
-        containerStyle={styles.explanationDialog}
-        pannableHeaderProps={{
-          title: 'Explanation',
-        }}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowExplanation(false)}
       >
-        <View style={styles.explanationContent}>
-          <Text text70 style={styles.explanationText}>
-            {explanation}
-          </Text>
-          <Button
-            label="Got it"
-            backgroundColor={isCorrect ? '#40c057' : '#fa5252'}
-            style={styles.gotItButton}
-            onPress={() => setShowExplanation(false)}
-          />
+        <View style={styles.modalOverlay}>
+          <View style={styles.explanationDialog}>
+            <View style={styles.explanationHeader}>
+              <Text style={styles.explanationTitle}>Explanation</Text>
+            </View>
+            <View style={styles.explanationContent}>
+              <Text style={styles.explanationText}>
+                {explanation}
+              </Text>
+              <Button
+                title="Got it"
+                buttonStyle={[
+                  styles.gotItButton,
+                  { backgroundColor: isCorrect ? '#40c057' : '#fa5252' }
+                ]}
+                onPress={() => setShowExplanation(false)}
+              />
+            </View>
+          </View>
         </View>
-      </Dialog>
+      </Modal>
     </>
   )
 }
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  },
   resultDialog: {
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingTop: 24,
     paddingBottom: 32,
     paddingHorizontal: 24,
+    backgroundColor: '#fff',
   },
   correctBackground: {
     backgroundColor: '#80ff97',
@@ -121,7 +144,6 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#fff',
   },
   whyButtonLabel: {
     color: '#fff',
@@ -147,6 +169,17 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
   },
+  explanationHeader: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f3f5',
+  },
+  explanationTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#495057',
+    textAlign: 'center',
+  },
   explanationContent: {
     padding: 24,
     paddingBottom: 48,
@@ -155,8 +188,11 @@ const styles = StyleSheet.create({
     color: '#495057',
     lineHeight: 24,
     marginBottom: 24,
+    fontSize: 16,
   },
   gotItButton: {
     marginTop: 16,
+    height: 48,
+    borderRadius: 12,
   },
 })

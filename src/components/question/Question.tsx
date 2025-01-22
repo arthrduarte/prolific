@@ -72,7 +72,7 @@ export default function Question({
       
       // Initialize word animations after content is cleared
       const words = currentStep.content.split(/(\n|\s+)/).filter(Boolean)
-      const animations = words.map(word => word === '\n' ? null : new Animated.Value(0))
+      const animations = words.map(word => word === '\n' ? null : new Animated.Value(voiceMode ? 0 : 1))
       setWordAnimations(animations)
 
       // Short delay before starting fade in
@@ -83,36 +83,43 @@ export default function Question({
           duration: 200,
           useNativeDriver: true,
         }).start(() => {
-          // Start word animations after container fade in
-          Animated.stagger(150, animations.map(anim => 
-            anim 
-              ? Animated.timing(anim, {
-                  toValue: 1,
-                  duration: 300,
-                  useNativeDriver: true,
-                })
-              : Animated.delay(350)
-          )).start(() => {
-            // Animate rich content after text
-            Animated.timing(richContentAnim, {
-              toValue: 1,
-              duration: 500,
-              useNativeDriver: true,
-            }).start(() => {
-              // Animate options after rich content
-              Animated.timing(optionsAnim, {
+          if (voiceMode) {
+            // Start word animations after container fade in only if voice mode is enabled
+            Animated.stagger(150, animations.map(anim => 
+              anim 
+                ? Animated.timing(anim, {
+                    toValue: 1,
+                    duration: 300,
+                    useNativeDriver: true,
+                  })
+                : Animated.delay(350)
+            )).start(() => {
+              // Animate rich content after text
+              Animated.timing(richContentAnim, {
                 toValue: 1,
                 duration: 500,
                 useNativeDriver: true,
               }).start(() => {
-                setIsTransitioning(false)
+                // Animate options after rich content
+                Animated.timing(optionsAnim, {
+                  toValue: 1,
+                  duration: 500,
+                  useNativeDriver: true,
+                }).start(() => {
+                  setIsTransitioning(false)
+                })
               })
             })
-          })
+          } else {
+            // If voice mode is disabled, show everything immediately
+            richContentAnim.setValue(1)
+            optionsAnim.setValue(1)
+            setIsTransitioning(false)
+          }
         })
       }, 100)
     })
-  }, [currentStepIndex, currentStep.content])
+  }, [currentStepIndex, currentStep.content, voiceMode])
 
   // Handle transitions
   useEffect(() => {
@@ -227,32 +234,42 @@ export default function Question({
 
   return (
     <>
-      <ScrollView 
-        style={styles.container}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <Animated.View style={{ opacity: fadeAnim }}>
-          {renderContent()}
-        </Animated.View>
+      <View style={styles.container}>
+        <ScrollView 
+          style={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.contentContainer}
+        >
+          <Animated.View style={{ opacity: fadeAnim }}>
+            {renderContent()}
+          </Animated.View>
+        </ScrollView>
         
         {currentStep.type !== 'content' && !isAnswered && (
-          <TouchableOpacity
-            style={[
-              styles.button,
-              (!selectedOption && currentStep.type !== 'input') ||
-              (currentStep.type === 'input' && !inputAnswer)
-                ? styles.buttonDisabled
-                : styles.buttonEnabled,
-            ]}
-            onPress={handleSubmit}
-            disabled={
-              (!selectedOption && currentStep.type !== 'input') ||
-              (currentStep.type === 'input' && !inputAnswer)
-            }
-          >
-            <Text style={styles.buttonText}>Check Answer</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                (!selectedOption && currentStep.type !== 'input') ||
+                (currentStep.type === 'input' && !inputAnswer)
+                  ? styles.buttonDisabled
+                  : styles.buttonEnabled,
+              ]}
+              onPress={handleSubmit}
+              disabled={
+                (!selectedOption && currentStep.type !== 'input') ||
+                (currentStep.type === 'input' && !inputAnswer)
+              }
+            >
+              <Text style={[
+                styles.buttonText,
+                (!selectedOption && currentStep.type !== 'input') ||
+                (currentStep.type === 'input' && !inputAnswer)
+                  ? styles.buttonTextDisabled
+                  : styles.buttonTextEnabled,
+              ]}>Check Answer</Text>
+            </TouchableOpacity>
+          </View>
         )}
 
         {(isAnswered || currentStep.type === 'content') && (
@@ -266,18 +283,20 @@ export default function Question({
               />
             )}
             {currentStep.type === 'content' && (
-              <TouchableOpacity
-                style={[styles.button, styles.buttonEnabled]}
-                onPress={handleNext}
-              >
-                <Text style={styles.buttonText}>
-                  Continue
-                </Text>
-              </TouchableOpacity>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={[styles.button, styles.buttonEnabled]}
+                  onPress={handleNext}
+                >
+                  <Text style={[styles.buttonText, styles.buttonTextEnabled]}>
+                    Continue
+                  </Text>
+                </TouchableOpacity>
+              </View>
             )}
           </>
         )}
-      </ScrollView>
+      </View>
 
       <Complete visible={showComplete} courseId={exercise.course_id} />
     </>
@@ -287,9 +306,14 @@ export default function Question({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    flex: 1,
   },
   contentContainer: {
     padding: 24,
+    paddingBottom: 32,
   },
   questionText: {
     fontSize: 18,
@@ -297,11 +321,17 @@ const styles = StyleSheet.create({
     color: '#000',
     marginBottom: 12,
   },
+  buttonContainer: {
+    padding: 16,
+    paddingBottom: 24,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#f1f3f5',
+  },
   button: {
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
-    marginTop: 8,
   },
   buttonEnabled: {
     backgroundColor: '#f0dc1b',
@@ -310,8 +340,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#e9ecef',
   },
   buttonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  buttonTextEnabled: {
+    color: '#000',
+  },
+  buttonTextDisabled: {
+    color: '#adb5bd',
   }
 });

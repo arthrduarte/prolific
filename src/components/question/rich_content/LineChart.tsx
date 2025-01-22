@@ -1,5 +1,5 @@
-import * as React from "react";
-import { CartesianChart, Line, useChartPressState } from "victory-native";
+import { View, useWindowDimensions } from "react-native";
+import { LineChart as GiftedLineChart } from "react-native-gifted-charts";
 import { RichContentProps } from "./rich_content.type";
 
 interface DataPoint extends Record<string, unknown> {
@@ -7,22 +7,41 @@ interface DataPoint extends Record<string, unknown> {
   y: number;
 }
 
-export function LineChart({ richContent, richContentAnim }: RichContentProps) {
+export function LineChart({ richContent }: RichContentProps) {
+  const { width: windowWidth } = useWindowDimensions();
+  
   if (!richContent?.data) return null;
+  
+  const data = richContent.data as DataPoint[];
+  
+  const chartData = data.map(point => ({
+    label: point.x,
+    value: point.y,
+  }));
 
   return (
-    <CartesianChart<DataPoint, "x", "y">
-     data={richContent.data} xKey="x" yKeys={["y"]}>
-      {({ points }) => (
-        //👇 pass a PointsArray to the Line component, as well as options.
-        <Line
-          points={points.y}
-          color="red"
-          strokeWidth={3}
-        //   animate={{ type: "timing", duration: 300 }}
-        />
-      )}
-    </CartesianChart>
-
+    <View style={{ 
+      marginVertical: 10,
+      marginHorizontal: 'auto',
+      backgroundColor: '#fffff',
+      borderRadius: 16,
+      padding: 0,
+    }}>
+      <GiftedLineChart
+        data={chartData}
+        // width={windowWidth - 88} // accounting for padding
+        // height={220}
+        // spacing={40}
+        initialSpacing={20}
+        color="#FF0000"
+        thickness={3}
+        maxValue={Math.max(...data.map(point => point.y)) * 1.2}
+        noOfSections={5}
+        yAxisTextStyle={{ color: '#000' }}
+        xAxisLabelTextStyle={{ color: '#000' }}
+        hideDataPoints
+        // curved
+      />
+    </View>
   );
 }
