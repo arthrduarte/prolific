@@ -45,6 +45,8 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
             inputContainerStyle={styles.inputContainer}
             labelStyle={styles.inputLabel}
             placeholderTextColor="#adb5bd"
+            keyboardType="email-address"
+            autoComplete="email"
           />
         </View>
         <View style={styles.verticallySpaced}>
@@ -59,6 +61,7 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
             inputContainerStyle={styles.inputContainer}
             labelStyle={styles.inputLabel}
             placeholderTextColor="#adb5bd"
+            autoComplete="password"
           />
         </View>
         <View style={[styles.verticallySpaced, styles.mt20]}>
@@ -71,6 +74,9 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
             disabledStyle={styles.buttonDisabled}
           />
         </View>
+        <TouchableOpacity onPress={onSwitchToSignup}>
+          <Text style={styles.switchText}>Don't have an account? Sign up</Text>
+        </TouchableOpacity>
         <View style={styles.orContainer}>
           <View style={styles.orLine} />
           <Text style={styles.orText}>or</Text>
@@ -79,9 +85,6 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
         <View style={styles.verticallySpaced}>
           <FacebookAuth />
         </View>
-        <TouchableOpacity onPress={onSwitchToSignup}>
-          <Text style={styles.switchText}>Don't have an account? Sign up</Text>
-        </TouchableOpacity>
       </View>
     </>
   )

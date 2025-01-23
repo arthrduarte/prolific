@@ -116,6 +116,9 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
             disabledStyle={styles.buttonDisabled}
           />
         </View>
+        <TouchableOpacity onPress={onSwitchToLogin}>
+          <Text style={styles.switchText}>Already have an account? Sign in</Text>
+        </TouchableOpacity>
         <View style={styles.orContainer}>
           <View style={styles.orLine} />
           <Text style={styles.orText}>or</Text>
@@ -124,9 +127,6 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
         <View style={styles.verticallySpaced}>
           <FacebookAuth />
         </View>
-        <TouchableOpacity onPress={onSwitchToLogin}>
-          <Text style={styles.switchText}>Already have an account? Sign in</Text>
-        </TouchableOpacity>
       </View>
     </>
   )
