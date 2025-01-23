@@ -28,26 +28,27 @@ export const authStyles = StyleSheet.create({
     padding: 24,
   },
   verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
+    paddingTop: 2,
+    paddingBottom: 2,
     alignSelf: 'stretch',
   },
   mt20: {
-    marginTop: 20,
+    marginTop: 12,
   },
   inputContainer: {
     borderWidth: 1,
     borderColor: '#e9ecef',
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 6,
     backgroundColor: '#fff',
+    marginVertical: -6
   },
   inputLabel: {
     color: '#495057',
     fontSize: 14,
     fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   button: {
     backgroundColor: '#f0dc1b',

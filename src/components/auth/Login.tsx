@@ -34,36 +34,32 @@ export default function Login({ onSwitchToSignup }: LoginProps) {
         </Text>
       </View>
       <View style={styles.formContainer}>
-        <View style={[styles.verticallySpaced, styles.mt20]}>
-          <Input
-            label="Email"
-            leftIcon={{ type: 'font-awesome', name: 'envelope', color: '#495057' }}
-            onChangeText={setEmail}
-            value={email}
-            placeholder="email@address.com"
-            autoCapitalize={'none'}
-            inputContainerStyle={styles.inputContainer}
-            labelStyle={styles.inputLabel}
-            placeholderTextColor="#adb5bd"
-            keyboardType="email-address"
-            autoComplete="email"
-          />
-        </View>
-        <View style={styles.verticallySpaced}>
-          <Input
-            label="Password"
-            leftIcon={{ type: 'font-awesome', name: 'lock', color: '#495057' }}
-            onChangeText={setPassword}
-            value={password}
-            secureTextEntry={true}
-            placeholder="Password"
-            autoCapitalize={'none'}
-            inputContainerStyle={styles.inputContainer}
-            labelStyle={styles.inputLabel}
-            placeholderTextColor="#adb5bd"
-            autoComplete="password"
-          />
-        </View>
+        <Input
+          label="Email"
+          leftIcon={{ type: 'font-awesome', name: 'envelope', color: '#495057' }}
+          onChangeText={setEmail}
+          value={email}
+          placeholder="email@address.com"
+          autoCapitalize={'none'}
+          inputContainerStyle={styles.inputContainer}
+          labelStyle={styles.inputLabel}
+          placeholderTextColor="#adb5bd"
+          keyboardType="email-address"
+          autoComplete="email"
+        />
+        <Input
+          label="Password"
+          leftIcon={{ type: 'font-awesome', name: 'lock', color: '#495057' }}
+          onChangeText={setPassword}
+          value={password}
+          secureTextEntry={true}
+          placeholder="Password"
+          autoCapitalize={'none'}
+          inputContainerStyle={styles.inputContainer}
+          labelStyle={styles.inputLabel}
+          placeholderTextColor="#adb5bd"
+          autoComplete="password"
+        />
         <View style={[styles.verticallySpaced, styles.mt20]}>
           <Button 
             title={loading ? "Loading..." : "Sign in"} 
