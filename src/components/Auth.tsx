@@ -48,18 +48,31 @@ export default function Auth() {
                 </Text>
               </View>
               <View style={styles.formContainer}>
-                <FacebookAuth />
-                <View style={styles.orContainer}>
-                  <View style={styles.orLine} />
-                  <Text style={styles.orText}>or</Text>
-                  <View style={styles.orLine} />
+                <View style={styles.buttonContainer}>
+                  {/* <Text style={styles.signInText}>Sign up</Text> */}
+                  <FacebookAuth />
+                  <View style={styles.orContainer}>
+                    <View style={styles.orLine} />
+                    <Text style={styles.orText}>or</Text>
+                    <View style={styles.orLine} />
+                  </View>
+                  <Button
+                    title="Continue with email"
+                    onPress={() => setShowEmailAuth(true)}
+                    buttonStyle={[styles.button, styles.emailButton]}
+                    titleStyle={styles.emailButtonText}
+                    icon={{
+                      name: 'envelope',
+                      type: 'font-awesome',
+                      size: 18,
+                      color: '#495057',
+                      style: { marginRight: 10 }
+                    }}
+                  />
+                  <Text style={styles.termsText}>
+                    By registering, you agree to our Terms of Service and Privacy Policy
+                  </Text>
                 </View>
-                <Button
-                  title="Continue with email"
-                  onPress={() => setShowEmailAuth(true)}
-                  buttonStyle={[styles.button, styles.emailButton]}
-                  titleStyle={styles.emailButtonText}
-                />
               </View>
             </>
           ) : (
@@ -85,13 +98,14 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   header: {
     paddingHorizontal: 24,
     height: 240,
     backgroundColor: '#f0dc1b',
     justifyContent: 'center',
+    alignItems: 'center',
     paddingTop: 20,
   },
   title: {
@@ -99,11 +113,13 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#000',
     marginBottom: 8,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     color: '#495057',
     lineHeight: 24,
+    textAlign: 'center',
   },
   formContainer: {
     flex: 1,
@@ -112,6 +128,17 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
+    justifyContent: 'center',
+  },
+  buttonContainer: {
+    width: '100%',
+  },
+  signInText: {
+    fontSize: 48,
+    fontWeight: '800',
+    color: '#000',
+    marginBottom: 12,
+    textAlign: 'center',
   },
   orContainer: {
     flexDirection: 'row',
@@ -142,5 +169,12 @@ const styles = StyleSheet.create({
     color: '#495057',
     fontSize: 16,
     fontWeight: '600',
+  },
+  termsText: {
+    fontSize: 12,
+    color: '#868e96',
+    textAlign: 'center',
+    marginTop: 16,
+    lineHeight: 18,
   },
 })
