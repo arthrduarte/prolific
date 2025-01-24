@@ -6,7 +6,7 @@ import QuestionComponent from '../components/question/Question'
 import { useUserProgress } from '../hooks/useUserProgress'
 import { FontAwesome } from '@expo/vector-icons'
 import UnderConstruction from '../components/UnderConstruction'
-import { SkeletonLoading } from '../components/SkeletonLoading'
+import { SkeletonLoaderQuestion } from '../components/SkeletonLoaderQuestion'
 
 export default function ExerciseScreen({ route, navigation }: { route: any, navigation: any }) {
   const { exerciseId, courseId } = route.params
@@ -65,7 +65,7 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
   }, [currentStepIndex, steps.length, progressWidth])
 
   if (isLoading) {
-    return <SkeletonLoading />
+    return <SkeletonLoaderQuestion />
   }
 
   // Show UnderConstruction only if we have the exercise data but no steps

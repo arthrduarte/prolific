@@ -1,71 +1,36 @@
 import { StatusBar } from 'expo-status-bar'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, View, Text, ScrollView, SafeAreaView } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Topic, Course } from '../types/database.types'
 import { CourseCard } from '../components/CourseCard'
 import { TopicPill } from '../components/TopicPill'
-
-interface TopicWithCount extends Topic {
-  courseCount: number;
-}
+import { useData } from '../contexts/DataContext'
+import { SkeletonLoaderHome } from '../components/SkeletonLoaderHome'
 
 export default function HomeScreen({navigation}: {navigation: any}) {
-  const [topics, setTopics] = useState<TopicWithCount[]>([])
-  const [courses, setCourses] = useState<Course[]>([])
+  const { topics, courses, isLoading } = useData();
   const [userName, setUserName] = useState<string>('')
-  const [selectedTopic, setSelectedTopic] = useState<TopicWithCount | null>(null)
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
 
-  useEffect(() => {
-    const fetchUserAndTopics = async () => {
-      // Fetch user data
+  React.useEffect(() => {
+    const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user?.user_metadata?.full_name) {
         setUserName(user.user_metadata.full_name)
       }
-
-      // Fetch topics with course counts
-      const { data: topicsData } = await supabase
-        .from('topics')
-        .select('*, courses(count)')
-
-      if (topicsData) {
-        const topicsWithCount = topicsData.map(topic => ({
-          ...topic,
-          courseCount: topic.courses[0].count
-        })) as TopicWithCount[]
-        
-        setTopics(topicsWithCount)
-        if (topicsWithCount.length > 0) {
-          setSelectedTopic(topicsWithCount[0])
-        }
-      }
     }
-    fetchUserAndTopics()
+    fetchUser()
   }, [])
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      if (!selectedTopic) return
-      
-      const { data, error } = await supabase
-        .from('courses')
-        .select('*')
-        .eq('topic_id', selectedTopic.id)
-      
-      if (data) {
-        setCourses(data as Course[])
-      }
+  React.useEffect(() => {
+    if (topics.length > 0 && !selectedTopic) {
+      setSelectedTopic(topics[0])
     }
-
-    fetchCourses()
-  }, [selectedTopic])
+  }, [topics])
 
   const handleTopicPress = (topic: Topic) => {
-    const topicWithCount = topics.find(t => t.id === topic.id)
-    if (topicWithCount) {
-      setSelectedTopic(topicWithCount)
-    }
+    setSelectedTopic(topic)
   }
 
   const handleCoursePress = (course: Course) => {
@@ -74,6 +39,36 @@ export default function HomeScreen({navigation}: {navigation: any}) {
       topicId: selectedTopic?.id 
     })
   }
+
+  const getTopicCourses = (topicId: string) => {
+    return courses.filter(course => course.topic_id === topicId)
+  }
+
+  const renderSkeletonLoaderHomes = () => (
+    <>
+      <ScrollView 
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.topicsScroll}
+      >
+        {[1, 2, 3, 4].map((_, index) => (
+          <SkeletonLoaderHome
+            key={index}
+            style={styles.topicSkeleton}
+          />
+        ))}
+      </ScrollView>
+
+      <View style={styles.coursesContainer}>
+        {[1, 2, 3].map((_, index) => (
+          <SkeletonLoaderHome
+            key={index}
+            style={styles.courseSkeleton}
+          />
+        ))}
+      </View>
+    </>
+  )
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -96,35 +91,41 @@ export default function HomeScreen({navigation}: {navigation: any}) {
           <Text style={styles.sectionTitle}>Let's Learn New Stuff!</Text>
         </View>
 
-        {/* Topics horizontal scroll */}
-        <ScrollView 
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.topicsScroll}
-        >
-          {topics.map((topic) => (
-            <TopicPill
-              key={topic.id}
-              topic={topic}
-              isSelected={selectedTopic?.id === topic.id}
-              onPress={handleTopicPress}
-              courseCount={topic.courseCount}
-            />
-          ))}
-        </ScrollView>
+        {isLoading ? (
+          renderSkeletonLoaderHomes()
+        ) : (
+          <>
+            {/* Topics horizontal scroll */}
+            <ScrollView 
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.topicsScroll}
+            >
+              {topics.map((topic) => (
+                <TopicPill
+                  key={topic.id}
+                  topic={topic}
+                  isSelected={selectedTopic?.id === topic.id}
+                  onPress={handleTopicPress}
+                  courseCount={getTopicCourses(topic.id).length}
+                />
+              ))}
+            </ScrollView>
 
-        {/* Courses grid */}
-        <View style={styles.coursesContainer}>
-          {courses.map((course, index) => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              topic={selectedTopic!}
-              onPress={handleCoursePress}
-              index={index}
-            />
-          ))}
-        </View>
+            {/* Courses grid */}
+            <View style={styles.coursesContainer}>
+              {selectedTopic && getTopicCourses(selectedTopic.id).map((course, index) => (
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  topic={selectedTopic}
+                  onPress={handleCoursePress}
+                  index={index}
+                />
+              ))}
+            </View>
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   )
@@ -174,5 +175,16 @@ const styles = StyleSheet.create({
   coursesContainer: {
     paddingHorizontal: 16,
     gap: 12,
+  },
+  topicSkeleton: {
+    width: 120,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  courseSkeleton: {
+    width: '100%',
+    height: 160,
+    borderRadius: 20,
   },
 });

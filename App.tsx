@@ -7,6 +7,7 @@ import { TabNavigator } from './src/components/Navbar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { PreferencesProvider } from './src/contexts/PreferencesContext';
+import { DataProvider } from './src/contexts/DataContext';
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -22,18 +23,20 @@ export default function App() {
   }, [])
 
   return (
-    <PreferencesProvider>
-      <SafeAreaProvider>
-        <StatusBar style="dark" />
-        <NavigationContainer>
-          {session && session.user ? (
-            <TabNavigator session={session} />
-          ) : (
-            <Auth />
-          )}
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </PreferencesProvider>
+    <DataProvider>
+      <PreferencesProvider>
+        <SafeAreaProvider>
+          <StatusBar style="dark" />
+          <NavigationContainer>
+            {session && session.user ? (
+              <TabNavigator session={session} />
+            ) : (
+              <Auth />
+            )}
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </PreferencesProvider>
+    </DataProvider>
   );
 }
 

@@ -3,7 +3,7 @@ import { View, StyleSheet, Animated, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-export const SkeletonLoading: React.FC = () => {
+export const SkeletonLoaderQuestion: React.FC = () => {
   const shimmerValue = new Animated.Value(0);
 
   useEffect(() => {
