@@ -120,7 +120,6 @@ export default function HomeScreen({navigation}: {navigation: any}) {
                   course={course}
                   topic={selectedTopic}
                   onPress={handleCoursePress}
-                  index={index}
                 />
               ))}
             </View>

@@ -12,18 +12,14 @@ interface ExerciseCardProps {
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   exercise,
-  index,
   isUnlocked,
   onPress,
 }) => {
-  const isEven = index % 2 === 0;
-
   return (
     <TouchableOpacity
       style={[
         styles.exerciseCard,
-        isEven ? styles.exerciseCardYellow : styles.exerciseCardDark,
-        !isUnlocked && styles.exerciseCardLocked
+        isUnlocked ? styles.exerciseCardYellow : styles.exerciseCardLocked
       ]}
       onPress={() => onPress(exercise)}
       activeOpacity={0.9}
@@ -32,8 +28,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
         <Text 
           style={[
             styles.exerciseTitle,
-            isEven ? styles.exerciseTitleDark : styles.exerciseTitleLight,
-            !isUnlocked && styles.exerciseTitleLocked
+            isUnlocked ? styles.exerciseTitleDark : styles.exerciseTitleLight
           ]}
           numberOfLines={1}
           ellipsizeMode="tail"
@@ -43,13 +38,12 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
       </View>
       <View style={[
         styles.playButton,
-        isEven ? styles.playButtonDark : styles.playButtonYellow,
-        !isUnlocked && styles.playButtonLocked
+        isUnlocked ? styles.playButtonDark : styles.playButtonLocked
       ]}>
         <FontAwesome 
           name={isUnlocked ? "play" : "lock"} 
           size={14} 
-          color={!isUnlocked ? "#fff" : (isEven ? "#fff" : "#000")}
+          color={isUnlocked ? "#fff" : "#fff"}
         />
       </View>
     </TouchableOpacity>
@@ -68,11 +62,8 @@ const styles = StyleSheet.create({
   exerciseCardYellow: {
     backgroundColor: '#ffd43b',
   },
-  exerciseCardDark: {
-    backgroundColor: '#212529',
-  },
   exerciseCardLocked: {
-    backgroundColor: '#868e96',
+    backgroundColor: '#212529',
   },
   exerciseContent: {
     flex: 1,
@@ -89,18 +80,12 @@ const styles = StyleSheet.create({
   exerciseTitleLight: {
     color: '#fff',
   },
-  exerciseTitleLocked: {
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
   playButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  playButtonYellow: {
-    backgroundColor: '#ffd43b',
   },
   playButtonDark: {
     backgroundColor: '#212529',
