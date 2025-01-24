@@ -1,13 +1,15 @@
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, ScrollView, SafeAreaView } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
 import { supabase } from '../lib/supabase'
-import { Topic } from '../types/database.types'
-import { TopicComponent } from '../components/Topic'
+import { Topic, Course } from '../types/database.types'
+import { CourseCard } from '../components/CourseCard'
 
 export default function HomeScreen({navigation}: {navigation: any}) {
   const [topics, setTopics] = useState<Topic[]>([])
+  const [courses, setCourses] = useState<Course[]>([])
   const [userName, setUserName] = useState<string>('')
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
 
   useEffect(() => {
     const fetchUserAndTopics = async () => {
@@ -18,45 +20,104 @@ export default function HomeScreen({navigation}: {navigation: any}) {
       }
 
       // Fetch topics
-      const { data, error } = await supabase.from('topics').select()
-      if (data) {
-        setTopics(data as Topic[])
+      const { data: topicsData } = await supabase.from('topics').select()
+      if (topicsData) {
+        setTopics(topicsData as Topic[])
+        if (topicsData.length > 0) {
+          setSelectedTopic(topicsData[0])
+        }
       }
     }
     fetchUserAndTopics()
   }, [])
 
+  useEffect(() => {
+    const fetchCourses = async () => {
+      if (!selectedTopic) return
+      
+      const { data, error } = await supabase
+        .from('courses')
+        .select('*')
+        .eq('topic_id', selectedTopic.id)
+      
+      if (data) {
+        setCourses(data as Course[])
+      }
+    }
+
+    fetchCourses()
+  }, [selectedTopic])
+
+  const handleTopicPress = (topic: Topic) => {
+    setSelectedTopic(topic)
+  }
+
+  const handleCoursePress = (course: Course) => {
+    navigation.navigate('Course', { 
+      courseId: course.id,
+      topicId: selectedTopic?.id 
+    })
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="dark" />
       
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.header}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.welcomeText}>
+              {userName ? `Hello, ${userName}` : 'Hello'}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Let's Learn New Stuff!</Text>
+        </View>
+
+        {/* Topics horizontal scroll */}
         <ScrollView 
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.topicsScroll}
         >
-          <View style={styles.header}>
-            <View style={styles.titleContainer}>
-              <Text style={styles.welcomeText}>
-                {userName ? `Hello, ${userName}` : 'Hello'}
+          {topics.map((topic) => (
+            <TouchableOpacity
+              key={topic.id}
+              style={[
+                styles.topicTag,
+                selectedTopic?.id === topic.id && styles.topicTagSelected
+              ]}
+              onPress={() => handleTopicPress(topic)}
+            >
+              <Text style={[
+                styles.topicTagText,
+                selectedTopic?.id === topic.id && styles.topicTagTextSelected
+              ]}>
+                {topic.title} {topic.emoji}
               </Text>
-            </View>
-          </View>
-
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Let's Learn New Stuff!</Text>
-          </View>
-
-          <View style={styles.cardsContainer}>
-            {topics.map((topic) => (
-              <TopicComponent 
-                key={topic.id}
-                topic={topic}
-                navigation={navigation}
-              />
-            ))}
-          </View>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
+
+        {/* Courses grid */}
+        <View style={styles.coursesContainer}>
+          {courses.map((course, index) => (
+            <CourseCard
+              key={course.id}
+              course={course}
+              topic={selectedTopic!}
+              onPress={handleCoursePress}
+              index={index}
+            />
+          ))}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }
@@ -81,55 +142,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontWeight: '500',
   },
-  title: {
-    fontSize: 42,
-    fontWeight: '800',
-    color: '#000',
-    letterSpacing: -1,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#495057',
-    lineHeight: 24,
-    marginBottom: 24,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statItemBorder: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: '#e9ecef',
-    paddingHorizontal: 20,
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#6c757d',
-    textAlign: 'center',
-    lineHeight: 16,
-  },
   scrollView: {
     flex: 1,
   },
@@ -146,12 +158,31 @@ const styles = StyleSheet.create({
     color: '#000',
     marginBottom: 4,
   },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: '#6c757d',
-    fontWeight: '500',
+  topicsScroll: {
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    gap: 8,
   },
-  cardsContainer: {
-    paddingHorizontal: 8,
+  topicTag: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#212529',
+    marginRight: 8,
+  },
+  topicTagSelected: {
+    backgroundColor: '#ffd43b',
+  },
+  topicTagText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  topicTagTextSelected: {
+    color: '#000',
+  },
+  coursesContainer: {
+    paddingHorizontal: 16,
+    gap: 12,
   },
 });
