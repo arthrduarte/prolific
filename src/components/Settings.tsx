@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text } from '@rneui/themed'
 import { usePreferences } from '../contexts/PreferencesContext'
 import React from 'react'
+import { BackButton } from './BackButton'
 
 export default function Settings() {
   const [loading, setLoading] = useState(false)
@@ -81,7 +82,10 @@ export default function Settings() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView>
-        <Text style={styles.title}>Settings</Text>
+        <View style={styles.header}>
+          <BackButton />
+          <Text style={styles.title}>Settings</Text>
+        </View>
         
         <View style={styles.cardsContainer}>
           {settings.map((setting) => (
@@ -125,12 +129,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  header: {
+    padding: 24,
+  },
   title: {
     fontSize: 42,
     fontWeight: '800',
     color: '#000',
     letterSpacing: -1,
-    padding: 24,
+    marginTop: 16,
   },
   cardsContainer: {
     padding: 24,
