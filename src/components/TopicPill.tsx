@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#212529',
+    backgroundColor: '#f1f3f5',
     marginRight: 8,
     flexDirection: 'row',
     alignItems: 'center',
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffd43b',
   },
   topicTagText: {
-    color: '#fff',
+    color: '#495057',
     fontSize: 16,
     fontWeight: '600',
     marginRight: 8,
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   countBadge: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: '#e9ecef',
     width: 24,
     height: 24,
     borderRadius: 12,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
   countText: {
-    color: '#fff',
+    color: '#495057',
     fontSize: 12,
     fontWeight: '600',
   },
