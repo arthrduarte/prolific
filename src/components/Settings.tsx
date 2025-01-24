@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { StyleSheet, View, Alert, ScrollView } from 'react-native'
-import { Button, Text, Switch } from '@rneui/themed'
+import { StyleSheet, View, Alert, ScrollView, TouchableOpacity } from 'react-native'
+import { Text } from '@rneui/themed'
 import { Session } from '@supabase/supabase-js'
 import { usePreferences } from '../contexts/PreferencesContext'
+import { FontAwesome } from '@expo/vector-icons'
 
 interface SettingsProps {
   session: Session
@@ -29,21 +30,36 @@ export default function Settings({ session }: SettingsProps) {
     }
   }
 
-  const SettingItem = ({ title, description, value, onValueChange }) => (
-    <View style={styles.settingItem}>
+  const SettingItem = ({ title, description, value, onValueChange, isLast = false }) => (
+    <TouchableOpacity 
+      style={[
+        styles.settingItem,
+        !isLast && styles.settingItemBorder
+      ]}
+      onPress={() => onValueChange(!value)}
+      activeOpacity={0.7}
+    >
       <View style={styles.settingRow}>
         <View style={styles.settingTextContainer}>
           <Text style={styles.settingTitle}>{title}</Text>
           <Text style={styles.settingDescription}>{description}</Text>
         </View>
-        <Switch value={value} onValueChange={onValueChange} />
+        <View style={[
+          styles.toggle,
+          value && styles.toggleActive
+        ]}>
+          <View style={[
+            styles.toggleCircle,
+            value && styles.toggleCircleActive
+          ]} />
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 
   return (
     <ScrollView style={styles.container}>
-      <Text h4 style={styles.title}>Settings</Text>
+      <Text style={styles.title}>Settings</Text>
       
       {/* Learning Section */}
       <View style={styles.section}>
@@ -53,6 +69,7 @@ export default function Settings({ session }: SettingsProps) {
           description="Enable audio for questions and explanations"
           value={voiceMode}
           onValueChange={setVoiceMode}
+          isLast={true}
         />
       </View>
 
@@ -65,27 +82,24 @@ export default function Settings({ session }: SettingsProps) {
           value={notifications}
           onValueChange={setNotifications}
         />
-        <SettingItem
-          title="Dark Mode"
-          description="Switch to dark theme"
-          value={darkMode}
-          onValueChange={setDarkMode}
-        />
       </View>
 
       {/* Account Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account</Text>
-        <View style={styles.settingItem}>
+        <View style={[styles.settingItem, styles.settingItemBorder]}>
           <Text style={styles.email}>{session.user.email}</Text>
         </View>
-        <Button
-          title={loading ? "Signing out..." : "Sign Out"}
+        <TouchableOpacity
+          style={styles.signOutButton}
           onPress={signOut}
           disabled={loading}
-          buttonStyle={styles.signOutButton}
-          titleStyle={styles.signOutButtonText}
-        />
+          activeOpacity={0.7}
+        >
+          <Text style={styles.signOutButtonText}>
+            {loading ? "Signing out..." : "Sign Out"}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <Text style={styles.version}>Version 1.0.0</Text>
@@ -102,7 +116,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 48,
     paddingBottom: 24,
-    fontWeight: '700',
+    fontSize: 42,
+    fontWeight: '800',
+    color: '#000',
+    letterSpacing: -1,
   },
   section: {
     paddingHorizontal: 24,
@@ -111,30 +128,38 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f1f3f5',
   },
   sectionTitle: {
+    fontSize: 16,
     color: '#868e96',
     marginBottom: 16,
     fontWeight: '600',
   },
   settingItem: {
-    marginBottom: 16,
+    paddingVertical: 16,
+  },
+  settingItemBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f3f5',
   },
   settingDescription: {
+    fontSize: 14,
     color: '#adb5bd',
     marginTop: 4,
   },
   email: {
+    fontSize: 16,
     color: '#495057',
+    fontWeight: '500',
   },
   signOutButton: {
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#fa5252',
-    borderRadius: 12,
+    backgroundColor: '#212529',
+    borderRadius: 16,
     marginTop: 16,
-    height: 48,
+    height: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   signOutButtonText: {
-    color: '#fa5252',
+    color: '#fff',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -154,7 +179,26 @@ const styles = StyleSheet.create({
   },
   settingTitle: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#495057',
+    fontWeight: '600',
+    color: '#000',
   },
-})
+  toggle: {
+    width: 48,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#e9ecef',
+    padding: 2,
+  },
+  toggleActive: {
+    backgroundColor: '#ffd43b',
+  },
+  toggleCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+  },
+  toggleCircleActive: {
+    transform: [{ translateX: 20 }],
+  },
+});

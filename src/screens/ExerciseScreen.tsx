@@ -193,11 +193,11 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    backgroundColor: '#2196f3',
+    backgroundColor: '#ffd43b',
     borderRadius: 2,
   },
   title: {
-    fontSize: 24,
+    fontSize: 42,
     fontWeight: '700',
     color: '#000',
     letterSpacing: -0.5,
