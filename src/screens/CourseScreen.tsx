@@ -4,25 +4,19 @@ import { supabase } from '../lib/supabase';
 import { Course, Exercise } from '../types/database.types';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ExerciseCard } from '../components/ExerciseCard';
+import { BackButton } from '../components/BackButton';
 import { useUserProgress } from '../hooks/useUserProgress';
+import { ExerciseCard } from '../components/ExerciseCard';
 
 type NavigationProp = NativeStackNavigationProp<{
   Exercise: { exerciseId: string; courseId: string };
 }>;
 
-type GroupedExercises = {
-  [key: string]: Exercise[];
-};
-
-const DIFFICULTY_ORDER = ['EASY', 'MEDIUM', 'HARD'];
-
 export default function CourseScreen({ route }: { route: any }) {
   const { courseId } = route.params;
   const navigation = useNavigation<NavigationProp>();
   const [course, setCourse] = useState<Course | null>(null);
-  const [groupedExercises, setGroupedExercises] = useState<GroupedExercises>({});
-  const [progress, setProgress] = useState(0);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
 
   const { 
     loading: progressLoading,
@@ -48,23 +42,10 @@ export default function CourseScreen({ route }: { route: any }) {
         .from('exercises')
         .select('*')
         .eq('course_id', courseId)
-        .order('difficulty', { ascending: true })
         .order('order', { ascending: true });
 
       if (!error && data) {
-        // Group exercises by difficulty
-        const grouped = (data as Exercise[]).reduce((acc: GroupedExercises, exercise) => {
-          const difficulty = exercise.difficulty.toUpperCase();
-          if (!acc[difficulty]) {
-            acc[difficulty] = [];
-          }
-          acc[difficulty].push(exercise);
-          return acc;
-        }, {});
-
-        setGroupedExercises(grouped);
-        // Placeholder progress calculation - you might want to implement actual progress tracking
-        setProgress(0.3); // 30% progress for demonstration
+        setExercises(data as Exercise[]);
       }
     };
 
@@ -74,7 +55,6 @@ export default function CourseScreen({ route }: { route: any }) {
 
   const handleExercisePress = (exercise: Exercise) => {
     if (!isExerciseUnlocked(exercise)) {
-      // You can show an alert, toast, or custom modal here
       Alert.alert(
         "Exercise Locked",
         "Complete the previous exercise to unlock this one.",
@@ -94,51 +74,26 @@ export default function CourseScreen({ route }: { route: any }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.scrollView}>
-        <View style={styles.header}>
-        </View>
-
-        <View style={styles.content}>
+        <View style={styles.container}>
+          <BackButton />
+          
           <Text style={styles.title}>{course.title}</Text>
-          <View style={styles.metaContainer}>
-            <Text style={styles.metaText}>
-              {Object.values(groupedExercises).reduce((total, exercises) => total + exercises.length, 0)} exercises
+          <View style={styles.lessonCountContainer}>
+            <Text style={styles.lessonCount}>
+              {exercises.length} Lessons
             </Text>
-            <View style={styles.progressContainer}>
-              <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
-              </View>
-              <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
-            </View>
           </View>
-          <Text style={styles.description}>
-            {course.description || 'Learn the fundamentals and advanced concepts through practical exercises.'}
-          </Text>
-        </View>
 
-        <View style={styles.content}>
-          <View style={styles.exercisesSection}>
-            <Text style={styles.sectionTitle}>Course Content</Text>
-            <View style={styles.exercisesContainer}>
-              {DIFFICULTY_ORDER.map((difficulty) => {
-                const exercises = groupedExercises[difficulty];
-                if (!exercises?.length) return null;
-                
-                return (
-                  <View key={difficulty} style={styles.difficultySection}>
-                    <Text style={styles.difficultyTitle}>{difficulty}:</Text>
-                    {exercises.map((exercise, index) => (
-                      <ExerciseCard
-                        key={exercise.id}
-                        exercise={exercise}
-                        index={index}
-                        isActive={isExerciseUnlocked(exercise)}
-                        onPress={handleExercisePress}
-                      />
-                    ))}
-                  </View>
-                );
-              })}
-            </View>
+          <View style={styles.exercisesContainer}>
+            {exercises.map((exercise, index) => (
+              <ExerciseCard
+                key={exercise.id}
+                exercise={exercise}
+                index={index}
+                isUnlocked={isExerciseUnlocked(exercise)}
+                onPress={handleExercisePress}
+              />
+            ))}
           </View>
         </View>
       </ScrollView>
@@ -149,91 +104,36 @@ export default function CourseScreen({ route }: { route: any }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f0dc1b',
+    backgroundColor: '#fff',
   },
   scrollView: {
     flex: 1,
-    backgroundColor: '#fff',
   },
-  header: {
-    backgroundColor: '#f0dc1b',
+  container: {
+    flex: 1,
     padding: 24,
-    height: 200,
-    paddingTop: 20,
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
   },
   title: {
-    marginTop: 20,
-    fontSize: 28,
+    fontSize: 42,
     fontWeight: '800',
     color: '#000',
-  },
-  metaContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  metaText: {
-    fontSize: 14,
-    color: '#495057',
-    fontWeight: '600',
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  progressBar: {
-    width: 100,
-    height: 4,
-    backgroundColor: 'rgba(0,0,0,0.1)',
-    borderRadius: 2,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#000',
-    borderRadius: 2,
-  },
-  progressText: {
-    fontSize: 14,
-    color: '#495057',
-    fontWeight: '600',
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  description: {
-    fontSize: 14,
-    color: '#495057',
-    lineHeight: 18,
-    opacity: 0.5,
-  },
-  exercisesSection: {
-    flex: 1,
-    marginTop: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000',
     marginBottom: 16,
+    letterSpacing: -1,
+  },
+  lessonCountContainer: {
+    backgroundColor: '#f8f9fa',
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    marginBottom: 32,
+  },
+  lessonCount: {
+    fontSize: 16,
+    color: '#495057',
+    fontWeight: '600',
   },
   exercisesContainer: {
-    flex: 1,
-  },
-  difficultySection: {
-    marginBottom: 24,
-  },
-  difficultyTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#000',
-    opacity: 0.3,
-    marginBottom: 12,
-    textTransform: 'capitalize',
+    gap: 12,
   },
 });

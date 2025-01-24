@@ -6,114 +6,106 @@ import { FontAwesome } from '@expo/vector-icons';
 interface ExerciseCardProps {
   exercise: Exercise;
   index: number;
-  isActive: boolean;
+  isUnlocked: boolean;
   onPress: (exercise: Exercise) => void;
-  topicEmoji?: string;
 }
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   exercise,
   index,
-  isActive,
+  isUnlocked,
   onPress,
-  topicEmoji = '📝',
 }) => {
+  const isEven = index % 2 === 0;
+
   return (
     <TouchableOpacity
       style={[
-        styles.exerciseContainer,
-        !isActive && styles.lockedContainer
+        styles.exerciseCard,
+        isEven ? styles.exerciseCardYellow : styles.exerciseCardDark,
+        !isUnlocked && styles.exerciseCardLocked
       ]}
       onPress={() => onPress(exercise)}
-      activeOpacity={0.7}
+      activeOpacity={0.9}
     >
+      <View style={styles.exerciseContent}>
+        <Text 
+          style={[
+            styles.exerciseTitle,
+            isEven ? styles.exerciseTitleDark : styles.exerciseTitleLight,
+            !isUnlocked && styles.exerciseTitleLocked
+          ]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {exercise.title}
+        </Text>
+      </View>
       <View style={[
-        styles.card,
-        isActive && styles.activeCard,
-        !isActive && styles.lockedCard
+        styles.playButton,
+        isEven ? styles.playButtonDark : styles.playButtonYellow,
+        !isUnlocked && styles.playButtonLocked
       ]}>
-        <View style={styles.cardContent}>
-          <View style={styles.emojiContainer}>
-            <Text style={styles.emoji}>
-              {isActive ? topicEmoji : '🔒'}
-            </Text>
-          </View>
-          
-          <View style={styles.textContainer}>
-            <Text style={[
-              styles.title,
-              !isActive && styles.lockedText
-            ]} numberOfLines={5}>
-              {exercise.title}
-            </Text>
-          </View>
-
-          <FontAwesome 
-            name="chevron-right" 
-            size={16} 
-            color={isActive ? "#adb5bd" : "#dee2e6"}
-            style={styles.chevron}
-          />
-        </View>
+        <FontAwesome 
+          name={isUnlocked ? "play" : "lock"} 
+          size={14} 
+          color={!isUnlocked ? "#fff" : (isEven ? "#fff" : "#000")}
+        />
       </View>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  exerciseContainer: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    alignItems: 'center',
-  },
-  card: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-  },
-  activeCard: {
-    borderColor: '#a1ff9c',
-    borderWidth: 2,
-  },
-  cardContent: {
+  exerciseCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    justifyContent: 'space-between',
+    height: 72,
+    paddingHorizontal: 24,
+    borderRadius: 16,
   },
-  emojiContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
+  exerciseCardYellow: {
+    backgroundColor: '#ffd43b',
   },
-  emoji: {
-    fontSize: 20,
+  exerciseCardDark: {
+    backgroundColor: '#212529',
   },
-  textContainer: {
+  exerciseCardLocked: {
+    backgroundColor: '#868e96',
+  },
+  exerciseContent: {
     flex: 1,
+    marginRight: 16,
   },
-  title: {
-    fontSize: 14,
+  exerciseTitle: {
+    fontSize: 18,
     fontWeight: '600',
+    lineHeight: 24,
+  },
+  exerciseTitleDark: {
     color: '#000',
   },
-  chevron: {
-    marginLeft: 'auto',
+  exerciseTitleLight: {
+    color: '#fff',
   },
-  lockedContainer: {
-    opacity: 0.7,
+  exerciseTitleLocked: {
+    color: 'rgba(255, 255, 255, 0.8)',
   },
-  lockedCard: {
-    backgroundColor: '#f8f9fa',
+  playButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  lockedText: {
-    color: '#adb5bd',
+  playButtonYellow: {
+    backgroundColor: '#ffd43b',
+  },
+  playButtonDark: {
+    backgroundColor: '#212529',
+  },
+  playButtonLocked: {
+    backgroundColor: '#495057',
   },
 }); 
