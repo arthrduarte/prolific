@@ -7,15 +7,23 @@ import { TopicComponent } from '../components/Topic'
 
 export default function HomeScreen({navigation}: {navigation: any}) {
   const [topics, setTopics] = useState<Topic[]>([])
+  const [userName, setUserName] = useState<string>('')
 
   useEffect(() => {
-    const fetchTopics = async () => {
+    const fetchUserAndTopics = async () => {
+      // Fetch user data
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.user_metadata?.full_name) {
+        setUserName(user.user_metadata.full_name)
+      }
+
+      // Fetch topics
       const { data, error } = await supabase.from('topics').select()
       if (data) {
         setTopics(data as Topic[])
       }
     }
-    fetchTopics()
+    fetchUserAndTopics()
   }, [])
 
   return (
@@ -29,33 +37,14 @@ export default function HomeScreen({navigation}: {navigation: any}) {
         >
           <View style={styles.header}>
             <View style={styles.titleContainer}>
-              <Text style={styles.welcomeText}>Welcome to</Text>
-              <Text style={styles.title}>Prolific</Text>
-            </View>
-            <Text style={styles.subtitle}>
-              Master new skills through interactive learning
-            </Text>
-            
-            {/* Stats Section */}
-            <View style={styles.statsContainer}>
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>{topics.length}</Text>
-                <Text style={styles.statLabel}>Learning{'\n'}Paths</Text>
-              </View>
-              <View style={[styles.statItem, styles.statItemBorder]}>
-                <Text style={styles.statNumber}>24</Text>
-                <Text style={styles.statLabel}>Interactive{'\n'}Courses</Text>
-              </View>
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>120</Text>
-                <Text style={styles.statLabel}>Hands-on{'\n'}Exercises</Text>
-              </View>
+              <Text style={styles.welcomeText}>
+                {userName ? `Hello, ${userName}` : 'Hello'}
+              </Text>
             </View>
           </View>
 
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Learning Paths</Text>
-            <Text style={styles.sectionSubtitle}>Choose your journey</Text>
+            <Text style={styles.sectionTitle}>Let's Learn New Stuff!</Text>
           </View>
 
           <View style={styles.cardsContainer}>
@@ -152,7 +141,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 42,
     fontWeight: '700',
     color: '#000',
     marginBottom: 4,
