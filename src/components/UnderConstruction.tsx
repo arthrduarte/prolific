@@ -5,12 +5,12 @@ import { FontAwesome } from '@expo/vector-icons';
 export const UnderConstruction: React.FC = () => {
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Under Construction</Text>
       <View style={styles.iconContainer}>
         <FontAwesome name="wrench" size={32} color="#495057" />
       </View>
-      <Text style={styles.title}>Under Construction</Text>
       <Text style={styles.description}>
-        We're working hard to create this exercise.{'\n'}
+        We are working hard to create this exercise.{'\n'}
         Please check back soon!
       </Text>
     </View>
@@ -28,14 +28,10 @@ const styles = StyleSheet.create({
   iconContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
-  },
-  cogIcon: {
-    marginLeft: -8,
-    marginTop: -16,
+    marginVertical: 40,
   },
   title: {
-    fontSize: 24,
+    fontSize: 42,
     fontWeight: '700',
     color: '#000',
     marginBottom: 12,

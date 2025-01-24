@@ -8,13 +8,21 @@ interface ExerciseCardProps {
   index: number;
   isUnlocked: boolean;
   onPress: (exercise: Exercise) => void;
+  steps?: number;
 }
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   exercise,
   isUnlocked,
   onPress,
+  steps = 0,
 }) => {
+  const getIcon = () => {
+    if (!isUnlocked) return "lock";
+    if (steps === 0) return "wrench";
+    return "play";
+  };
+
   return (
     <TouchableOpacity
       style={[
@@ -41,9 +49,9 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
         isUnlocked ? styles.playButtonDark : styles.playButtonLocked
       ]}>
         <FontAwesome 
-          name={isUnlocked ? "play" : "lock"} 
+          name={getIcon()} 
           size={14} 
-          color={isUnlocked ? "#fff" : "#fff"}
+          color="#fff"
         />
       </View>
     </TouchableOpacity>

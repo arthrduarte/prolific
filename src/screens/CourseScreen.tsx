@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, Alert } from 'react-native';
 import { supabase } from '../lib/supabase';
-import { Course, Exercise } from '../types/database.types';
+import { Course, Exercise, Step } from '../types/database.types';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BackButton } from '../components/BackButton';
@@ -17,6 +17,7 @@ export default function CourseScreen({ route }: { route: any }) {
   const navigation = useNavigation<NavigationProp>();
   const [course, setCourse] = useState<Course | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [stepsCount, setStepsCount] = useState<{ [key: string]: number }>({});
 
   const { 
     loading: progressLoading,
@@ -46,6 +47,22 @@ export default function CourseScreen({ route }: { route: any }) {
 
       if (!error && data) {
         setExercises(data as Exercise[]);
+        
+        // Fetch steps count for each exercise
+        const exerciseIds = data.map(ex => ex.id);
+        const { data: stepsData, error: stepsError } = await supabase
+          .from('steps')
+          .select('exercise_id')
+          .in('exercise_id', exerciseIds);
+
+        if (!stepsError && stepsData) {
+          // Count steps for each exercise
+          const counts = stepsData.reduce((acc, step) => {
+            acc[step.exercise_id] = (acc[step.exercise_id] || 0) + 1;
+            return acc;
+          }, {} as { [key: string]: number });
+          setStepsCount(counts);
+        }
       }
     };
 
@@ -92,6 +109,7 @@ export default function CourseScreen({ route }: { route: any }) {
                 index={index}
                 isUnlocked={isExerciseUnlocked(exercise)}
                 onPress={handleExercisePress}
+                steps={stepsCount[exercise.id] || 0}
               />
             ))}
           </View>
