@@ -6,11 +6,15 @@ import { Topic, Course } from '../types/database.types'
 import { CourseCard } from '../components/CourseCard'
 import { TopicPill } from '../components/TopicPill'
 
+interface TopicWithCount extends Topic {
+  courseCount: number;
+}
+
 export default function HomeScreen({navigation}: {navigation: any}) {
-  const [topics, setTopics] = useState<Topic[]>([])
+  const [topics, setTopics] = useState<TopicWithCount[]>([])
   const [courses, setCourses] = useState<Course[]>([])
   const [userName, setUserName] = useState<string>('')
-  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
+  const [selectedTopic, setSelectedTopic] = useState<TopicWithCount | null>(null)
 
   useEffect(() => {
     const fetchUserAndTopics = async () => {
@@ -20,12 +24,20 @@ export default function HomeScreen({navigation}: {navigation: any}) {
         setUserName(user.user_metadata.full_name)
       }
 
-      // Fetch topics
-      const { data: topicsData } = await supabase.from('topics').select()
+      // Fetch topics with course counts
+      const { data: topicsData } = await supabase
+        .from('topics')
+        .select('*, courses(count)')
+
       if (topicsData) {
-        setTopics(topicsData as Topic[])
-        if (topicsData.length > 0) {
-          setSelectedTopic(topicsData[0])
+        const topicsWithCount = topicsData.map(topic => ({
+          ...topic,
+          courseCount: topic.courses[0].count
+        })) as TopicWithCount[]
+        
+        setTopics(topicsWithCount)
+        if (topicsWithCount.length > 0) {
+          setSelectedTopic(topicsWithCount[0])
         }
       }
     }
@@ -50,7 +62,10 @@ export default function HomeScreen({navigation}: {navigation: any}) {
   }, [selectedTopic])
 
   const handleTopicPress = (topic: Topic) => {
-    setSelectedTopic(topic)
+    const topicWithCount = topics.find(t => t.id === topic.id)
+    if (topicWithCount) {
+      setSelectedTopic(topicWithCount)
+    }
   }
 
   const handleCoursePress = (course: Course) => {
@@ -93,6 +108,7 @@ export default function HomeScreen({navigation}: {navigation: any}) {
               topic={topic}
               isSelected={selectedTopic?.id === topic.id}
               onPress={handleTopicPress}
+              courseCount={topic.courseCount}
             />
           ))}
         </ScrollView>
