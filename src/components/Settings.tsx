@@ -32,33 +32,26 @@ export default function Settings() {
     }
   }
 
-  const SettingItem = ({ title, description, value, onValueChange, isLast = false }) => (
+  const SettingItem = ({ title, description, value, onValueChange }) => (
     <TouchableOpacity 
       style={[
         styles.settingCard,
-        value ? styles.cardYellow : styles.cardDark
+        styles.cardYellow
       ]}
       onPress={() => onValueChange(!value)}
       activeOpacity={0.9}
     >
       <View style={styles.settingContent}>
-        <Text style={[
-          styles.settingTitle,
-          value ? styles.textDark : styles.textLight
-        ]}>
+        <Text style={styles.settingTitle}>
           {title}
         </Text>
-        <Text style={[
-          styles.settingDescription,
-          value ? styles.descriptionDark : styles.descriptionLight
-        ]}>
+        <Text style={styles.settingDescription}>
           {description}
         </Text>
       </View>
       <View style={[
         styles.toggle,
-        value ? styles.toggleDark : styles.toggleYellow,
-        value && styles.toggleActive
+        value ? styles.toggleActive : styles.toggleInactive
       ]}>
         <View style={[
           styles.toggleCircle,
@@ -91,46 +84,31 @@ export default function Settings() {
         <Text style={styles.title}>Settings</Text>
         
         <View style={styles.cardsContainer}>
-          {settings.map((setting, index) => (
+          {settings.map((setting) => (
             <SettingItem
               key={setting.title}
               {...setting}
             />
           ))}
 
-          <View style={[
-            styles.settingCard,
-            settings.length % 2 === 0 ? styles.cardYellow : styles.cardDark,
-          ]}>
+          <View style={[styles.settingCard, styles.cardYellow]}>
             <View style={styles.settingContent}>
-              <Text style={[
-                styles.settingTitle,
-                settings.length % 2 === 0 ? styles.textDark : styles.textLight,
-              ]}>
+              <Text style={styles.settingTitle}>
                 Account
               </Text>
-              <Text style={[
-                styles.settingDescription,
-                settings.length % 2 === 0 ? styles.descriptionDark : styles.descriptionLight,
-              ]}>
+              <Text style={styles.settingDescription}>
                 {session.user.email}
               </Text>
             </View>
           </View>
 
           <TouchableOpacity
-            style={[
-              styles.settingCard,
-              (settings.length + 1) % 2 === 0 ? styles.cardYellow : styles.cardDark,
-            ]}
+            style={[styles.settingCard, styles.cardDark]}
             onPress={signOut}
             disabled={loading}
             activeOpacity={0.9}
           >
-            <Text style={[
-              styles.settingTitle,
-              (settings.length + 1) % 2 === 0 ? styles.textDark : styles.textLight,
-            ]}>
+            <Text style={styles.signOutText}>
               {loading ? "Signing out..." : "Sign Out"}
             </Text>
           </TouchableOpacity>
@@ -180,21 +158,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 4,
-  },
-  textDark: {
     color: '#000',
-  },
-  textLight: {
-    color: '#fff',
   },
   settingDescription: {
     fontSize: 14,
-  },
-  descriptionDark: {
     color: 'rgba(0, 0, 0, 0.7)',
   },
-  descriptionLight: {
-    color: 'rgba(255, 255, 255, 0.7)',
+  signOutText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#fff',
   },
   toggle: {
     width: 48,
@@ -202,13 +175,10 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 2,
   },
-  toggleYellow: {
-    backgroundColor: '#ffd43b',
-  },
-  toggleDark: {
+  toggleActive: {
     backgroundColor: '#212529',
   },
-  toggleActive: {
+  toggleInactive: {
     backgroundColor: '#868e96',
   },
   toggleCircle: {

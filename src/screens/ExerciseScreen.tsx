@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, Text, SafeAreaView, Animated, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, Text, Animated, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { supabase } from '../lib/supabase'
 import { Exercise, Step } from '../types/database.types'
 import QuestionComponent from '../components/question/Question'
@@ -99,56 +100,55 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <View style={[
+        styles.header,
+        { paddingBottom: currentStepIndex === 0 ? 24 : 16 }
+      ]}>
         <View style={[
-          styles.header,
-          { paddingBottom: currentStepIndex === 0 ? 24 : 16 }
+          styles.progressContainer,
+          { marginBottom: currentStepIndex === 0 ? 16 : 0 }
         ]}>
-          
-          <View style={[
-            styles.progressContainer,
-            { marginBottom: currentStepIndex === 0 ? 16 : 0 }
-          ]}>
-            {currentStepIndex > 0 && (
-              <TouchableOpacity 
-                style={styles.backButton}
-                onPress={handleGoBack}
-                activeOpacity={0.7}
-              >
-                <FontAwesome name="chevron-left" size={16} color="#000" />
-              </TouchableOpacity>
-            )}
-            <View style={[
-              styles.progressBackground,
-              { marginBottom: currentStepIndex === 0 ? 8 : 0 }
-            ]}>
-              <Animated.View 
-                style={[
-                  styles.progressBar,
-                  {
-                    width: progressWidth.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: ['0%', '100%']
-                    })
-                  }
-                ]}
-              />
-            </View>
-          </View>
-          {currentStepIndex === 0 && (
-            <Text style={styles.title}>{exercise.title}</Text>
+          {currentStepIndex > 0 && (
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={handleGoBack}
+              activeOpacity={0.7}
+            >
+              <FontAwesome name="chevron-left" size={16} color="#000" />
+            </TouchableOpacity>
           )}
+          <View style={[
+            styles.progressBackground,
+            { marginBottom: currentStepIndex === 0 ? 8 : 0 }
+          ]}>
+            <Animated.View 
+              style={[
+                styles.progressBar,
+                {
+                  width: progressWidth.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0%', '100%']
+                  })
+                }
+              ]}
+            />
+          </View>
         </View>
+        {currentStepIndex === 0 && (
+          <Text style={styles.title}>{exercise.title}</Text>
+        )}
+      </View>
 
-        <View style={styles.content}>
-          <QuestionComponent 
-            exercise={exercise}
-            steps={steps}
-            currentStepIndex={currentStepIndex}
-            onStepComplete={handleStepComplete}
-            onExerciseComplete={handleExerciseComplete}
-          />
-        </View>
+      <View style={styles.content}>
+        <QuestionComponent 
+          exercise={exercise}
+          steps={steps}
+          currentStepIndex={currentStepIndex}
+          onStepComplete={handleStepComplete}
+          onExerciseComplete={handleExerciseComplete}
+        />
+      </View>
     </SafeAreaView>
   )
 }
@@ -157,17 +157,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  loadingText: {
-    fontSize: 16,
-    color: '#666',
-    fontWeight: '500',
   },
   header: {
     paddingTop: 16,
@@ -211,6 +200,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 16,
     justifyContent: 'center',
-    // alignItems: 'center',
   },
 });
