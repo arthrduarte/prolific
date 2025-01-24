@@ -1,12 +1,13 @@
 import { StatusBar } from 'expo-status-bar'
 import React, { useState } from 'react'
-import { StyleSheet, View, Text, ScrollView, SafeAreaView } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Topic, Course } from '../types/database.types'
 import { CourseCard } from '../components/CourseCard'
 import { TopicPill } from '../components/TopicPill'
 import { useData } from '../contexts/DataContext'
 import { SkeletonLoaderHome } from '../components/SkeletonLoaderHome'
+import { FontAwesome } from '@expo/vector-icons'
 
 export default function HomeScreen({navigation}: {navigation: any}) {
   const { topics, courses, isLoading } = useData();
@@ -38,6 +39,10 @@ export default function HomeScreen({navigation}: {navigation: any}) {
       courseId: course.id,
       topicId: selectedTopic?.id 
     })
+  }
+
+  const handleSettingsPress = () => {
+    navigation.navigate('Settings')
   }
 
   const getTopicCourses = (topicId: string) => {
@@ -81,9 +86,17 @@ export default function HomeScreen({navigation}: {navigation: any}) {
       >
         <View style={styles.header}>
           <View style={styles.titleContainer}>
-            <Text style={styles.welcomeText}>
-              {userName ? `Hello, ${userName}` : 'Hello'}
-            </Text>
+            <View style={styles.welcomeRow}>
+              <Text style={styles.welcomeText}>
+                {userName ? `Hello, ${userName}` : 'Hello'}
+              </Text>
+              <TouchableOpacity 
+                onPress={handleSettingsPress}
+                style={styles.settingsButton}
+              >
+                <FontAwesome name="cog" size={20} color="#6c757d" />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -144,11 +157,19 @@ const styles = StyleSheet.create({
   titleContainer: {
     marginBottom: 8,
   },
+  welcomeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   welcomeText: {
     fontSize: 16,
     color: '#6c757d',
     marginBottom: 4,
     fontWeight: '500',
+  },
+  settingsButton: {
+    padding: 8,
   },
   scrollView: {
     flex: 1,
