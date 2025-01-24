@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar'
 import React, { useState } from 'react'
-import { StyleSheet, View, Text, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { supabase } from '../lib/supabase'
 import { Topic, Course } from '../types/database.types'
 import { CourseCard } from '../components/CourseCard'
@@ -76,7 +77,7 @@ export default function HomeScreen({navigation}: {navigation: any}) {
   )
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <StatusBar style="dark" />
       
       <ScrollView 

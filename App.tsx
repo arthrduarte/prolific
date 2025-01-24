@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from './src/lib/supabase';
 import { Session } from '@supabase/supabase-js';
 import Auth from './src/components/Auth';
-import { TabNavigator } from './src/components/Navbar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { PreferencesProvider } from './src/contexts/PreferencesContext';
@@ -31,27 +30,30 @@ export default function App() {
   }, [])
 
   return (
-    <PreferencesProvider>
-      <DataProvider>
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{
-            headerShown: false,
-            animation: 'slide_from_right',
-          }}>
-            {session && session.user ? (
-              <>
-                <Stack.Screen name="Home" component={HomeScreen} />
-                <Stack.Screen name="Course" component={CourseScreen} />
-                <Stack.Screen name="Exercise" component={ExerciseScreen} />
-                <Stack.Screen name="Settings" component={Settings} />
-              </>
-            ) : (
-              <Stack.Screen name="Auth" component={Auth} />
-            )}
-          </Stack.Navigator>
-        </NavigationContainer>
-      </DataProvider>
-    </PreferencesProvider>
+    <SafeAreaProvider>
+      <StatusBar style="dark" />
+      <PreferencesProvider>
+        <DataProvider>
+          <NavigationContainer>
+            <Stack.Navigator screenOptions={{
+              headerShown: false,
+              animation: 'slide_from_right',
+            }}>
+              {session && session.user ? (
+                <>
+                  <Stack.Screen name="Home" component={HomeScreen} />
+                  <Stack.Screen name="Course" component={CourseScreen} />
+                  <Stack.Screen name="Exercise" component={ExerciseScreen} />
+                  <Stack.Screen name="Settings" component={Settings} />
+                </>
+              ) : (
+                <Stack.Screen name="Auth" component={Auth} />
+              )}
+            </Stack.Navigator>
+          </NavigationContainer>
+        </DataProvider>
+      </PreferencesProvider>
+    </SafeAreaProvider>
   );
 }
 

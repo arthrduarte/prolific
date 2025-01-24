@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { StyleSheet, View, Alert, ScrollView, TouchableOpacity } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text } from '@rneui/themed'
 import { usePreferences } from '../contexts/PreferencesContext'
 import React from 'react'
@@ -85,57 +86,59 @@ export default function Settings() {
   if (!session) return null;
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
-      
-      <View style={styles.cardsContainer}>
-        {settings.map((setting, index) => (
-          <SettingItem
-            key={setting.title}
-            {...setting}
-          />
-        ))}
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScrollView>
+        <Text style={styles.title}>Settings</Text>
+        
+        <View style={styles.cardsContainer}>
+          {settings.map((setting, index) => (
+            <SettingItem
+              key={setting.title}
+              {...setting}
+            />
+          ))}
 
-        <View style={[
-          styles.settingCard,
-          settings.length % 2 === 0 ? styles.cardYellow : styles.cardDark,
-        ]}>
-          <View style={styles.settingContent}>
+          <View style={[
+            styles.settingCard,
+            settings.length % 2 === 0 ? styles.cardYellow : styles.cardDark,
+          ]}>
+            <View style={styles.settingContent}>
+              <Text style={[
+                styles.settingTitle,
+                settings.length % 2 === 0 ? styles.textDark : styles.textLight,
+              ]}>
+                Account
+              </Text>
+              <Text style={[
+                styles.settingDescription,
+                settings.length % 2 === 0 ? styles.descriptionDark : styles.descriptionLight,
+              ]}>
+                {session.user.email}
+              </Text>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={[
+              styles.settingCard,
+              (settings.length + 1) % 2 === 0 ? styles.cardYellow : styles.cardDark,
+            ]}
+            onPress={signOut}
+            disabled={loading}
+            activeOpacity={0.9}
+          >
             <Text style={[
               styles.settingTitle,
-              settings.length % 2 === 0 ? styles.textDark : styles.textLight,
+              (settings.length + 1) % 2 === 0 ? styles.textDark : styles.textLight,
             ]}>
-              Account
+              {loading ? "Signing out..." : "Sign Out"}
             </Text>
-            <Text style={[
-              styles.settingDescription,
-              settings.length % 2 === 0 ? styles.descriptionDark : styles.descriptionLight,
-            ]}>
-              {session.user.email}
-            </Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={[
-            styles.settingCard,
-            (settings.length + 1) % 2 === 0 ? styles.cardYellow : styles.cardDark,
-          ]}
-          onPress={signOut}
-          disabled={loading}
-          activeOpacity={0.9}
-        >
-          <Text style={[
-            styles.settingTitle,
-            (settings.length + 1) % 2 === 0 ? styles.textDark : styles.textLight,
-          ]}>
-            {loading ? "Signing out..." : "Sign Out"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.version}>Version 1.0.0</Text>
-    </ScrollView>
+        <Text style={styles.version}>Version 1.0.0</Text>
+      </ScrollView>
+    </SafeAreaView>
   )
 }
 

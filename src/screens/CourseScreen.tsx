@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
 import { Course, Exercise, Step } from '../types/database.types';
 import { useNavigation } from '@react-navigation/native';
@@ -89,7 +90,7 @@ export default function CourseScreen({ route }: { route: any }) {
   if (!course) return null;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView style={styles.scrollView}>
         <View style={styles.container}>
           <BackButton />
