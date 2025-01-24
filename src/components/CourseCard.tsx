@@ -7,49 +7,35 @@ interface CourseCardProps {
   course: Course;
   topic: Topic;
   onPress?: (course: Course) => void;
-  index?: number;
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ course, onPress, index = 0 }) => {
-  const isYellow = index % 2 === 0;
-  const backgroundColor = isYellow ? '#ffd43b' : '#212529';
-  const textColor = isYellow ? '#000' : '#fff';
-
+export const CourseCard: React.FC<CourseCardProps> = ({ course, onPress }) => {
   return (
     <TouchableOpacity 
       style={styles.container}
       onPress={() => onPress && onPress(course)}
       activeOpacity={0.9}
     >
-      <View style={[styles.card, { backgroundColor }]}>
+      <View style={styles.card}>
         <View>
-          <Text style={[styles.title, { color: textColor }]} numberOfLines={2}>
+          <Text style={styles.title} numberOfLines={2}>
             {course.title}
           </Text>
           <Text 
-            style={[
-              styles.description, 
-              { color: isYellow ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)' }
-            ]} 
+            style={styles.description}
             numberOfLines={2}
           >
             {course.description}
           </Text>
         </View>
-        <View style={[
-          styles.button,
-          { backgroundColor: isYellow ? '#212529' : '#ffd43b' }
-        ]}>
-          <Text style={[
-            styles.buttonText,
-            { color: isYellow ? '#fff' : '#000' }
-          ]}>
+        <View style={styles.button}>
+          <Text style={styles.buttonText}>
             Start Learning
           </Text>
           <FontAwesome 
             name="play" 
             size={14}
-            color={isYellow ? '#fff' : '#000'}
+            color="#fff"
           />
         </View>
       </View>
@@ -75,17 +61,20 @@ const styles = StyleSheet.create({
     padding: 20,
     minHeight: 230,
     justifyContent: 'space-between',
+    backgroundColor: '#ffd43b',
   },
   title: {
     fontSize: 24,
     fontWeight: '700',
     lineHeight: 32,
     marginBottom: 8,
+    color: '#000',
   },
   description: {
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 20,
+    color: 'rgba(0, 0, 0, 0.7)',
   },
   button: {
     width: '100%',
@@ -95,9 +84,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    backgroundColor: '#212529',
   },
   buttonText: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#fff',
   },
 });
