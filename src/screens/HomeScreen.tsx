@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, SafeAreaView } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Topic, Course } from '../types/database.types'
 import { CourseCard } from '../components/CourseCard'
+import { TopicPill } from '../components/TopicPill'
 
 export default function HomeScreen({navigation}: {navigation: any}) {
   const [topics, setTopics] = useState<Topic[]>([])
@@ -87,21 +88,12 @@ export default function HomeScreen({navigation}: {navigation: any}) {
           contentContainerStyle={styles.topicsScroll}
         >
           {topics.map((topic) => (
-            <TouchableOpacity
+            <TopicPill
               key={topic.id}
-              style={[
-                styles.topicTag,
-                selectedTopic?.id === topic.id && styles.topicTagSelected
-              ]}
-              onPress={() => handleTopicPress(topic)}
-            >
-              <Text style={[
-                styles.topicTagText,
-                selectedTopic?.id === topic.id && styles.topicTagTextSelected
-              ]}>
-                {topic.title} {topic.emoji}
-              </Text>
-            </TouchableOpacity>
+              topic={topic}
+              isSelected={selectedTopic?.id === topic.id}
+              onPress={handleTopicPress}
+            />
           ))}
         </ScrollView>
 
@@ -162,24 +154,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
     gap: 8,
-  },
-  topicTag: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#212529',
-    marginRight: 8,
-  },
-  topicTagSelected: {
-    backgroundColor: '#ffd43b',
-  },
-  topicTagText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  topicTagTextSelected: {
-    color: '#000',
   },
   coursesContainer: {
     paddingHorizontal: 16,
