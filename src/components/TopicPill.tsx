@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { Topic } from '../types/database.types';
+import { FontAwesome } from '@expo/vector-icons';
 
 interface TopicPillProps {
   topic: Topic;
@@ -10,30 +11,41 @@ interface TopicPillProps {
 }
 
 export const TopicPill: React.FC<TopicPillProps> = ({ topic, isSelected, onPress, courseCount }) => {
+  const isLocked = courseCount === 0;
+
   return (
     <TouchableOpacity
       style={[
         styles.topicTag,
-        isSelected && styles.topicTagSelected
+        isSelected && styles.topicTagSelected,
+        isLocked && styles.topicTagLocked
       ]}
-      onPress={() => onPress(topic)}
+      onPress={() => !isLocked && onPress(topic)}
+      activeOpacity={isLocked ? 1 : 0.7}
     >
       <Text style={[
         styles.topicTagText,
-        isSelected && styles.topicTagTextSelected
+        isSelected && styles.topicTagTextSelected,
+        isLocked && styles.topicTagTextLocked
       ]}>
         {topic.title}
       </Text>
       <View style={[
         styles.countBadge,
-        isSelected && styles.countBadgeSelected
+        isSelected && styles.countBadgeSelected,
+        isLocked && styles.countBadgeLocked
       ]}>
-        <Text style={[
-          styles.countText,
-          isSelected && styles.countTextSelected
-        ]}>
-          {courseCount}
-        </Text>
+        {isLocked ? (
+          <FontAwesome name="lock" size={10} color="#868e96" />
+        ) : (
+          <Text style={[
+            styles.countText,
+            isSelected && styles.countTextSelected,
+            isLocked && styles.countTextLocked
+          ]}>
+            {courseCount}
+          </Text>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -52,6 +64,10 @@ const styles = StyleSheet.create({
   topicTagSelected: {
     backgroundColor: '#ffd43b',
   },
+  topicTagLocked: {
+    backgroundColor: '#f1f3f5',
+    opacity: 0.7,
+  },
   topicTagText: {
     color: '#495057',
     fontSize: 16,
@@ -60,6 +76,9 @@ const styles = StyleSheet.create({
   },
   topicTagTextSelected: {
     color: '#000',
+  },
+  topicTagTextLocked: {
+    color: '#868e96',
   },
   countBadge: {
     backgroundColor: '#e9ecef',
@@ -72,6 +91,9 @@ const styles = StyleSheet.create({
   countBadgeSelected: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
+  countBadgeLocked: {
+    backgroundColor: '#e9ecef',
+  },
   countText: {
     color: '#495057',
     fontSize: 12,
@@ -79,5 +101,8 @@ const styles = StyleSheet.create({
   },
   countTextSelected: {
     color: '#000',
+  },
+  countTextLocked: {
+    color: '#868e96',
   },
 }); 
