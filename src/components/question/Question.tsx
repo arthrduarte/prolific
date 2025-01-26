@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonEnabled: {
-    backgroundColor: '#f0dc1b',
+    backgroundColor: '#ffd43b',
   },
   buttonDisabled: {
     backgroundColor: '#e9ecef',

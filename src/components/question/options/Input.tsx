@@ -51,9 +51,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff8db',
   },
   correctTextInput: {
-    backgroundColor: '#212529',
-    borderColor: '#212529',
-    color: '#fff',
+    backgroundColor: '#ffd43b',
+    borderColor: '#ffd43b',
+    color: '#000',
   },
   incorrectTextInput: {
     backgroundColor: '#868e96',

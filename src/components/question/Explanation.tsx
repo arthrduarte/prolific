@@ -94,7 +94,7 @@ export const Explanation: React.FC<ExplanationProps> = ({
                 title="Got it"
                 buttonStyle={[
                   styles.gotItButton,
-                  { backgroundColor: isCorrect ? '#40c057' : '#fa5252' }
+                  { backgroundColor: isCorrect ? '#ffd43b' : '#868e96' }
                 ]}
                 onPress={() => setShowExplanation(false)}
               />
@@ -121,10 +121,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   correctBackground: {
-    backgroundColor: '#80ff97',
+    backgroundColor: '#ffd43b',
   },
   incorrectBackground: {
-    backgroundColor: '#fa8490',
+    backgroundColor: '#868e96',
   },
   resultContent: {
     width: '100%',
@@ -159,10 +159,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   correctText: {
-    color: '#40c057',
+    color: '#000',
   },
   incorrectText: {
-    color: '#fa5252',
+    color: '#868e96',
   },
   explanationDialog: {
     backgroundColor: '#fff',
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   explanationTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#495057',
+    color: '#000',
     textAlign: 'center',
   },
   explanationContent: {
@@ -194,5 +194,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     height: 48,
     borderRadius: 12,
+    color: '#000',
   },
 })
