@@ -23,17 +23,17 @@ export const MultipleChoice: React.FC<MultipleChoiceProps> = ({
           key={index}
           style={[
             styles.optionButton,
-            selectedOption === option && styles.selectedOption,
+            selectedOption === option && !isAnswered && styles.selectedOption,
             isAnswered && option === correctAnswer && styles.correctOption,
             isAnswered && selectedOption === option && option !== correctAnswer && styles.incorrectOption,
           ]}
           onPress={() => onSelect(option)}
           disabled={isAnswered}
-          activeOpacity={0.7}
+          activeOpacity={0.9}
         >
           <Text style={[
             styles.optionText,
-            selectedOption === option && styles.selectedOptionText,
+            selectedOption === option && !isAnswered && styles.selectedOptionText,
             isAnswered && option === correctAnswer && styles.correctOptionText,
             isAnswered && selectedOption === option && option !== correctAnswer && styles.incorrectOptionText,
           ]}>
@@ -48,42 +48,34 @@ export const MultipleChoice: React.FC<MultipleChoiceProps> = ({
 const styles = StyleSheet.create({
   optionsContainer: {
     marginBottom: 24,
+    gap: 12,
   },
   optionButton: {
     padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#e9ecef',
+    borderRadius: 16,
+    backgroundColor: '#f1f3f5',
   },
   selectedOption: {
-    backgroundColor: '#e7f5ff',
-    borderColor: '#339af0',
+    backgroundColor: '#ffd43b',
   },
   correctOption: {
-    backgroundColor: '#d3f9d8',
-    borderColor: '#40c057',
+    backgroundColor: '#ffd43b',
   },
   incorrectOption: {
-    backgroundColor: '#ffe3e3',
-    borderColor: '#fa5252',
+    backgroundColor: '#868e96',
   },
   optionText: {
     fontSize: 16,
     color: '#495057',
-    fontWeight: '500',
+    fontWeight: '600',
   },
   selectedOptionText: {
-    color: '#1971c2',
-    fontWeight: '600',
+    color: '#000',
   },
   correctOptionText: {
-    color: '#2b8a3e',
-    fontWeight: '600',
+    color: '#000',
   },
   incorrectOptionText: {
-    color: '#c92a2a',
-    fontWeight: '600',
+    color: '#fff',
   },
-})
+});

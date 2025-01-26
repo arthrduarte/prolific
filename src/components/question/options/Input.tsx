@@ -19,13 +19,14 @@ export const Input: React.FC<InputProps> = ({
       <TextInput
         style={[
           styles.textInput,
+          !isAnswered && value && styles.activeTextInput,
           isAnswered && isCorrect && styles.correctTextInput,
           isAnswered && !isCorrect && styles.incorrectTextInput,
         ]}
         value={value}
         onChangeText={onChangeText}
         placeholder="Type your answer here..."
-        placeholderTextColor="#adb5bd"
+        placeholderTextColor="#868e96"
         editable={!isAnswered}
       />
     </View>
@@ -38,19 +39,25 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderWidth: 2,
-    borderColor: '#e9ecef',
-    borderRadius: 12,
+    borderColor: '#f1f3f5',
+    borderRadius: 16,
     padding: 16,
     fontSize: 16,
     backgroundColor: '#fff',
     color: '#000',
   },
+  activeTextInput: {
+    borderColor: '#ffd43b',
+    backgroundColor: '#fff8db',
+  },
   correctTextInput: {
-    backgroundColor: '#d3f9d8',
-    borderColor: '#40c057',
+    backgroundColor: '#212529',
+    borderColor: '#212529',
+    color: '#fff',
   },
   incorrectTextInput: {
-    backgroundColor: '#ffe3e3',
-    borderColor: '#fa5252',
+    backgroundColor: '#868e96',
+    borderColor: '#868e96',
+    color: '#fff',
   },
 })
