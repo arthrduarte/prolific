@@ -1,41 +1,52 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { BackButton } from './BackButton';
 
 export const UnderConstruction: React.FC = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Under Construction</Text>
-      <View style={styles.iconContainer}>
-        <FontAwesome name="wrench" size={32} color="#495057" />
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <BackButton />
+          <Text style={styles.title}>Under Construction</Text>
+          <View style={styles.iconContainer}>
+            <FontAwesome name="wrench" size={32} color="#495057" />
+          </View>
+          <Text style={styles.description}>
+            We are working hard to create this exercise.{'\n'}
+            Please check back soon!
+          </Text>
+        </View>
       </View>
-      <Text style={styles.description}>
-        We are working hard to create this exercise.{'\n'}
-        Please check back soon!
-      </Text>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+  },
+  header: {
     padding: 24,
   },
   iconContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 40,
+    marginTop: 40,
+    marginBottom: 24,
   },
   title: {
     fontSize: 42,
     fontWeight: '700',
     color: '#000',
-    marginBottom: 12,
+    marginTop: 16,
     letterSpacing: -0.5,
+    marginBottom: 8,
   },
   description: {
     fontSize: 16,
