@@ -96,6 +96,8 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
   const handleGoBack = () => {
     if (currentStepIndex > 0) {
       setCurrentStepIndex(currentStepIndex - 1)
+    } else {
+      navigation.goBack()
     }
   }
 
@@ -109,15 +111,13 @@ export default function ExerciseScreen({ route, navigation }: { route: any, navi
           styles.progressContainer,
           { marginBottom: currentStepIndex === 0 ? 16 : 0 }
         ]}>
-          {currentStepIndex > 0 && (
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={handleGoBack}
-              activeOpacity={0.7}
-            >
-              <FontAwesome name="chevron-left" size={16} color="#000" />
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={handleGoBack}
+            activeOpacity={0.7}
+          >
+            <FontAwesome name="chevron-left" size={16} color="#000" />
+          </TouchableOpacity>
           <View style={[
             styles.progressBackground,
             { marginBottom: currentStepIndex === 0 ? 8 : 0 }
