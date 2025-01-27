@@ -32,6 +32,7 @@ export interface Step {
     order: number
     rich_content: JSON
     audio_id: string
+    video_url: string | null
 }
 
 export interface Audio {
