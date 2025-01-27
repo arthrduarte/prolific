@@ -14,7 +14,14 @@
     "icon": "./assets/icon.png",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "be.prolific"
+      "bundleIdentifier": "be.prolific",
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": ["be.prolific"]
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
