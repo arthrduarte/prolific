@@ -12,6 +12,7 @@ import { usePreferences } from '../../contexts/PreferencesContext'
 import { useNavigation } from '@react-navigation/native'
 import { Complete } from './Complete'
 import { RichContent } from './rich_content/RichContent'
+import VideoScreen from './rich_content/VideoPlayer'
 
 interface QuestionProps {
   exercise: Exercise
@@ -220,6 +221,13 @@ export default function Question({
             richContentAnim={richContentAnim} 
           />
         )}
+
+        {/* {currentStep.video_url && (
+          <Animated.View style={{ opacity: richContentAnim, marginVertical: 16 }}>
+            <VideoScreen videoUrl={currentStep.video_url} />
+          </Animated.View>
+        )} */}
+
         {renderOptions()}
       </>
     )
