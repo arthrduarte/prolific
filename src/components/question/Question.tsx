@@ -57,13 +57,19 @@ export default function Question({
   useEffect(() => {
     setIsTransitioning(true)
     
-    // Fade out existing content first
+    // Stop any ongoing animations first
+    fadeAnim.stopAnimation()
+    richContentAnim.stopAnimation()
+    optionsAnim.stopAnimation()
+    wordAnimations.forEach(anim => anim && anim.stopAnimation())
+    
+    // Fade out existing content
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 200,
       useNativeDriver: true,
     }).start(() => {
-      // After fade out, reset all states and values
+      // Reset all states and values
       setSelectedOption(null)
       setInputAnswer('')
       setIsAnswered(false)
@@ -71,9 +77,11 @@ export default function Question({
       richContentAnim.setValue(0)
       optionsAnim.setValue(0)
       
-      // Initialize word animations after content is cleared
+      // Initialize new word animations
       const words = currentStep.content.split(/(\n|\s+)/).filter(Boolean)
-      const animations = words.map(word => word === '\n' ? null : new Animated.Value(voiceMode ? 0 : 1))
+      const animations = words.map(word => 
+        word === '\n' ? null : new Animated.Value(voiceMode ? 0 : 1)
+      )
       setWordAnimations(animations)
 
       // Short delay before starting fade in
@@ -85,7 +93,7 @@ export default function Question({
           useNativeDriver: true,
         }).start(() => {
           if (voiceMode) {
-            // Start word animations after container fade in only if voice mode is enabled
+            // Start word animations after container fade in
             Animated.stagger(150, animations.map(anim => 
               anim 
                 ? Animated.timing(anim, {
@@ -120,6 +128,14 @@ export default function Question({
         })
       }, 100)
     })
+
+    // Cleanup function
+    return () => {
+      fadeAnim.stopAnimation()
+      richContentAnim.stopAnimation()
+      optionsAnim.stopAnimation()
+      wordAnimations.forEach(anim => anim && anim.stopAnimation())
+    }
   }, [currentStepIndex, currentStep.content, voiceMode])
 
   // Handle transitions
