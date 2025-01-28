@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { StyleSheet, Dimensions, View, Modal } from 'react-native'
-import { Text, Button } from '@rneui/themed'
+import { StyleSheet, Dimensions, View } from 'react-native'
+import { Text, Button, Overlay } from '@rneui/themed'
 
 const { width } = Dimensions.get('window')
 
@@ -52,65 +52,65 @@ export const Explanation: React.FC<ExplanationProps> = ({
 
   return (
     <>
-      <Modal
-        visible={showResult}
-        transparent
-        animationType="slide"
-        onRequestClose={handleDismiss}
+      <Overlay
+        isVisible={showResult}
+        onBackdropPress={handleDismiss}
+        overlayStyle={styles.overlayContainer}
+        backdropStyle={styles.transparent}
+        animationType="fade"
       >
-        <View style={styles.modalOverlay}>
-          <View style={[
-            styles.resultDialog,
-            isCorrect ? styles.correctBackground : styles.incorrectBackground
-          ]}>
-            <View style={styles.resultContent}>
-              <Text h4 style={styles.resultText}>
-                {isCorrect ? '🎉 Correct!' : '❌ Wrong'}
-              </Text>
-              <View style={styles.buttonContainer}>
-                {renderButtons()}
-              </View>
+        <View style={[
+          styles.resultDialog,
+          isCorrect ? styles.correctBackground : styles.incorrectBackground
+        ]}>
+          <View style={styles.resultContent}>
+            <Text h4 style={styles.resultText}>
+              {isCorrect ? '🎉 Correct!' : '❌ Wrong'}
+            </Text>
+            <View style={styles.buttonContainer}>
+              {renderButtons()}
             </View>
           </View>
         </View>
-      </Modal>
+      </Overlay>
 
-      <Modal
-        visible={showExplanation}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowExplanation(false)}
+      <Overlay
+        isVisible={showExplanation}
+        onBackdropPress={() => setShowExplanation(false)}
+        overlayStyle={styles.overlayContainer}
+        backdropStyle={styles.transparent}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.explanationDialog}>
-            <View style={styles.explanationHeader}>
-              <Text style={styles.explanationTitle}>Explanation</Text>
-            </View>
-            <View style={styles.explanationContent}>
-              <Text style={styles.explanationText}>
-                {explanation}
-              </Text>
-              <Button
-                title="Got it"
-                buttonStyle={[
-                  styles.gotItButton,
-                  { backgroundColor: isCorrect ? '#ffd43b' : '#868e96' }
-                ]}
-                onPress={() => setShowExplanation(false)}
-              />
-            </View>
+        <View style={styles.explanationDialog}>
+          <View style={styles.explanationHeader}>
+            <Text style={styles.explanationTitle}>Explanation</Text>
+          </View>
+          <View style={styles.explanationContent}>
+            <Text style={styles.explanationText}>
+              {explanation}
+            </Text>
+            <Button
+              title="Got it"
+              buttonStyle={[
+                styles.gotItButton,
+                { backgroundColor: isCorrect ? '#ffd43b' : '#868e96' }
+              ]}
+              onPress={() => setShowExplanation(false)}
+            />
           </View>
         </View>
-      </Modal>
+      </Overlay>
     </>
   )
 }
 
 const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  overlayContainer: { 
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    margin: 0,
+    padding: 0,
   },
   resultDialog: {
     borderTopLeftRadius: 24,
@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
     paddingHorizontal: 24,
     backgroundColor: '#fff',
+    width: '100%',
   },
   correctBackground: {
     backgroundColor: '#ffd43b',
@@ -168,6 +169,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+    width: '100%',
   },
   explanationHeader: {
     padding: 16,
@@ -195,5 +197,8 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 12,
     color: '#000',
+  },
+  transparent: {
+    backgroundColor: 'transparent'
   },
 })
