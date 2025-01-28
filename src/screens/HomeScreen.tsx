@@ -152,11 +152,11 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 24,
     paddingTop: 20,
-    paddingBottom: 24,
+    paddingBottom: 8,
     backgroundColor: 'transparent',
   },
   titleContainer: {
-    marginBottom: 8,
+    marginBottom: 0,
   },
   welcomeRow: {
     flexDirection: 'row',
@@ -164,9 +164,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   welcomeText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#6c757d',
-    marginBottom: 4,
+    marginBottom: 0,
     fontWeight: '500',
   },
   settingsButton: {
@@ -180,13 +180,13 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     paddingHorizontal: 24,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 42,
     fontWeight: '700',
     color: '#000',
-    marginBottom: 4,
+    marginBottom: 0,
   },
   topicsScroll: {
     paddingHorizontal: 20,
