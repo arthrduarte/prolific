@@ -238,11 +238,11 @@ export default function Question({
           />
         )}
 
-        {/* {currentStep.video_url && (
+        {currentStep.video_url && (
           <Animated.View style={{ opacity: richContentAnim, marginVertical: 16 }}>
             <VideoScreen videoUrl={currentStep.video_url} />
           </Animated.View>
-        )} */}
+        )}
 
         {renderOptions()}
       </>
