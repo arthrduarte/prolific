@@ -1,47 +1,76 @@
-import { View, useWindowDimensions } from "react-native";
-import { LineChart as GiftedLineChart } from "react-native-gifted-charts";
-import { RichContentProps } from "./rich_content.type";
+import { useWindowDimensions, View, Text } from 'react-native';
+import { LineChart as GiftedLineChart } from 'react-native-gifted-charts';
+import { RichContentProps } from './rich_content.type';
 
-interface DataPoint extends Record<string, unknown> {
-  x: string;
-  y: number;
+interface DataPoint {
+  value: number;
+  label: string;
 }
+
+interface ChartContent {
+  data: DataPoint[];
+  title?: string;
+  type: 'line';
+}
+
+// This represents how the column rich_content (jsonb) is structured
+// const rich_content_example = {
+//   data: [
+//   { value: 100, label: 'Jan' },
+//   { value: 150, label: 'Feb' },
+//   { value: 200, label: 'Mar' },
+//   { value: 250, label: 'Apr' },
+//   { value: 300, label: 'May' },
+// ],
+//   type:"line"
+// }
 
 export function LineChart({ richContent }: RichContentProps) {
   const { width: windowWidth } = useWindowDimensions();
   
   if (!richContent?.data) return null;
   
-  const data = richContent.data as DataPoint[];
+  const chartData = (richContent as ChartContent).data;
   
-  const chartData = data.map(point => ({
-    label: point.x,
-    value: point.y,
-  }));
-
   return (
-    <View style={{ 
-      marginVertical: 10,
-      marginHorizontal: 'auto',
-      backgroundColor: '#fffff',
-      borderRadius: 16,
-      padding: 0,
-    }}>
+    <View>
       <GiftedLineChart
         data={chartData}
-        // width={windowWidth - 88} // accounting for padding
-        // height={220}
-        // spacing={40}
+        areaChart
+        width={windowWidth - 64}
+        height={250}
+        spacing={80}
         initialSpacing={20}
-        color="#FF0000"
+        endSpacing={20}
+        color="#ffd43b"
         thickness={3}
-        maxValue={Math.max(...data.map(point => point.y)) * 1.2}
-        noOfSections={5}
-        yAxisTextStyle={{ color: '#000' }}
-        xAxisLabelTextStyle={{ color: '#000' }}
-        hideDataPoints
-        // curved
+        curved
+        hideDataPoints={false}
+        dataPointsColor="#ffd43b"
+        dataPointsRadius={4}
+        startFillColor="#ffd43b"
+        endFillColor="#ffd43b20"
+        startOpacity={0.9}
+        endOpacity={0.2}
+        backgroundColor="#fff"
+        rulesColor="#e9ecef"
+        rulesType="solid"
+        yAxisColor="#e9ecef"
+        xAxisColor="#e9ecef"
+        xAxisLabelTextStyle={{ color: '#868e96', fontSize: 12 }}
+        yAxisTextStyle={{ color: '#868e96', fontSize: 12 }}
       />
+      {richContent.title && (
+        <Text style={{ 
+          fontSize: 14, 
+          fontWeight: '600', 
+          color: '#495057',
+          marginTop: 16,
+          textAlign: 'center' 
+        }}>
+          {richContent.title}
+        </Text>
+      )}
     </View>
   );
 }
