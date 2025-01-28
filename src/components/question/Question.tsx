@@ -270,7 +270,10 @@ export default function Question({
         </ScrollView>
         
         {currentStep.type !== 'content' && !isAnswered && (
-          <View style={styles.buttonContainer}>
+          <View style={[
+            styles.buttonContainer,
+            currentStep.video_url ? styles.buttonContainerTransparent : null
+          ]}>
             <TouchableOpacity
               style={[
                 styles.button,
@@ -307,7 +310,10 @@ export default function Question({
               />
             )}
             {currentStep.type === 'content' && (
-              <View style={styles.buttonContainer}>
+              <View style={[
+                styles.buttonContainer,
+                currentStep.video_url ? styles.buttonContainerTransparent : null
+              ]}>
                 <TouchableOpacity
                   style={[styles.button, styles.buttonEnabled]}
                   onPress={handleNext}
@@ -346,11 +352,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   buttonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     padding: 16,
     paddingBottom: 24,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#f1f3f5',
+  },
+  buttonContainerTransparent: {
+    backgroundColor: 'transparent',
+    borderTopWidth: 0,
+    paddingBottom: 40,
   },
   button: {
     padding: 16,
