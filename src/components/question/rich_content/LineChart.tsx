@@ -1,17 +1,6 @@
 import { useWindowDimensions, View, Text } from 'react-native';
 import { LineChart as GiftedLineChart } from 'react-native-gifted-charts';
-import { RichContentProps } from './rich_content.type';
-
-interface DataPoint {
-  value: number;
-  label: string;
-}
-
-interface ChartContent {
-  data: DataPoint[];
-  title?: string;
-  type: 'line';
-}
+import { ChartContent, RichContentProps } from './rich_content.type';
 
 // This represents how the column rich_content (jsonb) is structured
 // const rich_content_example = {
