@@ -3,6 +3,7 @@ import { Animated } from 'react-native';
 import { Table } from './Table';
 import { LineChart } from './LineChart';
 import { RichContentProps } from './rich_content.type';
+import { PieChart } from './PieChart';
 
 export const RichContent = ({ richContent, richContentAnim }: RichContentProps) => {
   if (!richContent) return null;
@@ -13,7 +14,8 @@ export const RichContent = ({ richContent, richContentAnim }: RichContentProps) 
       return <Table richContent={richContent} richContentAnim={richContentAnim} />;
     case 'line':
       return <LineChart richContent={richContent} richContentAnim={richContentAnim} />;
-    // Add more cases for different types of rich content
+    case 'pie':
+      return <PieChart richContent={richContent} richContentAnim={richContentAnim} />;
     default:
       console.warn(`Unsupported rich content type: ${richContent.type}`);
       return null;
