@@ -28,3 +28,9 @@ export interface ChartContent {
   title?: string;
   type: string;
 }
+
+export interface TableContent {
+  data: string[][];
+  head: string[];
+  type: string;
+}

@@ -1,50 +1,65 @@
 import React from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
-import { RichContentProps } from './rich_content.type';
+import { RichContentProps, TableContent } from './rich_content.type';
 
 export const Table = ({ richContent, richContentAnim }: RichContentProps) => {
-  if (!richContent?.table) return null;
+  if (!richContent?.data || !richContent?.head) return null;
+  
+  const tableContent = richContent as TableContent;
+  const columnCount = tableContent.head.length;
   
   return (
     <Animated.View style={{ opacity: richContentAnim }}>
       <View style={styles.tableContainer}>
         <View style={styles.tableHeader}>
-          {Object.keys(richContent.table[0]).map((header, index) => (
-            <Text 
+          {tableContent.head.map((header, index) => (
+            <View 
               key={index} 
               style={[
-                styles.tableCell, 
-                styles.tableHeaderText,
-                index === Object.keys(richContent.table[0]).length - 1 && styles.lastCell
+                styles.columnContainer,
+                { flex: 1 }
               ]}
             >
-              {header.charAt(0).toUpperCase() + header.slice(1)}
-            </Text>
+              <Text style={styles.tableHeaderText}>
+                {header}
+              </Text>
+            </View>
           ))}
         </View>
-        {richContent.table.map((row: any, rowIndex: number) => (
+        {tableContent.data.map((row, rowIndex) => (
           <View 
             key={rowIndex} 
             style={[
               styles.tableRow,
-              rowIndex % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd
+              rowIndex === tableContent.data.length - 1 && styles.lastRow
             ]}
           >
-            {Object.values(row).map((value: any, colIndex: number) => (
-              <Text 
-                key={colIndex} 
+            {row.map((cell, colIndex) => (
+              <View 
+                key={colIndex}
                 style={[
-                  styles.tableCell,
-                  colIndex === Object.values(row).length - 1 && styles.lastCell,
-                  typeof value === 'number' && styles.numberCell
+                  styles.columnContainer,
+                  { flex: 1 }
                 ]}
               >
-                {typeof value === 'number' ? value.toLocaleString() : value}
-              </Text>
+                <Text 
+                  style={[
+                    styles.tableCell,
+                    !isNaN(Number(cell)) && styles.numberCell
+                  ]}
+                >
+                  {!isNaN(Number(cell)) ? Number(cell).toLocaleString() : cell}
+                </Text>
+              </View>
             ))}
           </View>
         ))}
       </View>
+      {richContent.title && (
+        <Text style={styles.title}>
+          {richContent.title}
+        </Text>
+      )}
     </Animated.View>
   );
 };
@@ -55,43 +70,49 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderColor: '#f1f3f5',
     backgroundColor: '#fff',
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
-    padding: 12,
+    backgroundColor: '#ffd43b',
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
+    borderBottomColor: '#f1f3f5',
   },
   tableHeaderText: {
     fontWeight: '600',
-    color: '#495057',
+    color: '#000',
     fontSize: 14,
-    textTransform: 'uppercase',
+    textAlign: 'center',
   },
   tableRow: {
     flexDirection: 'row',
-    padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#fff',
+    borderBottomColor: '#f1f3f5',
   },
-  tableRowEven: {
-    backgroundColor: '#fff',
+  lastRow: {
+    borderBottomWidth: 0,
   },
-  tableRowOdd: {
-    backgroundColor: '#fff',
+  columnContainer: {
+    padding: 16,
+    justifyContent: 'center',
   },
   tableCell: {
-    flex: 1,
     fontSize: 14,
     color: '#495057',
-  },
-  lastCell: {
-    textAlign: 'right',
+    textAlign: 'center',
   },
   numberCell: {
     fontVariant: ['tabular-nums'],
+    color: '#000',
+    fontWeight: '600',
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#495057',
+    marginTop: 16,
+    textAlign: 'center',
+    marginBottom: 8,
   },
 });
