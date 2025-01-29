@@ -4,6 +4,7 @@ import { Table } from './Table';
 import { LineChart } from './LineChart';
 import { RichContentProps } from './rich_content.type';
 import { PieChart } from './PieChart';
+import { BarChart } from './BarChart';
 
 export const RichContent = ({ richContent, richContentAnim }: RichContentProps) => {
   if (!richContent) return null;
@@ -16,6 +17,8 @@ export const RichContent = ({ richContent, richContentAnim }: RichContentProps) 
       return <LineChart richContent={richContent} richContentAnim={richContentAnim} />;
     case 'pie':
       return <PieChart richContent={richContent} richContentAnim={richContentAnim} />;
+    case 'bar':
+      return <BarChart richContent={richContent} richContentAnim={richContentAnim} />;
     default:
       console.warn(`Unsupported rich content type: ${richContent.type}`);
       return null;
