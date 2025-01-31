@@ -68,7 +68,7 @@ export default function Home() {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-[#6c757d] text-lg font-medium">
-                {userName ? `Hello, ${userName}` : 'Hello'}
+                {`Hello`}
               </p>
             </div>
             <button
