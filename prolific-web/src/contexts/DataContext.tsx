@@ -18,10 +18,13 @@ const DataContext = createContext<DataContextType>({
   lastFetched: null,
 });
 
+interface DataProviderProps {
+  children: ReactNode;
+}
+
 export const useData = () => useContext(DataContext);
 
-
-export const DataProvider = ({ children }: { children: React.ReactNode }): React.ReactElement => {
+export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
