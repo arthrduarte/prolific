@@ -1,18 +1,18 @@
 import 'react-native-url-polyfill/auto'
 import { NavigationContainer } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
-import { supabase } from './prolific-mobile/src/lib/supabase';
+import { supabase } from './src/lib/supabase';
 import { Session } from '@supabase/supabase-js';
-import Auth from './prolific-mobile/src/components/Auth';
+import Auth from './src/components/Auth';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { PreferencesProvider } from './prolific-mobile/src/contexts/PreferencesContext';
-import { DataProvider } from './prolific-mobile/src/contexts/DataContext';
+import { PreferencesProvider } from './src/contexts/PreferencesContext';
+import { DataProvider } from './src/contexts/DataContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './prolific-mobile/src/screens/HomeScreen';
-import CourseScreen from './prolific-mobile/src/screens/CourseScreen';
-import ExerciseScreen from './prolific-mobile/src/screens/ExerciseScreen';
-import Settings from './prolific-mobile/src/components/Settings';
+import HomeScreen from './src/screens/HomeScreen';
+import CourseScreen from './src/screens/CourseScreen';
+import ExerciseScreen from './src/screens/ExerciseScreen';
+import Settings from './src/components/Settings';
 
 const Stack = createNativeStackNavigator();
 
