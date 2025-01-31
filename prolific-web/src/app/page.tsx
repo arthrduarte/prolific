@@ -1,101 +1,147 @@
-import Image from "next/image";
+'use client'
+
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
+import { Topic, Course } from '@/types/database.types'
+import { useData } from '@/contexts/DataContext'
+import { FaCog } from 'react-icons/fa'
+import { useRouter } from 'next/navigation'
+
+// Temporary components until we create the actual ones
+const TopicPill = ({ topic, isSelected, onPress, courseCount }: any) => (
+  <div className={`px-4 py-2 rounded-full cursor-pointer ${
+    isSelected ? 'bg-blue-500 text-white' : 'bg-gray-100'
+  }`}>
+    {topic.name} ({courseCount})
+  </div>
+)
+
+const CourseCard = ({ course, topic, onPress }: any) => (
+  <div className="bg-white rounded-2xl shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow">
+    <h3>{course.title}</h3>
+  </div>
+)
+
+const SkeletonLoader = ({ className }: { className?: string }) => (
+  <div className={`animate-pulse bg-gray-200 ${className}`} />
+)
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const router = useRouter()
+  const { topics, courses, isLoading } = useData()
+  const [userName, setUserName] = useState<string>('')
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.user_metadata?.full_name) {
+        setUserName(user.user_metadata.full_name)
+      }
+    }
+    fetchUser()
+  }, [])
+
+  useEffect(() => {
+    if (topics.length > 0 && !selectedTopic) {
+      setSelectedTopic(topics[0])
+    }
+  }, [topics])
+
+  const handleTopicPress = (topic: Topic) => {
+    setSelectedTopic(topic)
+  }
+
+  const handleCoursePress = (course: Course) => {
+    router.push(`/course/${course.id}?topicId=${selectedTopic?.id}`)
+  }
+
+  const handleSettingsPress = () => {
+    router.push('/settings')
+  }
+
+  const getTopicCourses = (topicId: string) => {
+    return courses.filter(course => course.topic_id === topicId)
+  }
+
+  const renderSkeletonLoaders = () => (
+    <>
+      <div className="flex space-x-2 px-6">
+        {[1, 2, 3, 4].map((_, index) => (
+          <SkeletonLoader
+            key={index}
+            className="w-30 h-10 rounded-full"
+          />
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 px-4">
+        {[1, 2, 3].map((_, index) => (
+          <SkeletonLoader
+            key={index}
+            className="w-full h-40 rounded-2xl"
+          />
+        ))}
+      </div>
+    </>
+  )
+
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="py-5">
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="text-[#6c757d] text-lg font-medium">
+                {userName ? `Hello, ${userName}` : 'Hello'}
+              </p>
+            </div>
+            <button
+              onClick={handleSettingsPress}
+              className="p-2 text-[#6c757d] hover:text-gray-900 transition-colors"
+            >
+              <FaCog size={20} />
+            </button>
+          </div>
+
+          <h1 className="text-4xl font-bold text-black mt-2 mb-6">
+            Let's Learn New Stuff!
+          </h1>
+
+          {isLoading ? (
+            renderSkeletonLoaders()
+          ) : (
+            <>
+              {/* Topics horizontal scroll */}
+              <div className="overflow-x-auto pb-4 mb-6">
+                <div className="flex space-x-2 px-2">
+                  {topics.map((topic) => (
+                    <TopicPill
+                      key={topic.id}
+                      topic={topic}
+                      isSelected={selectedTopic?.id === topic.id}
+                      onPress={handleTopicPress}
+                      courseCount={getTopicCourses(topic.id).length}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Courses grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {selectedTopic && getTopicCourses(selectedTopic.id).map((course) => (
+                  <CourseCard
+                    key={course.id}
+                    course={course}
+                    topic={selectedTopic}
+                    onPress={handleCoursePress}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
-  );
+  )
 }
