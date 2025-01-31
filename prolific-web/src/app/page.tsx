@@ -1,26 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { Topic, Course } from '@/types/database.types'
 import { useData } from '@/contexts/DataContext'
 import { FaCog } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
-
-// Temporary components until we create the actual ones
-const TopicPill = ({ topic, isSelected, onPress, courseCount }: any) => (
-  <div className={`px-4 py-2 rounded-full cursor-pointer ${
-    isSelected ? 'bg-blue-500 text-white' : 'bg-gray-100'
-  }`}>
-    {topic.name} ({courseCount})
-  </div>
-)
-
-const CourseCard = ({ course, topic, onPress }: any) => (
-  <div className="bg-white rounded-2xl shadow-md p-4 cursor-pointer hover:shadow-lg transition-shadow">
-    <h3>{course.title}</h3>
-  </div>
-)
+import { CourseCard } from '@/components/CourseCard'
+import { TopicPill } from '@/components/TopicPill'
 
 const SkeletonLoader = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-gray-200 ${className}`} />
@@ -29,18 +15,7 @@ const SkeletonLoader = ({ className }: { className?: string }) => (
 export default function Home() {
   const router = useRouter()
   const { topics, courses, isLoading } = useData()
-  const [userName, setUserName] = useState<string>('')
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user?.user_metadata?.full_name) {
-        setUserName(user.user_metadata.full_name)
-      }
-    }
-    fetchUser()
-  }, [])
 
   useEffect(() => {
     if (topics.length > 0 && !selectedTopic) {
@@ -114,7 +89,7 @@ export default function Home() {
             <>
               {/* Topics horizontal scroll */}
               <div className="overflow-x-auto pb-4 mb-6">
-                <div className="flex space-x-2 px-2">
+                <div className="flex px-2">
                   {topics.map((topic) => (
                     <TopicPill
                       key={topic.id}
