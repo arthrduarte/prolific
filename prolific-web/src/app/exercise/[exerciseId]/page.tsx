@@ -117,9 +117,15 @@ export default function ExercisePage() {
         `}>
           <button
             onClick={handleGoBack}
-            className="w-4 h-8 flex items-center justify-center hover:text-gray-600 transition-colors"
+            className="
+              w-10 h-10 rounded-full 
+              bg-gray-100 
+              flex items-center justify-center
+              transition-all duration-200
+              hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300
+            "
           >
-            <FaChevronLeft className="w-4 h-4" />
+            <FaChevronLeft className="w-4 h-4 text-black" />
           </button>
           <div className="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden">
             <motion.div
