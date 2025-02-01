@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/utils/supabase/client'
 import { FaEnvelope, FaLock, FaUser } from 'react-icons/fa'
-import FacebookAuth from './Facebook'
+import FacebookAuth from '../_components/Facebook'
 
 interface SignupProps {
   onSwitchToLogin: () => void
@@ -38,7 +38,7 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/confirm`,
         data: {
           full_name: name,
         }

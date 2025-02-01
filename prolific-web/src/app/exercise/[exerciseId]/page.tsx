@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/utils/supabase/client';
 import { Exercise, Step } from '@/types/database.types';
 import Question from '@/app/exercise/_components/Question';
 import SkeletonLoaderQuestion from '@/app/exercise/_components/SkeletonLoaderQuestion';

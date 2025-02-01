@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../utils/supabase/client';
 import { Exercise, User_Progress } from '../types/database.types';
 
 interface UseUserProgressReturn {

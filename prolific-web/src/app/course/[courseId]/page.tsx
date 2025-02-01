@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/utils/supabase/client';
 import { Course, Exercise } from '@/types/database.types';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import ExerciseCard from '@/app/course/_components/ExerciseCard';

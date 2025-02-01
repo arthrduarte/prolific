@@ -1,6 +1,6 @@
 'use client'
 
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/utils/supabase/client'
 import { FaFacebook } from 'react-icons/fa'
 
 export default function FacebookAuth() {

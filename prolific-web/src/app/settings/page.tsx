@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/utils/supabase/client'
 import { usePreferences } from '@/contexts/PreferencesContext'
 
 export default function Settings() {
