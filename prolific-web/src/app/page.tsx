@@ -7,6 +7,7 @@ import { FaCog } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
 import { CourseCard } from '@/components/CourseCard'
 import { TopicPill } from '@/components/TopicPill'
+import SkeletonLoaderHome from '@/components/SkeletonLoaderHome'
 
 const SkeletonLoader = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-gray-200 ${className}`} />
@@ -61,6 +62,24 @@ export default function Home() {
     </>
   )
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-12">
+            <SkeletonLoaderHome className="h-12 w-48 mb-2" />
+            <SkeletonLoaderHome className="h-6 w-72" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[1, 2, 3, 4].map((index) => (
+              <SkeletonLoaderHome key={index} className="h-[280px] w-full rounded-2xl" />
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -83,38 +102,32 @@ export default function Home() {
             Let's Learn New Stuff!
           </h1>
 
-          {isLoading ? (
-            renderSkeletonLoaders()
-          ) : (
-            <>
-              {/* Topics horizontal scroll */}
-              <div className="overflow-x-auto pb-4 mb-6">
-                <div className="flex px-2">
-                  {topics.map((topic) => (
-                    <TopicPill
-                      key={topic.id}
-                      topic={topic}
-                      isSelected={selectedTopic?.id === topic.id}
-                      onPress={handleTopicPress}
-                      courseCount={getTopicCourses(topic.id).length}
-                    />
-                  ))}
-                </div>
-              </div>
+          {/* Topics horizontal scroll */}
+          <div className="overflow-x-auto pb-4 mb-6">
+            <div className="flex px-2">
+              {topics.map((topic) => (
+                <TopicPill
+                  key={topic.id}
+                  topic={topic}
+                  isSelected={selectedTopic?.id === topic.id}
+                  onPress={handleTopicPress}
+                  courseCount={getTopicCourses(topic.id).length}
+                />
+              ))}
+            </div>
+          </div>
 
-              {/* Courses grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {selectedTopic && getTopicCourses(selectedTopic.id).map((course) => (
-                  <CourseCard
-                    key={course.id}
-                    course={course}
-                    topic={selectedTopic}
-                    onPress={handleCoursePress}
-                  />
-                ))}
-              </div>
-            </>
-          )}
+          {/* Courses grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {selectedTopic && getTopicCourses(selectedTopic.id).map((course) => (
+              <CourseCard
+                key={course.id}
+                course={course}
+                topic={selectedTopic}
+                onPress={handleCoursePress}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

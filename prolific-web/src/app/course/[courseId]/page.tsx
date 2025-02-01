@@ -7,12 +7,15 @@ import { Course, Exercise } from '@/types/database.types';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import ExerciseCard from '@/components/ExerciseCard';
 import BackButton from '@/components/BackButton';
+import SkeletonLoaderQuestion from '@/components/SkeletonLoaderQuestion';
+
 export default function CoursePage() {
   const params = useParams();
   const courseId = params.courseId as string;
   const [course, setCourse] = useState<Course | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [stepsCount, setStepsCount] = useState<{ [key: string]: number }>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const { 
     loading: progressLoading,
@@ -23,48 +26,52 @@ export default function CoursePage() {
   useEffect(() => {
     if (!courseId) return;
 
-    const fetchCourse = async () => {
-      const { data, error } = await supabase
-        .from('courses')
-        .select('*')
-        .eq('id', courseId)
-        .single();
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const { data: courseData, error: courseError } = await supabase
+          .from('courses')
+          .select('*')
+          .eq('id', courseId)
+          .single();
 
-      if (!error && data) {
-        setCourse(data as Course);
-      }
-    };
-
-    const fetchExercises = async () => {
-      const { data, error } = await supabase
-        .from('exercises')
-        .select('*')
-        .eq('course_id', courseId)
-        .order('order', { ascending: true });
-
-      if (!error && data) {
-        setExercises(data as Exercise[]);
-        
-        // Fetch steps count for each exercise
-        const exerciseIds = data.map(ex => ex.id);
-        const { data: stepsData, error: stepsError } = await supabase
-          .from('steps')
-          .select('exercise_id')
-          .in('exercise_id', exerciseIds);
-
-        if (!stepsError && stepsData) {
-          // Count steps for each exercise
-          const counts = stepsData.reduce((acc, step) => {
-            acc[step.exercise_id] = (acc[step.exercise_id] || 0) + 1;
-            return acc;
-          }, {} as { [key: string]: number });
-          setStepsCount(counts);
+        if (!courseError && courseData) {
+          setCourse(courseData as Course);
         }
+
+        const { data: exercisesData, error: exercisesError } = await supabase
+          .from('exercises')
+          .select('*')
+          .eq('course_id', courseId)
+          .order('order', { ascending: true });
+
+        if (!exercisesError && exercisesData) {
+          setExercises(exercisesData as Exercise[]);
+          
+          // Fetch steps count for each exercise
+          const exerciseIds = exercisesData.map(ex => ex.id);
+          const { data: stepsData, error: stepsError } = await supabase
+            .from('steps')
+            .select('exercise_id')
+            .in('exercise_id', exerciseIds);
+
+          if (!stepsError && stepsData) {
+            // Count steps for each exercise
+            const counts = stepsData.reduce((acc, step) => {
+              acc[step.exercise_id] = (acc[step.exercise_id] || 0) + 1;
+              return acc;
+            }, {} as { [key: string]: number });
+            setStepsCount(counts);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching course data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchCourse();
-    fetchExercises();
+    fetchData();
   }, [courseId]);
 
   const handleExercisePress = (exercise: Exercise) => {
@@ -75,6 +82,10 @@ export default function CoursePage() {
 
     window.location.href = `/exercise/${exercise.id}?courseId=${courseId}`;
   };
+
+  if (isLoading || progressLoading) {
+    return <SkeletonLoaderQuestion />;
+  }
 
   if (!course) return null;
 
