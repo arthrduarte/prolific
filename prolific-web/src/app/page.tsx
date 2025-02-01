@@ -5,9 +5,9 @@ import { Topic, Course } from '@/types/database.types'
 import { useData } from '@/contexts/DataContext'
 import { FaCog } from 'react-icons/fa'
 import { useRouter } from 'next/navigation'
-import { CourseCard } from '@/components/CourseCard'
-import { TopicPill } from '@/components/TopicPill'
-import SkeletonLoaderHome from '@/components/SkeletonLoaderHome'
+import { CourseCard } from '@/app/_components/CourseCard'
+import { TopicPill } from '@/app/_components/TopicPill'
+import SkeletonLoaderHome from '@/app/_components/SkeletonLoaderHome'
 
 const SkeletonLoader = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-gray-200 ${className}`} />

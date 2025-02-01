@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Exercise, Step } from '@/types/database.types';
-import Question from '@/components/question/Question';
-import SkeletonLoaderQuestion from '@/components/SkeletonLoaderQuestion';
+import Question from '@/app/exercise/_components/Question';
+import SkeletonLoaderQuestion from '@/app/exercise/_components/SkeletonLoaderQuestion';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { FaChevronLeft } from 'react-icons/fa';
+
 import { motion, useSpring, useTransform } from 'framer-motion';
 
 export default function ExercisePage() {
@@ -78,7 +79,7 @@ export default function ExercisePage() {
     if (!courseId || !exercise) return;
     
     try {
-      await updateProgress(exercise.id);
+      await updateProgress(exercise.id, 100);
     } catch (error) {
       console.error('Error updating progress:', error);
     }

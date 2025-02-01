@@ -5,9 +5,9 @@ import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Course, Exercise } from '@/types/database.types';
 import { useUserProgress } from '@/hooks/useUserProgress';
-import ExerciseCard from '@/components/ExerciseCard';
+import ExerciseCard from '@/app/course/_components/ExerciseCard';
 import BackButton from '@/components/BackButton';
-import SkeletonLoaderQuestion from '@/components/SkeletonLoaderQuestion';
+import SkeletonLoaderQuestion from '@/app/exercise/_components/SkeletonLoaderQuestion';
 
 export default function CoursePage() {
   const params = useParams();
