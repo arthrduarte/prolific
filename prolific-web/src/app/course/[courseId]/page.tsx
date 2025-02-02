@@ -6,7 +6,7 @@ import { supabase } from '@/utils/supabase/client';
 import { Course, Exercise } from '@/types/database.types';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import ExerciseCard from '@/app/course/_components/ExerciseCard';
-import BackButton from '@/components/BackButton';
+import CourseBackButton from '@/app/course/_components/CourseBackButton';
 import SkeletonLoaderQuestion from '@/app/exercise/_components/SkeletonLoaderQuestion';
 
 export default function CoursePage() {
@@ -92,7 +92,7 @@ export default function CoursePage() {
   return (
     <div className="min-h-screen bg-white p-8">
       <div className="max-w-4xl mx-auto">
-        <BackButton />
+        <CourseBackButton />
         
         <h1 className="text-4xl font-bold text-black mb-4 tracking-tight">
           {course.title}
