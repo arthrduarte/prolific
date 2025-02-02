@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/utils/supabase/client'
 import { usePreferences } from '@/contexts/PreferencesContext'
+import BackButton from '@/components/BackButton'
 
 export default function Settings() {
   const [loading, setLoading] = useState(false)
@@ -45,11 +46,11 @@ export default function Settings() {
     onValueChange: (value: boolean) => void 
   }) => (
     <div 
-      className="flex items-center justify-between p-6 bg-yellow-300 rounded-2xl cursor-pointer hover:bg-yellow-400 transition-colors"
+      className="flex items-center justify-between p-6 bg-primary rounded-2xl cursor-pointer hover:bg-primary-500 transition-colors"
       onClick={() => onValueChange(!value)}
     >
       <div className="flex-1 mr-4">
-        <h3 className="text-lg font-semibold mb-1">{title}</h3>
+        <h3 className="text-lg font-semibold mb-1 text-black">{title}</h3>
         <p className="text-sm text-gray-700">{description}</p>
       </div>
       <div className={`w-12 h-7 rounded-full p-0.5 transition-colors ${value ? 'bg-gray-900' : 'bg-gray-400'}`}>
@@ -79,13 +80,8 @@ export default function Settings() {
     <div className="min-h-screen bg-white p-6 md:p-8 lg:p-12">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
-          <button 
-            onClick={() => router.back()}
-            className="mb-4 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            ← Back
-          </button>
-          <h1 className="text-4xl font-extrabold tracking-tight">Settings</h1>
+          <BackButton />
+          <h1 className="text-4xl text-black font-bold tracking-tight">Settings</h1>
         </div>
         
         <div className="space-y-3">
@@ -97,7 +93,7 @@ export default function Settings() {
           ))}
 
           <div className="p-6 bg-yellow-300 rounded-2xl">
-            <h3 className="text-lg font-semibold mb-1">Account</h3>
+            <h3 className="text-lg font-semibold mb-1 text-black">Account</h3>
             <p className="text-sm text-gray-700">{session.user.email}</p>
           </div>
 

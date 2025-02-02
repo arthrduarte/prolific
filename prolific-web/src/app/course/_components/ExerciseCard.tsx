@@ -35,7 +35,7 @@ export default function ExerciseCard({
         }
       `}
     >
-      <div className="flex-1 mr-4 truncate">
+      <div className=" mr-4 truncate">
         <h3 
           className={`
             text-lg font-semibold leading-6 truncate

@@ -33,14 +33,10 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-5">
           <div className="flex justify-between items-center">
-            <div>
-              <p className="text-[#6c757d] text-lg font-medium">
-                {`Hello`}
-              </p>
-            </div>
+            
             <button
-              onClick={()=> router.push('/settings')}
-              className="p-2 text-[#6c757d] hover:text-gray-900 transition-colors"
+              onClick={() => router.push('/settings')}
+              className="p-3 text-secondary-600 hover:text-secondary-900 hover:bg-secondary-100 rounded-xl transition-colors"
             >
               <FaCog size={20} />
             </button>

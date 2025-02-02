@@ -94,7 +94,7 @@ export default function CoursePage() {
       <div className="max-w-4xl mx-auto">
         <BackButton />
         
-        <h1 className="text-5xl font-extrabold text-black mb-4 tracking-tight">
+        <h1 className="text-4xl font-bold text-black mb-4 tracking-tight">
           {course.title}
         </h1>
 

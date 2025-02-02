@@ -20,7 +20,7 @@ export const TopicPill: React.FC<TopicPillProps> = ({
   return (
     <button
       className={`
-        px-4 py-2 rounded-full flex items-center mr-2 transition-all duration-200
+        px-4 py-2 rounded-full flex items-center mr-2 transition-all duration-200 whitespace-nowrap
         ${isSelected 
           ? 'bg-[#ffd43b]' 
           : 'bg-[#f1f3f5]'
