@@ -9,10 +9,6 @@ import { CourseCard } from '@/app/_components/CourseCard'
 import { TopicPill } from '@/app/_components/TopicPill'
 import SkeletonLoaderHome from '@/app/_components/SkeletonLoaderHome'
 
-const SkeletonLoader = ({ className }: { className?: string }) => (
-  <div className={`animate-pulse bg-gray-200 ${className}`} />
-)
-
 export default function Home() {
   const router = useRouter()
   const { topics, courses, isLoading } = useData()
@@ -24,60 +20,12 @@ export default function Home() {
     }
   }, [topics])
 
-  const handleTopicPress = (topic: Topic) => {
-    setSelectedTopic(topic)
-  }
-
-  const handleCoursePress = (course: Course) => {
-    router.push(`/course/${course.id}?topicId=${selectedTopic?.id}`)
-  }
-
-  const handleSettingsPress = () => {
-    router.push('/settings')
-  }
-
   const getTopicCourses = (topicId: string) => {
     return courses.filter(course => course.topic_id === topicId)
   }
 
-  const renderSkeletonLoaders = () => (
-    <>
-      <div className="flex space-x-2 px-6">
-        {[1, 2, 3, 4].map((_, index) => (
-          <SkeletonLoader
-            key={index}
-            className="w-30 h-10 rounded-full"
-          />
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 px-4">
-        {[1, 2, 3].map((_, index) => (
-          <SkeletonLoader
-            key={index}
-            className="w-full h-40 rounded-2xl"
-          />
-        ))}
-      </div>
-    </>
-  )
-
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white p-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-12">
-            <SkeletonLoaderHome className="h-12 w-48 mb-2" />
-            <SkeletonLoaderHome className="h-6 w-72" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map((index) => (
-              <SkeletonLoaderHome key={index} className="h-[280px] w-full rounded-2xl" />
-            ))}
-          </div>
-        </div>
-      </div>
-    )
+    return <SkeletonLoaderHome />
   }
 
   return (
@@ -91,7 +39,7 @@ export default function Home() {
               </p>
             </div>
             <button
-              onClick={handleSettingsPress}
+              onClick={()=> router.push('/settings')}
               className="p-2 text-[#6c757d] hover:text-gray-900 transition-colors"
             >
               <FaCog size={20} />
@@ -110,10 +58,11 @@ export default function Home() {
                   key={topic.id}
                   topic={topic}
                   isSelected={selectedTopic?.id === topic.id}
-                  onPress={handleTopicPress}
+                  onPress={() => setSelectedTopic(topic)}
                   courseCount={getTopicCourses(topic.id).length}
                 />
               ))}
+
             </div>
           </div>
 
@@ -124,7 +73,7 @@ export default function Home() {
                 key={course.id}
                 course={course}
                 topic={selectedTopic}
-                onPress={handleCoursePress}
+                onPress={() => router.push(`/course/${course.id}?topicId=${selectedTopic?.id}`)}
               />
             ))}
           </div>
