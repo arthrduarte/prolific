@@ -18,7 +18,7 @@ A modern React Native mobile application built with Expo, focusing on providing 
 - **Facebook Authentication** - Social login
 
 ## 📽️ Demo
-https://youtube.com/shorts/nX-sgX6jG-k?si=rOCQJVEQWudOvD3r
+[![Prolific App Demo](https://img.youtube.com/vi/nX-sgX6jG-k/0.jpg)](https://youtube.com/shorts/nX-sgX6jG-k?si=rOCQJVEQWudOvD3r)
 
 ## 👥 Authors
 Arthur Duarte & Felipe Izquierdo
